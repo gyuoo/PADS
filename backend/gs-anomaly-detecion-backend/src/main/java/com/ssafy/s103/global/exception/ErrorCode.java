@@ -1,7 +1,9 @@
 package com.ssafy.s103.global.exception;
 
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@Getter
 public enum ErrorCode {
     ;
     private final HttpStatus code;

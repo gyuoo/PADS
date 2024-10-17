@@ -1,5 +1,8 @@
 package com.ssafy.s103.global.exception;
 
+import lombok.Getter;
+
+@Getter
 public class BaseException extends RuntimeException {
     private final ErrorCode errorCode;
 

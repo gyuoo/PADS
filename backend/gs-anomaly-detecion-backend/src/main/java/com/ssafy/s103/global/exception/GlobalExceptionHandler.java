@@ -12,4 +12,9 @@ public class GlobalExceptionHandler {
     protected ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.of(HttpStatus.INTERNAL_SERVER_ERROR));
     }
+
+    @ExceptionHandler({BaseException.class})
+    protected ResponseEntity<ErrorResponse> handleBusinessException(BaseException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponse.of(e.getErrorCode().getMessage(), e.getErrorCode().getCode()));
+    }
 }
