@@ -5,3 +5,7 @@ spring:
     active: ${SPRING_ACTIVE_PROFILE:dev}
   config:
     import: optional:file:.env[.properties]
+mybatis:
+  mapper-locations: mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
