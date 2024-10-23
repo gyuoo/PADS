@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: dashboard
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILE:dev}
+  config:
+    import: optional:file:.env[.properties]
