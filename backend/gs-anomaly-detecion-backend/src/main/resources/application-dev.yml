@@ -1,12 +1,10 @@
 spring:
+  config:
+    import: application-secret.yml
   data:
     redis:
-      host: ${DEV_REDIS_HOST}
-      port: ${DEV_REDIS_PORT}
-      password: ${DEV_REDIS_PASSWORD}
-
+      port: 6379
   datasource:
-    url: jdbc:postgresql://${DEV_POSTGRES_HOST}:${DEV_POSTGRES_PORT}/${DEV_POSTGRES_DB}
-    username: ${DEV_POSTGRES_USER}
-    password: ${DEV_POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/anomaly
+    username: postgres
