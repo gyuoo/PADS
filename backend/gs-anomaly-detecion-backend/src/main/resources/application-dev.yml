@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      uri: ${DEV_MONGO_URL}
+      database: ${DEV_MONGO_DATABASE}
+    redis:
+      host: ${DEV_REDIS_HOST}
+      port: ${DEV_REDIS_PORT}
+      password: ${DEV_REDIS_PASSWORD}
