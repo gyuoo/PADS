@@ -1,0 +1,10 @@
+spring:
+  config:
+    import: application-secret.yml
+  data:
+    redis:
+      port: 6379
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/anomaly
+    username: postgres

@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: dashboard
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILE:dev}
+
+mybatis:
+  mapper-locations: mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
