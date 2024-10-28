@@ -14,6 +14,7 @@ const count = ref(0)
     <Button class="ms-3" type="button" @click="count++"
       >count is {{ count }}</Button
     >
+    <router-link to="/">Home</router-link>
   </div>
 </template>
 
