@@ -1,0 +1,24 @@
+<template>
+  <div class="flex-col justify-center content-center">
+    <div class="flex flex-col space-y-5">
+      <Button variant="ghost" class="text-base">
+        <House class="mr-5" /> 대시보드
+      </Button>
+
+      <Button variant="ghost" class="text-base">
+        <ShoppingCart class="mr-5" /> 상품 현황
+      </Button>
+
+      <Button variant="ghost" class="text-base">
+        <ClipboardCheck class="mr-5" /> 배치 현황
+      </Button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import Button from '../ui/button/Button.vue'
+import { House, ShoppingCart, ClipboardCheck } from 'lucide-vue-next'
+</script>
+
+<style scoped></style>
