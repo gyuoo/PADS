@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -30,6 +31,9 @@ public class User extends BaseTimeEntity {
     @Column(length = 250, nullable = false, unique = true)
     private String email;
 
+    @Column(length = 512)
+    private String refreshToken;
+
     @Builder
     public User(String password, String email) {
         this.name = extractNameFromEmail(email);
@@ -42,9 +46,15 @@ public class User extends BaseTimeEntity {
         return email.split("@")[0];
     }
 
-    // 비밀번호를 암호화된 상태로 설정
-    public void updatePassword(String encodedPassword) {
-        this.password = encodedPassword;
+    public void encodePassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
     }
 
+    public void updateRefreshTokenByLogin(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void deleteRefreshTokenByLogout() {
+        this.refreshToken = null;
+    }
 }
