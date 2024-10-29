@@ -68,8 +68,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager()
-        throws Exception { // AuthenticationManager 등록
+    public AuthenticationManager authenticationManager() { // AuthenticationManager 등록
         DaoAuthenticationProvider provider = daoAuthenticationProvider(); // DaoAuthenticationProvider 사용
         provider.setPasswordEncoder(
             passwordEncoder()); // PasswordEncoder로는 PasswordEncoderFactories.createDelegatingPasswordEncoder() 사용
@@ -77,8 +76,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordLoginFilter()
-        throws Exception {
+    public JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordLoginFilter() {
         JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordLoginFilter = new JsonUsernamePasswordAuthenticationFilter(
             objectMapper);
         jsonUsernamePasswordLoginFilter.setAuthenticationManager(authenticationManager());
