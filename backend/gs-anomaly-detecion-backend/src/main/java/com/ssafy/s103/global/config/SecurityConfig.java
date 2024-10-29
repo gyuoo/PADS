@@ -3,6 +3,8 @@ package com.ssafy.s103.global.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -60,6 +62,15 @@ public class SecurityConfig {
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
 
         return daoAuthenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager()
+        throws Exception { // AuthenticationManager 등록
+        DaoAuthenticationProvider provider = daoAuthenticationProvider(); // DaoAuthenticationProvider 사용
+        provider.setPasswordEncoder(
+            passwordEncoder()); // PasswordEncoder로는 PasswordEncoderFactories.createDelegatingPasswordEncoder() 사용
+        return new ProviderManager(provider);
     }
 
 }
