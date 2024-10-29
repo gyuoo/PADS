@@ -1,5 +1,7 @@
 package com.ssafy.s103.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.s103.global.security.filter.JsonUsernamePasswordAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
+    private final ObjectMapper objectMapper;
 
     @Bean
     public PasswordEncoder bCryptPasswordEncoder() {
@@ -73,4 +76,12 @@ public class SecurityConfig {
         return new ProviderManager(provider);
     }
 
+    @Bean
+    public JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordLoginFilter()
+        throws Exception {
+        JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordLoginFilter = new JsonUsernamePasswordAuthenticationFilter(
+            objectMapper);
+        jsonUsernamePasswordLoginFilter.setAuthenticationManager(authenticationManager());
+        return jsonUsernamePasswordLoginFilter;
+    }
 }
