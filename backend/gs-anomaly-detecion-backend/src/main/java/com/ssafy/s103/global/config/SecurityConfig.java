@@ -2,6 +2,8 @@ package com.ssafy.s103.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.s103.global.security.filter.JsonUsernamePasswordAuthenticationFilter;
+import com.ssafy.s103.global.security.handler.LoginFailureHandler;
+import com.ssafy.s103.global.security.handler.LoginSuccessJWTProvideHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -76,10 +78,23 @@ public class SecurityConfig {
     }
 
     @Bean
+    public LoginSuccessJWTProvideHandler loginSuccessJWTProvideHandler() {
+        return new LoginSuccessJWTProvideHandler();
+    }
+
+    @Bean
+    public LoginFailureHandler loginFailureHandler() {
+        return new LoginFailureHandler();
+    }
+
+    @Bean
     public JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordLoginFilter() {
         JsonUsernamePasswordAuthenticationFilter jsonUsernamePasswordLoginFilter = new JsonUsernamePasswordAuthenticationFilter(
             objectMapper);
         jsonUsernamePasswordLoginFilter.setAuthenticationManager(authenticationManager());
+        jsonUsernamePasswordLoginFilter.setAuthenticationSuccessHandler(
+            loginSuccessJWTProvideHandler());
+        jsonUsernamePasswordLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
         return jsonUsernamePasswordLoginFilter;
     }
 }
