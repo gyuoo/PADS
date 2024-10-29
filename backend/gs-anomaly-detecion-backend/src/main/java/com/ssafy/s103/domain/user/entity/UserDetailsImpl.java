@@ -1,12 +1,20 @@
 package com.ssafy.s103.domain.user.entity;
 
 import java.util.Collection;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Getter
-public record UserDetailsImpl(User user) implements UserDetails {
+public class UserDetailsImpl implements UserDetails {
+
+    private final User user;
+
+    public UserDetailsImpl(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return user;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
