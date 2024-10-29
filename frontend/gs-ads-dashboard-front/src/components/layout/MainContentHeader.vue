@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-between items-center">
-    <div class="text-3xl font-bold">{{ title }}</div>
+    <div class="text-4xl font-bold">{{ title }}</div>
     <div class="flex items-center justify-center space-x-5">
       <Bell></Bell>
       <Avatar>
@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { Avatar, AvatarImage, AvatarFallback } from '../ui/avatar'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Bell } from 'lucide-vue-next'
 defineProps<{
   title: string

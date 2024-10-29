@@ -5,9 +5,11 @@
     >
       <Sidebar />
     </aside>
-    <main class="flex flex-col p-10 flex-1">
+    <main class="flex flex-col p-10 flex-1 space-y-5">
       <MainContentHeader :title="mainTitle"></MainContentHeader>
-      <slot name="content"></slot>
+      <div class="flex-1">
+        <slot name="content"></slot>
+      </div>
     </main>
   </div>
 </template>

@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Main from '@/views/Main.vue'
-
+import Main from '../views/dashboard/Main.vue'
 // 라우터 설정
 const routes = [
   {
