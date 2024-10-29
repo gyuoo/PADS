@@ -31,10 +31,15 @@ public class User extends BaseTimeEntity {
     private String email;
 
     @Builder
-    public User(String name, String password, String email) {
-        this.name = name;
+    public User(String password, String email) {
+        this.name = extractNameFromEmail(email);
         this.password = password;
         this.email = email;
+    }
+
+    // 이메일에서 '@' 앞부분만 가져옴
+    private String extractNameFromEmail(String email) {
+        return email.split("@")[0];
     }
 
     // 비밀번호를 암호화된 상태로 설정
