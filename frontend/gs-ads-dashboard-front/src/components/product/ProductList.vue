@@ -81,8 +81,10 @@
       </div>
     </div>
 
-    <div class="flex-1 p-3 bg-white shadow">
-      <Table>
+    <div
+      class="flex-1 p-3 bg-white shadow flex flex-col space-y-10 justify-center items-center"
+    >
+      <Table class="flex=1">
         <TableHeader class="text-base">
           <TableRow class="hover:bg-transparent">
             <TableHead class="text-center font-semibold text-[#333333]">
@@ -138,19 +140,47 @@
           </TableRow>
         </TableBody>
       </Table>
+      <Pagination
+        v-model:page="curPage"
+        v-slot="{ page }"
+        :total="totalPages * 10"
+      >
+        <PaginationList v-slot="{ items }" class="flex items-center gap-5">
+          <PaginationFirst class="border-none" />
+          <PaginationPrev class="border-none" />
+
+          <!-- 현재 페이지 그룹 표시 -->
+          <template v-for="(item, index) in items">
+            <PaginationListItem
+              v-if="item.type === 'page'"
+              :key="index"
+              :value="item.value"
+              as-child
+            >
+              <Button
+                class="w-10 h-10 p-0"
+                :variant="item.value === page ? 'default' : 'ghost'"
+              >
+                {{ item.value }}
+              </Button>
+            </PaginationListItem>
+            <!-- <PaginationEllipsis v-else :key="item.type" :index="index" /> -->
+          </template>
+
+          <PaginationNext class="border-none" />
+          <PaginationLast class="border-none" />
+        </PaginationList>
+      </Pagination>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
@@ -161,26 +191,47 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { Button } from '@/components/ui/button'
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
+
+import {
+  Pagination,
+  PaginationFirst,
+  PaginationLast,
+  PaginationList,
+  PaginationListItem,
+  PaginationNext,
+  PaginationPrev,
+} from '@/components/ui/pagination'
+
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Search } from 'lucide-vue-next'
+import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
+import { Input } from '@/components/ui/input'
 import {
   type DateValue,
   getLocalTimeZone,
   today,
 } from '@internationalized/date'
-import { type Ref, ref } from 'vue'
-import { Calendar as CalendarIcon } from 'lucide-vue-next'
+import { Calendar as CalendarIcon, Search } from 'lucide-vue-next'
+import { type Ref, ref, watch } from 'vue'
 
 const startDate = ref(today(getLocalTimeZone())) as Ref<DateValue>
 const endDate = ref(today(getLocalTimeZone())) as Ref<DateValue>
-
+const totalPages = ref(34) // 전체 페이지 수// 현재 페이지 그룹의 시작 페이지
+const curPage = ref(1)
+watch(
+  () => curPage.value,
+  (newPage) => {
+    console.log('페이지가 변경되었습니다. 현재 페이지:', newPage)
+    // 페이지 변경 시 수행할 작업을 여기에 추가합니다.
+  },
+)
 const data = [
   {
     prId: 10515454,
@@ -190,6 +241,42 @@ const data = [
     category: 'Credit Card',
     lastCheck: '2024-10-30 17:35:20',
     score: 80,
+  },
+  {
+    prId: 10515455,
+    name: 'INV001',
+    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E'],
+    regDate: '2024-10-30',
+    category: 'Credit Card',
+    lastCheck: '2024-10-30 17:35:20',
+    score: 13.5,
+  },
+  {
+    prId: 10515455,
+    name: 'INV001',
+    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E'],
+    regDate: '2024-10-30',
+    category: 'Credit Card',
+    lastCheck: '2024-10-30 17:35:20',
+    score: 13.5,
+  },
+  {
+    prId: 10515455,
+    name: 'INV001',
+    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E'],
+    regDate: '2024-10-30',
+    category: 'Credit Card',
+    lastCheck: '2024-10-30 17:35:20',
+    score: 13.5,
+  },
+  {
+    prId: 10515455,
+    name: 'INV001',
+    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E'],
+    regDate: '2024-10-30',
+    category: 'Credit Card',
+    lastCheck: '2024-10-30 17:35:20',
+    score: 13.5,
   },
   {
     prId: 10515455,
