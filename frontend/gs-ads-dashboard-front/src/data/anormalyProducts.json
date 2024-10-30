@@ -1,0 +1,12 @@
+[
+  { "id": 1, "name": "아이비 목걸이", "category": "이미지이상 / 가격이상", "anomalyScore": 60, "updatedAt": "2024-10-28" },
+  { "id": 2, "name": "하루틴 리포좀 비타민C 6개월분", "category": "이미지이상", "anomalyScore": 80, "updatedAt": "2024-10-27" },
+  { "id": 3, "name": "순수한 면 티셔츠", "category": "가격이상", "anomalyScore": 73.23, "updatedAt": "2024-10-26" },
+  { "id": 4, "name": "프리미엄 유기농 커피 500g", "category": "리뷰이상", "anomalyScore": 75, "updatedAt": "2024-10-25" },
+  { "id": 5, "name": "에센셜 헤어 오일", "category": "이미지이상", "anomalyScore": 90, "updatedAt": "2024-10-24" },
+  { "id": 6, "name": "다목적 여행 백팩", "category": "가격이상", "anomalyScore": 65.1, "updatedAt": "2024-10-23" },
+  { "id": 7, "name": "핸드메이드 목도리", "category": "리뷰이상 / 이미지이상", "anomalyScore": 60, "updatedAt": "2024-10-22" },
+  { "id": 8, "name": "천연 성분 치약", "category": "가격이상", "anomalyScore": 55, "updatedAt": "2024-10-21" },
+  { "id": 9, "name": "유기농 캐모마일 티", "category": "리뷰이상", "anomalyScore": 85, "updatedAt": "2024-10-20" },
+  { "id": 10, "name": "프리미엄 핸드크림 세트", "category": "가격이상", "anomalyScore": 70, "updatedAt": "2024-10-19" }
+]
