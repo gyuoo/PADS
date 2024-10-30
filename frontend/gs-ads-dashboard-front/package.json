@@ -9,6 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@unovis/ts": "^1.4.4",
+    "@unovis/vue": "^1.4.4",
+    "@vueuse/core": "^11.1.0",
     "autoprefixer": "^10.4.20",
     "chart.js": "^4.4.6",
     "class-variance-authority": "^0.7.0",
