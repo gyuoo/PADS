@@ -1,9 +1,12 @@
 package com.ssafy.s103.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.s103.domain.user.application.repository.UserRepository;
 import com.ssafy.s103.global.security.filter.JsonUsernamePasswordAuthenticationFilter;
+import com.ssafy.s103.global.security.filter.JwtAuthenticationProcessingFilter;
 import com.ssafy.s103.global.security.handler.LoginFailureHandler;
-import com.ssafy.s103.global.security.handler.LoginSuccessJWTProvideHandler;
+import com.ssafy.s103.global.security.handler.LoginSuccessJwtProvideHandler;
+import com.ssafy.s103.global.security.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -27,6 +31,8 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @Bean
     public PasswordEncoder bCryptPasswordEncoder() {
@@ -47,6 +53,11 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 서버에서 세션을 관리하지 않음
             );
+        http
+            .addFilterAfter(jsonUsernamePasswordLoginFilter(),
+                LogoutFilter.class) // 커스터마이징 된 필터를 SpringSecurityFilterChain에 등록
+            .addFilterBefore(jwtAuthenticationProcessingFilter(),
+                JsonUsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
@@ -78,8 +89,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public LoginSuccessJWTProvideHandler loginSuccessJWTProvideHandler() {
-        return new LoginSuccessJWTProvideHandler();
+    public LoginSuccessJwtProvideHandler loginSuccessJwtProvideHandler() {
+        return new LoginSuccessJwtProvideHandler(jwtService, userRepository);
     }
 
     @Bean
@@ -93,8 +104,17 @@ public class SecurityConfig {
             objectMapper);
         jsonUsernamePasswordLoginFilter.setAuthenticationManager(authenticationManager());
         jsonUsernamePasswordLoginFilter.setAuthenticationSuccessHandler(
-            loginSuccessJWTProvideHandler());
+            loginSuccessJwtProvideHandler());
         jsonUsernamePasswordLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
         return jsonUsernamePasswordLoginFilter;
     }
+
+    @Bean
+    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
+        JwtAuthenticationProcessingFilter jsonUsernamePasswordLoginFilter = new JwtAuthenticationProcessingFilter(
+            jwtService, userRepository);
+
+        return jsonUsernamePasswordLoginFilter;
+    }
 }
+
