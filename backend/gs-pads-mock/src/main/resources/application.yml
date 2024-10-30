@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: local
+  jpa:
+    open-in-view: false
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+      table-prefix: GS_PADS_
