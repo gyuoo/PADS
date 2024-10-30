@@ -7,6 +7,7 @@
     </aside>
     <main class="flex flex-col p-10 flex-1 space-y-5">
       <MainContentHeader :title="mainTitle"></MainContentHeader>
+      <Separator class="my-4" />
       <div class="flex-1">
         <slot name="content"></slot>
       </div>
@@ -17,6 +18,7 @@
 <script setup lang="ts">
 import Sidebar from './Sidebar.vue'
 import MainContentHeader from './MainContentHeader.vue'
+import { Separator } from '@/components/ui/separator'
 defineProps<{
   mainTitle: string
 }>()

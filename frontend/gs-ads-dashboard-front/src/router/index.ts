@@ -1,11 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Main from '../views/dashboard/Main.vue'
+import Main from '@/views/dashboard/Main.vue'
+import ProductMain from '@/views/product/ProductMain.vue'
 // 라우터 설정
 const routes = [
   {
     path: '/',
     name: '',
     component: Main,
+  },
+  {
+    path: '/product',
+    name: 'product',
+    component: ProductMain,
   },
 ]
 

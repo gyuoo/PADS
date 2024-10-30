@@ -7,8 +7,12 @@
   src: url('/fonts/Pretendard-Regular.woff') format('woff');
   font-weight: normal;
 }
+html {
+  min-width: 1024px;
+}
 body {
   font-family: 'Pretendard-Regular';
+  min-width: 1024px;
 }
 
 @layer base {

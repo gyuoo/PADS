@@ -1,6 +1,3 @@
 spring:
-  datasource:
-    username: padsdev
-    password: ssafy1346@
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/pads_dev
+  config:
+    import: application-secret.yml

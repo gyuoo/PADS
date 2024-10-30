@@ -12,8 +12,8 @@
 </template>
 
 <script setup lang="ts">
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Bell } from 'lucide-vue-next'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 defineProps<{
   title: string
 }>()
