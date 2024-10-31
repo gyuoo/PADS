@@ -1,7 +1,7 @@
 <template>
-  <div class="bg-white rounded shadow-lg p-4 w-full h-full overflow-y-hidden">
+  <div class="bg-white rounded shadow-lg p-4 w-full h-full pb-9">
     <div class="justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-gray-800 mb-1">이상치 발생 빈도</h2>
+      <div class="text-xl font-semibold text-gray-800 mb-1">이상치 유형별 발생 횟수</div>
       <div class="flex items-center text-gray-500 text-sm">
         <img src="https://velog.velcdn.com/images/gangintheremark/post/1a66b4c8-e1e8-43ed-b7b5-f5b6994d8ae1/image.png" alt="배치 아이콘" class="w-4 h-4 mr-1"/>
         <span>{{ today }}</span>
