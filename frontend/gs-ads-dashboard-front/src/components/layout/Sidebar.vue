@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-col justify-center content-center">
+  <div class="flex-col justify-center content-center sticky top-0 z-10">
     <div class="flex flex-col space-y-5">
       <Button variant="ghost" class="text-base" @click="move('/')">
         <House class="mr-5" /> 대시보드
@@ -25,5 +25,3 @@ const move = (to: string) => {
   router.push(to)
 }
 </script>
-
-<style scoped></style>
