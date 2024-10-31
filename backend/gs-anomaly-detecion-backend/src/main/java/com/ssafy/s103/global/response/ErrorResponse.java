@@ -1,10 +1,10 @@
-package com.ssafy.s103.global.exception;
+package com.ssafy.s103.global.response;
 
 import org.springframework.http.HttpStatus;
 
 public record ErrorResponse(
-        String message,
-        HttpStatus status) {
+    String message,
+    HttpStatus status) {
 
     public static ErrorResponse of(String message, HttpStatus httpStatus) {
         return new ErrorResponse(message, httpStatus);
