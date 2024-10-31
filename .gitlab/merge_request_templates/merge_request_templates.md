@@ -15,6 +15,6 @@
 
 ## ➕ 지라 링크
 
-- [S11P21A701-{이슈번호}](https://ssafy.atlassian.net/browse/S11P21A701-{이슈번호})
+- [S11P31S103-{이슈번호}](https://ssafy.atlassian.net/browse/S11P31S103-{이슈번호})
 
 <br/>
