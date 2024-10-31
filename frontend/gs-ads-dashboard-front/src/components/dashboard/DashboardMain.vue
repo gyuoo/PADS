@@ -1,6 +1,6 @@
 <template>
-  <div class="flex h-[565px]">
-    <div class="flex flex-col gap-2 w-1/5 h-full p-2">
+  <div class="flex h-[560px]">
+    <div class="flex flex-col gap-3 w-1/5 h-full p-2">
       <OverviewCount label="전체 상품 수" :count="16534672" />
       <OverviewCount label="대기 중인 상품 수" :count="1324" />
       <DoughnutChart />
