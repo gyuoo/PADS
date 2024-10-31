@@ -1,44 +1,89 @@
 package com.ssafy.s103.domain.user.entity;
 
-import com.ssafy.s103.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.util.Collection;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Getter
+@Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseTimeEntity {
+public class User implements UserDetails {
 
     @Id
-    @Column(nullable = false)
+    @Column(updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    private Long id;
 
-    @Column(length = 20, nullable = false)
-    private String name;
-
-    @Column(length = 20, nullable = false)
-    private String password;
-
-    @Column(length = 250, nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(length = 512)
-    private String refreshToken;
+    @Column(nullable = false)
+    private String username;
+
+    @Column(nullable = false)
+    private String password;
+
+    // 권한 반환
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("admin"));
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    //계정 잠금 여부 반환
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    //패스워드의 만료 여부 반환
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    //계정 사용 가능 여부 반환
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 
     @Builder
-    public User(String password, String email) {
-        this.name = extractNameFromEmail(email);
-        this.password = password;
+    public User(String email, String password) {
         this.email = email;
+        this.username = extractNameFromEmail(email);
+        this.password = password;
     }
 
     // 이메일에서 '@' 앞부분만 가져옴
@@ -46,15 +91,4 @@ public class User extends BaseTimeEntity {
         return email.split("@")[0];
     }
 
-    public void encodePassword(PasswordEncoder passwordEncoder) {
-        this.password = passwordEncoder.encode(password);
-    }
-
-    public void updateRefreshTokenByLogin(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public void deleteRefreshTokenByLogout() {
-        this.refreshToken = null;
-    }
 }
