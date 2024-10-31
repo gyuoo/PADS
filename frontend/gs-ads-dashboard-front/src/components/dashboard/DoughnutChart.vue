@@ -1,42 +1,30 @@
 <template>
-  <div class="bg-white rounded shadow-lg p-4 w-full h-full">
+  <div class="bg-white rounded shadow-lg p-4 w-full h-full overflow-y-hidden">
     <div class="justify-between items-center mb-4">
-      <h2 class="text-lg font-semibold text-gray-800">실시간 이상치 발생 빈도</h2>
+      <h2 class="text-xl font-semibold text-gray-800">이상치 발생 빈도</h2>
     </div>
-    <Doughnut :data="chartData" :options="chartOptions" />
+    <DonutChart index="name" :category="'total'" :data="data" :colors="colors" class="h-[150px]"  />
+
+    <div class="flex flex-wrap mt-4">
+      <div v-for="(item, index) in data" :key="item.name" class="flex items-center mr-4 mb-2">
+        <span :style="{ backgroundColor: colors[index] }" class="w-3 h-3 rounded-full inline-block mr-2"></span>
+        <span class="text-sm text-gray-700">{{ item.name }}</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Doughnut } from 'vue-chartjs'
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js'
+import { DonutChart } from '../ui/chart-donut'
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement)
 
-const chartData = {
-  labels: ['이미지이상', '가격이상', '리뷰이상', '카테고리이상'],
-  datasets: [
-    {
-      data: [50, 23, 10, 25],
-      backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-    },
-  ],
-}
-
-const chartOptions = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'bottom' as const,
-      labels: {
-        font: {
-          size: 11,
-        },
-        boxWidth: 10,
-      },
-    },
-  },
-}
+const data = [
+  { name: '이미지이상', total: 50 },
+  { name: '가격이상', total: 23 },
+  { name: '리뷰이상', total: 10 },
+  { name: '카테고리이상', total: 25 },
+]
+const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0']
 </script>
 
 <style scoped></style>
