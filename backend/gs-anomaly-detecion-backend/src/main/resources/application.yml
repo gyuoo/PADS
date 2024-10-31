@@ -3,6 +3,8 @@ spring:
     name: dashboard
   profiles:
     active: ${SPRING_ACTIVE_PROFILE:dev}
+  jpa:
+    open-in-view: false
 
 mybatis:
   mapper-locations: mapper/**/*.xml
