@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILE:dev}
+  datasource:
+    hikari:
+      minimum-idle: 5
+  jpa:
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
