@@ -6,3 +6,8 @@ spring:
       port: 6379
   datasource:
     driver-class-name: org.postgresql.Driver
+  kafka:
+    consumer:
+      auto-offset-reset: earliest
+
+
