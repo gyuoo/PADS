@@ -32,18 +32,18 @@ public class SecurityConfig {
         return httpSecurity
             .authorizeHttpRequests(auth -> auth //인증, 인가 설정
                 .requestMatchers(
-                    new AntPathRequestMatcher("/login"),
-                    new AntPathRequestMatcher("/register"),
+                    new AntPathRequestMatcher("/users/login"),
+                    new AntPathRequestMatcher("/users/register"),
                     new AntPathRequestMatcher("/")
                 ).permitAll()
                 .anyRequest().authenticated())
             .formLogin(formLogin -> formLogin
-                .loginPage("/login")
+                .loginPage("/users/login")
                 .successHandler(customLoginSuccessHandler)
                 .failureHandler(customLoginFailureHandler)
             )
             .logout(logout -> logout
-                .logoutSuccessUrl("/login")
+                .logoutSuccessUrl("/users/login")
                 .invalidateHttpSession(true)
             )
             .csrf(AbstractHttpConfigurer::disable)
