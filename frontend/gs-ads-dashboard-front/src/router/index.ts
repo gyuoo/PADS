@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Main from '@/views/dashboard/Main.vue'
 import ProductMain from '@/views/product/ProductMain.vue'
+import ProductDetailMain from '@/views/product/ProductDetailMain.vue'
 // 라우터 설정
 const routes = [
   {
@@ -13,6 +14,11 @@ const routes = [
     name: 'product',
     component: ProductMain,
   },
+  {
+    path: '/product/:id',
+    name: 'ProductDetail',
+    component: ProductDetailMain,
+  }
 ]
 
 // 라우터 생성
