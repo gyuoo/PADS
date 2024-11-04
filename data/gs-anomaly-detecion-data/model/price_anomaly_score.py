@@ -44,7 +44,7 @@ class PriceAnomalyDetector:
         self.data['cate2_score'] = 1 - np.exp(-0.8*self.data['cate2_nm_zscore'].abs())
 
         # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산)
-        self.data['outlier_score'] = (self.data['supplier_score'] *
+        self.data['price_anomaly_score'] = (self.data['supplier_score'] *
                                       self.data['brandclass_score'] *
                                       self.data['cate2_score']) * 100
         return self.data
@@ -60,4 +60,4 @@ class PriceAnomalyDetector:
         # 결과로 반환할 컬럼만 선택
         return scored_outliers[['prd_id', 'supplier_code', 'cate2_nm', 'class_name', 'brand_name',
                                 'supplier_code_zscore', 'brandclass_name_zscore', 'cate2_nm_zscore',
-                                'outlier_score', 'price']]
+                                'price_anomaly_score', 'price']]
