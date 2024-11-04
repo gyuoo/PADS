@@ -1,18 +1,17 @@
 package com.ssafy.s103.domain.member.dto.request;
 
+import com.ssafy.s103.domain.member.entity.Member;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
 
-@Builder
 public record MemberLoginRequestDto(
     @NotNull String email,
     @NotNull String password
 ) {
 
-    public MemberLoginRequestDto toEntity(String email, String password) {
-        return MemberLoginRequestDto.builder()
+    public Member toEntity(String encodedPassword) {
+        return Member.builder()
             .email(email)
-            .password(password)
+            .password(encodedPassword)
             .build();
     }
 }
