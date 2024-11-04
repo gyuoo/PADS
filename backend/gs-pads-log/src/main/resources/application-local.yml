@@ -7,7 +7,9 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
   kafka:
+    bootstrap-servers: localhost:9092
     consumer:
+      group-id: test_log_consumer
       auto-offset-reset: earliest
-
-
+    topic:
+      log-topic: test_log_topic
