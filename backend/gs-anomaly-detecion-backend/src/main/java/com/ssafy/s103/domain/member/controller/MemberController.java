@@ -1,7 +1,7 @@
-package com.ssafy.s103.domain.user.controller;
+package com.ssafy.s103.domain.member.controller;
 
-import com.ssafy.s103.domain.user.application.service.UserService;
-import com.ssafy.s103.domain.user.dto.request.UserRegisterRequestDto;
+import com.ssafy.s103.domain.member.application.service.MemberService;
+import com.ssafy.s103.domain.member.dto.request.MemberRegisterRequestDto;
 import com.ssafy.s103.global.exception.SuccessCode;
 import com.ssafy.s103.global.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
-public class UserController {
+@RequestMapping("/api/v1/members")
+public class MemberController {
 
-    private final UserService userService;
+    private final MemberService memberService;
 
     @PostMapping("/register")
-    public ApiResponse<Void> register(@RequestBody @Valid UserRegisterRequestDto request) {
-        userService.save(request);
+    public ApiResponse<Void> register(@RequestBody @Valid MemberRegisterRequestDto request) {
+        memberService.save(request);
         return ApiResponse.of(SuccessCode.REGISTER_SUCCESS.getMessage(),
             SuccessCode.REGISTER_SUCCESS.getCode(), null,
             "/login");

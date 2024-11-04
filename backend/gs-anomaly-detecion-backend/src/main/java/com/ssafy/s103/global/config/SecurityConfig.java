@@ -1,6 +1,6 @@
 package com.ssafy.s103.global.config;
 
-import com.ssafy.s103.domain.user.application.service.UserDetailsServiceImpl;
+import com.ssafy.s103.domain.member.application.service.MemberDetailsService;
 import com.ssafy.s103.global.security.handler.CustomLoginFailureHandler;
 import com.ssafy.s103.global.security.handler.CustomLoginSuccessHandler;
 import com.ssafy.s103.global.security.service.RedisTokenService;
@@ -23,7 +23,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final MemberDetailsService memberDetailsService;
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
     private final CustomLoginFailureHandler customLoginFailureHandler;
 
@@ -32,18 +32,18 @@ public class SecurityConfig {
         return httpSecurity
             .authorizeHttpRequests(auth -> auth //인증, 인가 설정
                 .requestMatchers(
-                    new AntPathRequestMatcher("/users/login"),
-                    new AntPathRequestMatcher("/users/register"),
+                    new AntPathRequestMatcher("/members/login"),
+                    new AntPathRequestMatcher("/members/register"),
                     new AntPathRequestMatcher("/")
                 ).permitAll()
                 .anyRequest().authenticated())
             .formLogin(formLogin -> formLogin
-                .loginPage("/users/login")
+                .loginPage("/members/login")
                 .successHandler(customLoginSuccessHandler)
                 .failureHandler(customLoginFailureHandler)
             )
             .logout(logout -> logout
-                .logoutSuccessUrl("/users/login")
+                .logoutSuccessUrl("/members/login")
                 .invalidateHttpSession(true)
             )
             .csrf(AbstractHttpConfigurer::disable)
@@ -53,7 +53,7 @@ public class SecurityConfig {
     @Bean
     public DaoAuthenticationProvider authProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-        daoAuthenticationProvider.setUserDetailsService(userDetailsServiceImpl);
+        daoAuthenticationProvider.setUserDetailsService(memberDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
 
         return daoAuthenticationProvider;

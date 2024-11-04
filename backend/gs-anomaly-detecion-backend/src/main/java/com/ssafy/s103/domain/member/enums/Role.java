@@ -1,4 +1,4 @@
-package com.ssafy.s103.domain.user.enums;
+package com.ssafy.s103.domain.member.enums;
 
 public enum Role {
     ROLE_ADMIN("admin");

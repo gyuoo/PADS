@@ -1,30 +1,30 @@
-package com.ssafy.s103.domain.user.application.service;
+package com.ssafy.s103.domain.member.application.service;
 
-import com.ssafy.s103.domain.user.application.repository.UserRepository;
-import com.ssafy.s103.domain.user.dto.request.UserRegisterRequestDto;
-import com.ssafy.s103.domain.user.entity.User;
-import com.ssafy.s103.domain.user.exception.EmailAlreadyExistsException;
+import com.ssafy.s103.domain.member.application.repository.MemberRepository;
+import com.ssafy.s103.domain.member.dto.request.MemberRegisterRequestDto;
+import com.ssafy.s103.domain.member.entity.Member;
+import com.ssafy.s103.domain.member.exception.EmailAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class MemberService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public void save(UserRegisterRequestDto userRegisterRequestDto) {
-        String email = userRegisterRequestDto.email();
+    public void save(MemberRegisterRequestDto memberRegisterRequestDto) {
+        String email = memberRegisterRequestDto.email();
 
-        if (userRepository.findByEmail(email).isPresent()) {
+        if (memberRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException();
         }
 
-        userRepository.save(User.builder()
+        memberRepository.save(Member.builder()
             .email(email)
-            .password(bCryptPasswordEncoder.encode(userRegisterRequestDto.password()))
+            .password(bCryptPasswordEncoder.encode(memberRegisterRequestDto.password()))
             .build());
     }
 

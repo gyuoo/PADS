@@ -1,4 +1,4 @@
-package com.ssafy.s103.domain.user.exception;
+package com.ssafy.s103.domain.member.exception;
 
 import com.ssafy.s103.global.exception.BaseException;
 import com.ssafy.s103.global.exception.ErrorCode;

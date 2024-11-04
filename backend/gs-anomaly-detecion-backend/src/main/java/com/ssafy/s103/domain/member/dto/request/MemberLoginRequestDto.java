@@ -1,8 +1,8 @@
-package com.ssafy.s103.domain.user.dto.request;
+package com.ssafy.s103.domain.member.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 
-public record UserRegisterRequestDto(
+public record MemberLoginRequestDto(
     @NotNull String email,
     @NotNull String password
 ) {

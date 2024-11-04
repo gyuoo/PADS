@@ -1,6 +1,6 @@
-package com.ssafy.s103.domain.user.entity;
+package com.ssafy.s103.domain.member.entity;
 
-import com.ssafy.s103.domain.user.enums.Role;
+import com.ssafy.s103.domain.member.enums.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,7 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User implements UserDetails {
+public class Member implements UserDetails {
 
     @Id
     @Column(updatable = false)
@@ -83,7 +83,7 @@ public class User implements UserDetails {
     }
 
     @Builder
-    public User(String email, String password) {
+    public Member(String email, String password) {
         this.email = email;
         this.username = extractNameFromEmail(email);
         this.password = password;

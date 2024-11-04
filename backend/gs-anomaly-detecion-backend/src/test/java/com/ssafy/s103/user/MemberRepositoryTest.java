@@ -1,7 +1,7 @@
 package com.ssafy.s103.user;
 
-import com.ssafy.s103.domain.user.application.repository.UserRepository;
-import com.ssafy.s103.domain.user.entity.User;
+import com.ssafy.s103.domain.member.application.repository.MemberRepository;
+import com.ssafy.s103.domain.member.entity.Member;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-class UserRepositoryTest {
+class MemberRepositoryTest {
 
     @Autowired
-    private UserRepository userRepository;
+    private MemberRepository memberRepository;
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -23,12 +23,12 @@ class UserRepositoryTest {
     @Test
     @Commit
     void testRegister() {
-        User user = User.builder()
+        Member member = Member.builder()
             .email("id@test.com")
             .password(bCryptPasswordEncoder.encode("pw"))
             .build();
-        User saved = userRepository.save(user);
+        Member saved = memberRepository.save(member);
         Assertions.assertThat(saved).isNotNull();
-        Assertions.assertThat(saved).isEqualTo(user);
+        Assertions.assertThat(saved).isEqualTo(member);
     }
 }
