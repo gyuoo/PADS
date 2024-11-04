@@ -1,8 +1,7 @@
 import numpy as np
 from scipy.stats import zscore
 
-
-class PriceAnomalyDetector:
+class ReviewAnomalyDetector:
     def __init__(self, data):
         """
         클래스 초기화 메서드.
@@ -15,7 +14,7 @@ class PriceAnomalyDetector:
         # 브랜드와 클래스 이름을 결합하여 새로운 컬럼 생성
         self.data['brandclass_name'] = self.data['brand_name'] + '_' + self.data['class_name']
 
-    def calculate_z_scores(self, group_column, column_name='price'):
+    def calculate_z_scores(self, group_column, column_name='review_score'):
         """
         주어진 그룹별로 Z-score를 계산하여 데이터프레임에 추가.
 
@@ -39,17 +38,19 @@ class PriceAnomalyDetector:
         - DataFrame: 가중치가 포함된 이상치 점수가 추가된 데이터프레임
         """
         # 각 Z-score 컬럼에 대한 가중치 점수 계산
-        self.data['supplier_score'] = 1 - np.exp(-0.8*self.data['supplier_code_zscore'].abs())
-        self.data['brandclass_score'] = 1 - np.exp(-0.8*self.data['brandclass_name_zscore'].abs())
-        self.data['cate2_score'] = 1 - np.exp(-0.8*self.data['cate2_nm_zscore'].abs())
+        self.data['review_count_score'] = 1 - np.exp(-0.2*self.data['review_count'].abs())
+        self.data['supplier_score'] = 1 - np.exp(-self.data['supplier_code_zscore'].abs())
+        self.data['brandclass_score'] = 1 - np.exp(-self.data['brandclass_name_zscore'].abs())
+        self.data['cate2_score'] = 1 - np.exp(-self.data['cate2_nm_zscore'].abs())
 
         # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산)
-        self.data['outlier_score'] = (self.data['supplier_score'] *
+        self.data['outlier_score'] = (self.data['review_count_score'] *
+                                      self.data['supplier_score'] *
                                       self.data['brandclass_score'] *
                                       self.data['cate2_score']) * 100
         return self.data
 
-    def get_price_anomaly_scores(self):
+    def get_review_anomaly_scores(self):
         """
         Returns:
         - DataFrame: 가격에 대한 이상치 점수를 반환
@@ -60,4 +61,5 @@ class PriceAnomalyDetector:
         # 결과로 반환할 컬럼만 선택
         return scored_outliers[['prd_id', 'supplier_code', 'cate2_nm', 'class_name', 'brand_name',
                                 'supplier_code_zscore', 'brandclass_name_zscore', 'cate2_nm_zscore',
+                                'review_count','review_score',
                                 'outlier_score', 'price']]
