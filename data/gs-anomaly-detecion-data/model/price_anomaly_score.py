@@ -36,9 +36,9 @@ class PriceAnomalyDetector:
         각 Z-score에 가중치를 적용하여 이상치 점수 계산.
 
         Returns:
-        - DataFrame: 가중치가 포함된 이상치 점수가 추가된 데이터프레임
+        - DataFrame: 가중치 포함된 이상치 점수가 추가된 데이터프레임
         """
-        # 각 Z-score 컬럼에 대한 가중치 점수 계산
+        # 각 Z-score 컬럼에 대한 가중치 점수 계산, 0.8은 조정가능한 값
         self.data['supplier_score'] = 1 - np.exp(-0.8*self.data['supplier_code_zscore'].abs())
         self.data['brandclass_score'] = 1 - np.exp(-0.8*self.data['brandclass_name_zscore'].abs())
         self.data['cate2_score'] = 1 - np.exp(-0.8*self.data['cate2_nm_zscore'].abs())
