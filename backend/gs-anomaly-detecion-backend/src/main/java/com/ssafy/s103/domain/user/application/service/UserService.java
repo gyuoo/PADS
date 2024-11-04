@@ -3,8 +3,8 @@ package com.ssafy.s103.domain.user.application.service;
 import com.ssafy.s103.domain.user.application.repository.UserRepository;
 import com.ssafy.s103.domain.user.dto.request.UserRegisterRequestDto;
 import com.ssafy.s103.domain.user.entity.User;
+import com.ssafy.s103.domain.user.exception.EmailAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,14 +16,17 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public void save(UserRegisterRequestDto userRegisterRequestDto) {
-        try {
-            userRepository.save(User.builder()
-                .email(userRegisterRequestDto.email())
-                .password(bCryptPasswordEncoder.encode(userRegisterRequestDto.password()))
-                .build());
-        } catch (Exception e) {
-            throw new UsernameNotFoundException(e.getMessage());
+        String email = userRegisterRequestDto.email();
+
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new EmailAlreadyExistsException();
         }
+
+        userRepository.save(User.builder()
+            .email(email)
+            .password(bCryptPasswordEncoder.encode(userRegisterRequestDto.password()))
+            .build());
+
     }
 
 //    public boolean login(String rawPassword, UserLoginRequestDto userLoginRequestDto) {
