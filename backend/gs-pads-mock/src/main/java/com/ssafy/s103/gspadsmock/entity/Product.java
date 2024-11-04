@@ -1,19 +1,13 @@
-package com.ssafy.s103.gspadsmock.schedule.entity;
+package com.ssafy.s103.gspadsmock.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import lombok.Getter;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Data;
 
-@Entity
-@Table(name = "productsample")
-@DynamicUpdate
-@Getter
+@Data
 public class Product {
-    @Id
+
     @Column(name = "prd_id", length = 255)
     private String prdId;
 

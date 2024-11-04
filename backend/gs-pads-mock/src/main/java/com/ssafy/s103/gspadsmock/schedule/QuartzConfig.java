@@ -11,8 +11,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Slf4j
@@ -24,32 +22,10 @@ public class QuartzConfig {
         this.scheduler = scheduler;
     }
 
-//    @Bean
-//    public JobDetail findNewProduct() {
-//        JobDataMap jobDataMap = new JobDataMap();
-//        jobDataMap.put(NewProductJob.FIRST_KEY, 1);
-//        return JobBuilder.newJob(NewProductJob.class)
-//                .withIdentity("newProductJob")
-//                .setJobData(jobDataMap)
-//                .storeDurably()
-//                .build();
-//    }
-//
-//    @Bean
-//    public Trigger findNewProductTrigger(JobDetail findNewProduct) {
-//        return TriggerBuilder.newTrigger()
-//                .withIdentity("newProductTrigger")
-//                .forJob(findNewProduct)
-//                .startNow()
-//                .withSchedule(CronScheduleBuilder.cronSchedule("*/5 * * * * ?"))
-//                .build();
-//    }
-
-
     @PostConstruct
     public void scheduleNewProductJob() throws SchedulerException {
         JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put(NewProductJob.FIRST_KEY, 1);
+        jobDataMap.put(NewProductJob.JOB_NAME, 1);
 
         JobDetail jobDetail = JobBuilder.newJob(NewProductJob.class)
                 .withIdentity("newProductJob")
@@ -60,6 +36,7 @@ public class QuartzConfig {
                 .withIdentity("newProductTrigger")
                 .startNow()
                 .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
+//                .withSchedule(CronScheduleBuilder.cronSchedule("0 0/5 * * * ?"))
                 .forJob(jobDetail)
                 .build();
 
