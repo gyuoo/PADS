@@ -4,6 +4,7 @@ import com.ssafy.s103.domain.user.application.repository.UserRepository;
 import com.ssafy.s103.domain.user.dto.request.UserRegisterRequestDto;
 import com.ssafy.s103.domain.user.entity.User;
 import com.ssafy.s103.domain.user.exception.EmailAlreadyExistsException;
+import com.ssafy.s103.domain.user.exception.MissingRequiredFieldException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,10 @@ public class UserService {
 
         if (userRepository.findByEmail(email).isPresent()) {
             throw new EmailAlreadyExistsException();
+        }
+
+        if (userRegisterRequestDto.email() == null || userRegisterRequestDto.password() == null) {
+            throw new MissingRequiredFieldException();
         }
 
         userRepository.save(User.builder()
