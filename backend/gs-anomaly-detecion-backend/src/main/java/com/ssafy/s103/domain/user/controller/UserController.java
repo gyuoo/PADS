@@ -6,6 +6,7 @@ import com.ssafy.s103.global.exception.SuccessCode;
 import com.ssafy.s103.global.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -23,7 +24,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ApiResponse<Void> register(@RequestBody UserRegisterRequestDto request) {
+    public ApiResponse<Void> register(@RequestBody @Valid UserRegisterRequestDto request) {
         userService.save(request);
         return ApiResponse.of(SuccessCode.REGISTER_SUCCESS.getMessage(),
             SuccessCode.REGISTER_SUCCESS.getCode(), null,
