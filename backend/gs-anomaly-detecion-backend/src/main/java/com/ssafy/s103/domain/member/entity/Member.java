@@ -1,6 +1,7 @@
 package com.ssafy.s103.domain.member.entity;
 
 import com.ssafy.s103.domain.member.enums.Role;
+import com.ssafy.s103.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,21 +10,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.Collection;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member implements UserDetails {
+public class Member extends BaseTimeEntity {
 
     @Id
     @Column(updatable = false)
@@ -43,51 +39,12 @@ public class Member implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
-    // 권한 반환
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("admin"));
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    //계정 잠금 여부 반환
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    //패스워드의 만료 여부 반환
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    //계정 사용 가능 여부 반환
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
     @Builder
     public Member(String email, String password) {
         this.email = email;
         this.username = extractNameFromEmail(email);
         this.password = password;
-        this.role = Role.ROLE_ADMIN;
+        this.role = Role.ROLE_MEMBER;
     }
 
     // 이메일에서 '@' 앞부분만 가져옴

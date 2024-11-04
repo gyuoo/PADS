@@ -1,7 +1,7 @@
 package com.ssafy.s103.domain.member.application.service;
 
 import com.ssafy.s103.domain.member.application.repository.MemberRepository;
-import com.ssafy.s103.domain.member.entity.CustomMember;
+import com.ssafy.s103.domain.member.entity.CustomUser;
 import com.ssafy.s103.domain.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +18,6 @@ public class MemberDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findUser(username);
-        return new CustomMember(member);
+        return new CustomUser(member);
     }
 }
