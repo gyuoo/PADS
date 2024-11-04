@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-4 w-full">
+  <div class="bg-white rounded-2xl shadow-lg p-4 w-full">
     <div class="text-sm text-gray-500 mb-2">{{ label }}</div>
     <div class="text-3xl font-bold text-right break-words">{{ animatedCount.toLocaleString() }}</div>
   </div>
