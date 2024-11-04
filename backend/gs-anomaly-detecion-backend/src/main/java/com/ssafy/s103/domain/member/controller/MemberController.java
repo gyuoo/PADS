@@ -27,8 +27,7 @@ public class MemberController {
     public ApiResponse<Void> register(@RequestBody @Valid MemberRegisterRequestDto request) {
         memberService.save(request);
         return ApiResponse.of(SuccessCode.REGISTER_SUCCESS.getMessage(),
-            SuccessCode.REGISTER_SUCCESS.getCode(), null,
-            "/login");
+            SuccessCode.REGISTER_SUCCESS.getCode(), null);
     }
 
     @GetMapping("/logout")
@@ -36,7 +35,6 @@ public class MemberController {
         new SecurityContextLogoutHandler().logout(request, response,
             SecurityContextHolder.getContext().getAuthentication());
         return ApiResponse.of(SuccessCode.LOGOUT_SUCCESS.getMessage(),
-            SuccessCode.LOGOUT_SUCCESS.getCode(), null,
-            "/home");
+            SuccessCode.LOGOUT_SUCCESS.getCode(), null);
     }
 }

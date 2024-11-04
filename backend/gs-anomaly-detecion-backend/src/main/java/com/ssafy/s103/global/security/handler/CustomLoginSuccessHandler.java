@@ -25,8 +25,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         ApiResponse<Void> apiResponse = ApiResponse.of(
             SuccessCode.LOGIN_SUCCESS.getMessage(),
             SuccessCode.LOGIN_SUCCESS.getCode(),
-            null,
-            "/dashboard"
+            null
         );
 
         response.setContentType("application/json");

@@ -26,7 +26,6 @@ public class CustomLoginFailureHandler implements AuthenticationFailureHandler {
         ApiResponse<Void> apiResponse = ApiResponse.of(
             ErrorCode.LOGIN_FAILED.getMessage(),
             ErrorCode.LOGIN_FAILED.getCode(),
-            null,
             null
         );
 
