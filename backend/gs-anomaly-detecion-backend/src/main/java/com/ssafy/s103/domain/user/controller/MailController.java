@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mail")
-public class MailApi {
+public class MailController {
 
     private final Map<String, String> verificationCodes = new HashMap<>();
     private final MailService mailService;
