@@ -8,11 +8,5 @@ public record MemberRegisterRequestDto(
     @NotNull String email,
     @NotNull String password
 ) {
-
-    public MemberRegisterRequestDto toEntity(String email, String password) {
-        return MemberRegisterRequestDto.builder()
-            .email(email)
-            .password(password)
-            .build();
-    }
+    
 }
