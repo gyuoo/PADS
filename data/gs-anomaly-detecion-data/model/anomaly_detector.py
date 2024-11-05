@@ -7,7 +7,11 @@ class AnomalyDetector:
         """
         AnomalyDetector 초기화 메서드. 각 하위 이상치 탐지 클래스를 리스트로 관리합니다.
         """
-        self.detectors = []
+        self.detectors = [
+            DiscountAnomalyDetector(),
+            PriceAnomalyDetector(),
+            ReviewAnomalyDetector()
+        ]
 
     def process(self, data):
         """
@@ -19,13 +23,6 @@ class AnomalyDetector:
         Returns:
         - DataFrame: 모든 이상치 점수가 포함된 데이터프레임
         """
-        # 각 Detector 인스턴스를 생성하여 리스트에 추가
-        self.detectors = [
-            DiscountAnomalyDetector(),
-            PriceAnomalyDetector(),
-            ReviewAnomalyDetector()
-        ]
-
         # 각 Detector의 calculate_anomaly 호출
         for detector in self.detectors:
             data = detector.calculate_anomaly(data)
