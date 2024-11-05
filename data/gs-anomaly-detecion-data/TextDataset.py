@@ -7,12 +7,12 @@ import torch
 
 class TextDataset(Dataset):
     """
-        Pads 프로젝트에서 활용할 Text Classification을 위한 dataloader
+    Pads 프로젝트에서 활용할 Text Classification을 위한 dataloader
 
-        Args:
-            data_dir (str): JSON 파일이 저장된 경로.
-            tokenizer (AutoTokenizer): 활용할 토크나이저 (klur/bert-base활용 권장)
-            max_length (int, optional): 텍스트 토큰화 시 최대 길이. 기본값은 128.
+    Args:
+        data_dir (str): JSON 파일이 저장된 경로.
+        tokenizer (AutoTokenizer): 활용할 토크나이저 (klur/bert-base활용 권장)
+        max_length (int, optional): 텍스트 토큰화 시 최대 길이. 기본값은 128.
     """
     
     def __init__(self, data_dir, tokenizer, max_length=128, is_test=False):
