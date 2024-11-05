@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record MemberRegisterRequestDto(
+public record MemberRegisterRequest(
     @NotNull String email,
     @NotNull String password
 ) {
-    
+
 }

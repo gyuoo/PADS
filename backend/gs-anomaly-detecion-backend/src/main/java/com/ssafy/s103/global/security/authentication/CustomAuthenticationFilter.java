@@ -1,7 +1,7 @@
 package com.ssafy.s103.global.security.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.s103.domain.member.dto.request.MemberLoginRequestDto;
+import com.ssafy.s103.domain.member.dto.request.MemberLoginRequest;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,19 +32,19 @@ public class CustomAuthenticationFilter extends AbstractAuthenticationProcessing
         }
 
         // POST 이면 body 를 AccountDto( 로그인 정보 DTO ) 에 매핑
-        MemberLoginRequestDto memberLoginRequestDto = objectMapper.readValue(request.getReader(),
-            MemberLoginRequestDto.class);
+        MemberLoginRequest memberLoginRequest = objectMapper.readValue(request.getReader(),
+            MemberLoginRequest.class);
 
         // ID, PASSWORD 가 있는지 확인
-        if (!StringUtils.hasLength(memberLoginRequestDto.email())
-            || !StringUtils.hasLength(memberLoginRequestDto.password())) {
+        if (!StringUtils.hasLength(memberLoginRequest.email())
+            || !StringUtils.hasLength(memberLoginRequest.password())) {
             throw new IllegalArgumentException("username or password is empty");
         }
 
         // 처음에는 인증 되지 않은 토큰 생성
         CustomAuthenticationToken token = new CustomAuthenticationToken(
-            memberLoginRequestDto.email(),
-            memberLoginRequestDto.password()
+            memberLoginRequest.email(),
+            memberLoginRequest.password()
         );
 
         // Manager 에게 인증 처리
