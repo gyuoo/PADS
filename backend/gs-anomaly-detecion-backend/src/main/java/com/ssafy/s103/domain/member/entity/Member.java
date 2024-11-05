@@ -1,7 +1,6 @@
 package com.ssafy.s103.domain.member.entity;
 
 import com.ssafy.s103.domain.member.enums.Role;
-import com.ssafy.s103.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseTimeEntity {
+public class Member {
 
     @Id
     @Column(updatable = false)
@@ -44,7 +43,7 @@ public class Member extends BaseTimeEntity {
         this.email = email;
         this.username = extractNameFromEmail(email);
         this.password = password;
-        this.role = Role.ROLE_MEMBER;
+        this.role = Role.ROLE_ADMIN;
     }
 
     // 이메일에서 '@' 앞부분만 가져옴
