@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,7 +34,7 @@ public class AnomalyLog {
 	@Column(columnDefinition = "timestamp(0)", updatable = false)
 	private LocalDateTime createdAt;
 
-	@OneToMany(mappedBy = "anomalyLog", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OneToMany(mappedBy = "anomalyLog", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<AnomalyReport> anomalyReports = new ArrayList<>();
 
 	@Builder
