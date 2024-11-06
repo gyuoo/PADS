@@ -22,7 +22,7 @@ public class KafkaConsumerService {
 	public void listenLogRequest(ConsumerRecord<String, String> record) {
 		try {
 			AnomalyLogCreateRequest anomalyLogRequest = objectMapper.readValue(record.value(), AnomalyLogCreateRequest.class);
-			anomalyLogRepository.saveAll(anomalyLogRequest.toEntity());
+			anomalyLogRepository.save(anomalyLogRequest.toEntity());
 
 			log.info("받은 메시지: " + record.value());
 		} catch (Exception e) {
