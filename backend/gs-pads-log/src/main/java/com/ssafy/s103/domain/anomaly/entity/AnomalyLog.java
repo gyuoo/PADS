@@ -38,9 +38,7 @@ public class AnomalyLog {
 	private List<AnomalyReport> anomalyReports = new ArrayList<>();
 
 	@Builder
-	public AnomalyLog(String productId, List<AnomalyReport> anomalyReports) {
+	public AnomalyLog(String productId) {
 		this.productId = productId;
-		if (anomalyReports != null)
-			this.anomalyReports = anomalyReports;
 	}
 }
