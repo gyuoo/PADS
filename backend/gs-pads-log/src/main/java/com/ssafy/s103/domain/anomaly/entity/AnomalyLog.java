@@ -29,12 +29,12 @@ public class AnomalyLog {
 	@Column(nullable = false)
 	private String productId;
 
-	@OneToMany(mappedBy = "anomalyLog", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<AnomalyReport> anomalyReports = new ArrayList<>();
-
 	@CreationTimestamp
 	@Column(columnDefinition = "timestamp(0)", updatable = false)
 	private LocalDateTime createdAt;
+
+	@OneToMany(mappedBy = "anomalyLog", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<AnomalyReport> anomalyReports = new ArrayList<>();
 
 	@Builder
 	public AnomalyLog(String productId, List<AnomalyReport> anomalyReports) {
