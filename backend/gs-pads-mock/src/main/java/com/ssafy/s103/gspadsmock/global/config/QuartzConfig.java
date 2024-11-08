@@ -1,6 +1,7 @@
-package com.ssafy.s103.gspadsmock.schedule;
+package com.ssafy.s103.gspadsmock.global.config;
 
-import com.ssafy.s103.gspadsmock.schedule.job.NewProductJob;
+import com.ssafy.s103.gspadsmock.domain.gsproduct.schedule.GsShopProductJob;
+import com.ssafy.s103.gspadsmock.global.schedule.job.NewProductJob;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.CronScheduleBuilder;
@@ -40,7 +41,7 @@ public class QuartzConfig {
                 .forJob(jobDetail)
                 .build();
 
-        scheduler.scheduleJob(jobDetail, trigger);
+//        scheduler.scheduleJob(jobDetail, trigger);
     }
 
 }

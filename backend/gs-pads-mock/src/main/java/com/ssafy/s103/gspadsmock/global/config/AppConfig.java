@@ -1,4 +1,4 @@
-package com.ssafy.s103.gspadsmock.config;
+package com.ssafy.s103.gspadsmock.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

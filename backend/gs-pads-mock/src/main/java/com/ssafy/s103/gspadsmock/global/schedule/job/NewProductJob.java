@@ -1,4 +1,4 @@
-package com.ssafy.s103.gspadsmock.schedule.job;
+package com.ssafy.s103.gspadsmock.global.schedule.job;
 
 import com.ssafy.s103.gspadsmock.batch.ProductBatch;
 import lombok.Getter;
@@ -14,6 +14,9 @@ import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
+/**
+ * 이상 상품 탐지
+ */
 @Slf4j
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
@@ -36,7 +39,7 @@ public class NewProductJob extends QuartzJobBean {
                     .addLong("time", System.currentTimeMillis())  // 매번 다른 파라미터로 새로운 Job 실행
                     .toJobParameters();
 
-            jobLauncher.run(jobRegistry.getJob(ProductBatch.PRODUCT_BATCH_NAME), jobParameters);
+//            jobLauncher.run(jobRegistry.getJob(ProductBatch.PRODUCT_BATCH_NAME), jobParameters);
         } catch (Exception e) {
             log.info("error : {}", e);
         }

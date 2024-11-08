@@ -30,32 +30,15 @@ import org.springframework.transaction.PlatformTransactionManager;
 @RequiredArgsConstructor
 public class ProductBatch {
     public static final String PRODUCT_BATCH_NAME = "productBatch";
-    public static final String GS_PRODUCT_BATCH = "fetchGsProduct";
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
-    private final CustomTasklet gsProductTask;
     private final DataSource dataSource;
-
-    @Bean
-    public Job gsProductJob() {
-        return new JobBuilder(GS_PRODUCT_BATCH, jobRepository)
-                .start(gsProductStep())
-                .incrementer(new RunIdIncrementer())
-                .build();
-    }
 
     @Bean
     public Job newProductJob() throws Exception {
         return new JobBuilder(PRODUCT_BATCH_NAME, jobRepository)
                 .start(jdbcChunkStep())
                 .incrementer(new RunIdIncrementer())
-                .build();
-    }
-
-    @Bean
-    public Step gsProductStep() {
-        return new StepBuilder(GS_PRODUCT_BATCH + "Step1", jobRepository)
-                .tasklet(gsProductTask, platformTransactionManager)
                 .build();
     }
 
@@ -120,56 +103,4 @@ public class ProductBatch {
             log.info("{} , {}", chunk.getItems().size(), chunk.getItems().getFirst().getPrdId());
         };
     }
-
-
-
-//    @Bean
-//    public Step jpaPagingStep() {
-//        return new StepBuilder("jpaPagingStep", jobRepository)
-//                .<Product, Product>chunk(100, platformTransactionManager)
-//                .reader(jpaPagingItemReader())
-//                .processor(productProcessor())
-//                .writer(productWriter())
-//                .build();
-//    }
-
-//    @Bean
-//    public Step productFirstStep() {
-//        //청크는 대량의 데이터를 사이즈만큼
-//        //100개의 데이터를 가져와야 할 때 10개씩 가져온다는 의미
-//        //사이즈 조절을 통해 I/O 최적화 가능
-//        return new StepBuilder("newProductJobFirstStep", jobRepository)
-//                .<Product, Product> chunk(100, platformTransactionManager)
-//                .reader(productReader())
-//                .processor(createNewProductBatch())
-//                .writer(flagWrite())
-//                .build();
-//    }
-//
-//    @Bean
-//    public RepositoryItemReader<Product> productReader() {
-//        return new RepositoryItemReaderBuilder<Product>()
-//                .name("readNewProduct")
-//                .pageSize(50)
-//                .methodName("findByAnomalyFlagFalse")
-//                .repository(productRepository)
-//                .sorts(Map.of("prdId", Direction.ASC))
-//                .build();
-//    }
-//
-//    @Bean
-//    public ItemProcessor<Product, Product> createNewProductBatch() {
-//        return product -> {
-//            product.setAnomalyFlag(true);
-//            return product;
-//        };
-//    }
-//
-//    @Bean
-//    public RepositoryItemWriter<Product> flagWrite() {
-//        return new RepositoryItemWriterBuilder<Product>()
-//                .repository(productRepository)
-//                .methodName("save")
-//                .build();
-//    }
 }

@@ -1,12 +1,18 @@
-package com.ssafy.s103.gspadsmock.entity;
+package com.ssafy.s103.gspadsmock.domain.migrate.entity;
 
+import com.ssafy.s103.gspadsmock.domain.gsproduct.entity.GsShopProduct;
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.Data;
 
+@Table(name = "productsample")
+@Entity
 @Data
-public class Product {
-
+public class ProductSample {
+    @Id
     @Column(name = "prd_id", length = 255)
     private String prdId;
 
@@ -67,15 +73,6 @@ public class Product {
     @Column(name = "review_count")
     private Integer reviewCount;
 
-    @Column(name = "createdate", length = 255)
-    private String createdate;
-
-    @Column(name = "updatedate", length = 255)
-    private String updatedate;
-
-    @Column(name = "upsertdate")
-    private LocalDateTime upsertdate;
-
     @Column(name = "prd_discount_date", length = 255)
     private String prdDiscountDate;
 
@@ -121,9 +118,47 @@ public class Product {
     @Column(name = "prd_adult_flag")
     private Boolean prdAdultFlag;
 
-    @Column(name = "anomaly_flag", nullable = false)
-    private Boolean anomalyFlag = false;
-
-    public Product() {
+    public ProductSample() {
     }
+
+    public GsShopProduct toGsShopProduct() {
+        return GsShopProduct.builder()
+                .prdId(this.prdId)
+                .viewName(this.viewName)
+                .prdNm(this.prdNm)
+                .cate1Nm(this.cate1Nm)
+                .cate2Nm(this.cate2Nm)
+                .cate3Nm(this.cate3Nm)
+                .cate4Nm(this.cate4Nm)
+                .brdName(this.brdName)
+                .supplierCode(this.supplierCode)
+                .className(this.className)
+                .clsCd(this.clsCd)
+                .orgItemCd(this.orgItemCd)
+                .dealFlag(this.dealFlag)
+                .tvFlag(this.tvFlag)
+                .tempoutFlag(this.tempoutFlag)
+                .price(this.price)
+                .discprice(this.discprice)
+                .buyCount(this.buyCount)
+                .reviewScore(this.reviewScore)
+                .reviewCount(this.reviewCount)// LocalDateTime to String
+                .prdDiscountDate(this.prdDiscountDate)
+                .attrCharVal1(this.attrCharVal1)
+                .attrCharVal2(this.attrCharVal2)
+                .attrCharVal3(this.attrCharVal3)
+                .attrCharVal4(this.attrCharVal4)
+                .attrCharVal5(this.attrCharVal5)
+                .attrCharVal6(this.attrCharVal6)
+                .attrCharVal7(this.attrCharVal7)
+                .attrCharVal8(this.attrCharVal8)
+                .couponDesc(this.couponDesc)
+                .couponNum(this.couponNum)
+                .deliveryCode(this.deliveryCode)
+                .dtctCd(this.dtctCd)
+                .dlvPickMthodCd(this.dlvPickMthodCd)
+                .prdAdultFlag(this.prdAdultFlag)
+                .build();
+    }
+
 }

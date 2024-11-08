@@ -1,10 +1,18 @@
-package com.ssafy.s103.gspadsmock.entity;
+package com.ssafy.s103.gspadsmock.domain.gsproduct.entity;
 
-
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Entity;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
+@Schema(name = "GS 상품 데이터")
 @Data
-public class GsShopProductData {
+@AllArgsConstructor
+@Builder
+public class GsShopProduct {
     private String prdId;
     private String viewName;
     private String prdNm;
@@ -25,9 +33,6 @@ public class GsShopProductData {
     private Integer buyCount;
     private Integer reviewScore;
     private Integer reviewCount;
-    private String createdate;
-    private String updatedate;
-    private String upsertdate;
     private String prdDiscountDate;
     private String attrCharVal1;
     private String attrCharVal2;
@@ -43,4 +48,8 @@ public class GsShopProductData {
     private String dtctCd;
     private String dlvPickMthodCd;
     private Boolean prdAdultFlag;
+    private OffsetDateTime createDt;
+
+    public GsShopProduct() {
+    }
 }

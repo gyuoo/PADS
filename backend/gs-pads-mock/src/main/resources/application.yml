@@ -3,7 +3,9 @@ spring:
     active: local
   jpa:
     open-in-view: false
-#    show-sql: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
 
   batch:
     job:
