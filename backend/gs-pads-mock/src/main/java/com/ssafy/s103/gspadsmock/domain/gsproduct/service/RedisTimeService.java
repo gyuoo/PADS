@@ -26,7 +26,7 @@ public class RedisTimeService {
 
     public void updateStartTime(LocalDateTime startTime) {
         // 5분 증가된 시간으로 업데이트
-        LocalDateTime nextTime = startTime.plusMinutes(2);
+        LocalDateTime nextTime = startTime.plusMinutes(5);
         redisTemplate.opsForValue().set(TIME_KEY, nextTime.format(FORMATTER));
     }
 }

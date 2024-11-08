@@ -43,11 +43,11 @@ public class GsShopProductJob extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
         LocalDateTime startDt = redisTimeService.getStartTime();
         if (startDt == null || startDt.isAfter(LocalDateTime.now())) {
-//            startDt = LocalDateTime.now().withMinute((LocalDateTime.now().getMinute() / 5) * 5).withSecond(0).withNano(0);
-            startDt = LocalDateTime.now().withMinute((LocalDateTime.now().getMinute() / 2) * 2).withSecond(0).withNano(0);
+            startDt = LocalDateTime.now().withMinute((LocalDateTime.now().getMinute() / 5) * 5).withSecond(0).withNano(0);
+//            startDt = LocalDateTime.now().withMinute((LocalDateTime.now().getMinute() / 2) * 2).withSecond(0).withNano(0);
             redisTimeService.updateStartTime(startDt);
         }
-        LocalDateTime endDt = startDt.plusMinutes(2).minusSeconds(1L);
+        LocalDateTime endDt = startDt.plusMinutes(5).minusSeconds(1L);
 //        LocalDateTime endDt = startDt.plusMinutes(2).minusSeconds(1L);
 
         redisTimeService.updateStartTime(startDt);
