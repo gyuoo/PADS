@@ -27,15 +27,4 @@ public class MemberService {
             .password(bCryptPasswordEncoder.encode(memberRegisterRequest.password()))
             .build());
     }
-
-//    public boolean login(String rawPassword, UserLoginRequestDto userLoginRequestDto) {
-//        User user = userRepository.findByEmail(userLoginRequestDto.email())
-//            .orElseThrow(() -> new UsernameNotFoundException(userLoginRequestDto.email()));
-//        return passwordChecker(rawPassword, user.getPassword());
-//    }
-//
-//    public boolean passwordChecker(String rawPassword, String hashedPassword) {
-//        return bCryptPasswordEncoder.matches(rawPassword, hashedPassword);
-//    }
-
 }
