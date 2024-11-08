@@ -42,6 +42,16 @@ public class SecurityConfig {
                     "/"
                 ).permitAll())
 //                .anyRequest().authenticated())
+            .formLogin((auth) -> auth
+                .loginPage("/api/v1/members/login")
+                .loginProcessingUrl("/login")
+                .successHandler(customLoginSuccessHandler)
+                .permitAll())
+            .logout(logout -> logout
+                .logoutUrl("/api/v1/members/logout")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .permitAll())
             .addFilterBefore(ajaxAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(config -> config
                 .authenticationEntryPoint(authenticationEntryPoint)
