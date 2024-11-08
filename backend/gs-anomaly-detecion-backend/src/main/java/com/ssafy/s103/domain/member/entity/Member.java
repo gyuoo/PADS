@@ -9,16 +9,22 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.io.Serial;
+import java.io.Serializable;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L; // 직렬화 ID 추가
 
     @Id
     @Column(updatable = false)
@@ -46,9 +52,11 @@ public class Member {
         this.role = Role.ROLE_ADMIN;
     }
 
-    // 이메일에서 '@' 앞부분만 가져옴
     private String extractNameFromEmail(String email) {
         return email.split("@")[0];
     }
 
+    public boolean isPasswordMatch(PasswordEncoder passwordEncoder, String password) {
+        return passwordEncoder.matches(password, this.password);
+    }
 }
