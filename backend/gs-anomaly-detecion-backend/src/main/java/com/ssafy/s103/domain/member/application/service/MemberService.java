@@ -2,7 +2,6 @@ package com.ssafy.s103.domain.member.application.service;
 
 import com.ssafy.s103.domain.member.application.repository.MemberRepository;
 import com.ssafy.s103.domain.member.dto.request.MemberRegisterRequest;
-import com.ssafy.s103.domain.member.entity.Member;
 import com.ssafy.s103.domain.member.exception.EmailAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -22,9 +21,7 @@ public class MemberService {
             throw new EmailAlreadyExistsException();
         }
 
-        memberRepository.save(Member.builder()
-            .email(email)
-            .password(bCryptPasswordEncoder.encode(memberRegisterRequest.password()))
-            .build());
+        memberRepository.save(memberRegisterRequest.toEntity(
+            bCryptPasswordEncoder.encode(memberRegisterRequest.password())));
     }
 }
