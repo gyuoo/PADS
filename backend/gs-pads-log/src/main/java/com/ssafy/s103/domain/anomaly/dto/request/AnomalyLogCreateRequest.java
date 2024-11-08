@@ -12,18 +12,19 @@ public record AnomalyLogCreateRequest(
 	Map<String, Integer> report,
 	String status
 ) {
-	public AnomalyLog toEntity() {
-		AnomalyLog anomalyLog = AnomalyLog.builder()
+	public AnomalyLog toAnomalyLog() {
+		return AnomalyLog.builder()
 			.productId(prd_id)
 			.build();
-		List<AnomalyReport> anomalyReports = report.entrySet().stream()
+	}
+
+	public List<AnomalyReport> toAnomalyReports(AnomalyLog anomalyLog) {
+		return report.entrySet().stream()
 			.map(entry -> AnomalyReport.builder()
 				.anomalyLog(anomalyLog)
-				.anomalyCode(entry.getKey())
-				.anomalyScore(entry.getValue())
-				.build())
-			.collect(Collectors.toList());
-		anomalyLog.getAnomalyReports().addAll(anomalyReports);
-		return anomalyLog;
+				.code(entry.getKey().substring(0, 1))
+				.subCode(entry.getKey().substring(1))
+				.score(entry.getValue())
+				.build()).collect(Collectors.toList());
 	}
 }

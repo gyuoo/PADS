@@ -23,15 +23,19 @@ public class AnomalyReport {
 	private AnomalyLog anomalyLog;
 
 	@Column(nullable = false)
-	private String anomalyCode;
+	private String code;
 
 	@Column(nullable = false)
-	private Integer anomalyScore;
+	private String subCode;
+
+	@Column(nullable = false)
+	private Integer score;
 
 	@Builder
-	public AnomalyReport(AnomalyLog anomalyLog, String anomalyCode, Integer anomalyScore) {
+	public AnomalyReport(AnomalyLog anomalyLog, String code, String subCode ,Integer score) {
 		this.anomalyLog = anomalyLog;
-		this.anomalyCode = anomalyCode;
-		this.anomalyScore = anomalyScore;
+		this.code = code;
+		this.subCode = subCode;
+		this.score = score;
 	}
 }
