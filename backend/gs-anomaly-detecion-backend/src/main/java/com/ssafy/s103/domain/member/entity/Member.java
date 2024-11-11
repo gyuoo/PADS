@@ -49,7 +49,7 @@ public class Member implements Serializable {
         this.email = email;
         this.username = extractNameFromEmail(email);
         this.password = password;
-        this.role = Role.ROLE_ADMIN;
+        this.role = Role.ROLE_MEMBER;
     }
 
     private String extractNameFromEmail(String email) {
