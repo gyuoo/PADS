@@ -1,4 +1,4 @@
-import __init__
+import pandas as pd
 from model import DiscountAnomalyDetector, PriceAnomalyDetector, ReviewAnomalyDetector
 
 
@@ -13,7 +13,7 @@ class AnomalyDetector:
             ReviewAnomalyDetector()
         ]
 
-    def process(self, data):
+    def process(self, data:pd.DataFrame):
         """
         모든 이상치 점수를 계산하고 결과를 반환합니다.
 
@@ -23,9 +23,13 @@ class AnomalyDetector:
         Returns:
         - DataFrame: 모든 이상치 점수가 포함된 데이터프레임
         """
+        columns = data.columns
+        columns.drop('prd_id')
+
         # 각 Detector의 calculate_anomaly 호출
         for detector in self.detectors:
             data = detector.calculate_anomaly(data)
 
+        data = data.drop(columns=columns)
         return data
 
