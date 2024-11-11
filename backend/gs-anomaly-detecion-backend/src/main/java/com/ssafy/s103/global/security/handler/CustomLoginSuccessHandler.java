@@ -1,7 +1,6 @@
 package com.ssafy.s103.global.security.handler;
 
 import com.ssafy.s103.global.exception.SuccessCode;
-import com.ssafy.s103.global.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -22,13 +21,15 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         log.info(SuccessCode.LOGIN_SUCCESS.getMessage());
 
-        ApiResponse<Void> apiResponse = ApiResponse.of(
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("application/json");
+
+        String jsonResponse = String.format(
+            "{\"message\":\"%s\", \"code\":\"%s\"}",
             SuccessCode.LOGIN_SUCCESS.getMessage(),
-            SuccessCode.LOGIN_SUCCESS.getCode(),
-            null
+            SuccessCode.LOGIN_SUCCESS.getCode()
         );
 
-        response.setContentType("application/json");
-        response.getWriter().write(apiResponse.toString());
+        response.getWriter().write(jsonResponse);
     }
 }
