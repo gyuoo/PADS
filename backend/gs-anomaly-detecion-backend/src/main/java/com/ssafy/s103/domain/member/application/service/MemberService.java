@@ -4,7 +4,7 @@ import com.ssafy.s103.domain.member.application.repository.MemberRepository;
 import com.ssafy.s103.domain.member.dto.request.MemberRegisterRequest;
 import com.ssafy.s103.domain.member.exception.EmailAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder bCryptPasswordEncoder;
 
     public void save(MemberRegisterRequest memberRegisterRequest) {
         String email = memberRegisterRequest.email();
