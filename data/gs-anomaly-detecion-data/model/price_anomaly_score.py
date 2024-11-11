@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from abstract_detector import AbstractDetector
+from model.abstract_detector import AbstractDetector
 from scipy.stats import zscore
 
 
@@ -30,6 +30,7 @@ class PriceAnomalyDetector(AbstractDetector):
         self.validate_data(data)
 
         data['brandclass_name'] = data['brand_name'] + '_' + data['class_name']
+        data['D001_message'] = ""
         score_columns = []
 
         for col in self.GROUP_COLUMNS:
@@ -39,8 +40,8 @@ class PriceAnomalyDetector(AbstractDetector):
             data[score_column] = 1- np.exp(-self.z_threshold*data[zscore_column].abs())
             score_columns.append(score_column)
 
-        # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산)
-        data['price_anomaly_score'] = data[score_columns].apply(lambda row: np.prod(row), axis=1) * 100
+        # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산), price_anomaly : D001
+        data['D001_score'] = data[score_columns].apply(lambda row: np.prod(row), axis=1) * 100
 
         data = data.drop(columns=score_columns + [f'{col}_zscore' for col in self.GROUP_COLUMNS])
         return data
