@@ -11,10 +11,10 @@ import org.springframework.stereotype.Repository;
 
 @Slf4j
 @Repository
-public class GSProductDao {
+public class GsProductDao {
     private final JdbcTemplate jdbcTemplate;
 
-    public GSProductDao(JdbcTemplate jdbcTemplate) {
+    public GsProductDao(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

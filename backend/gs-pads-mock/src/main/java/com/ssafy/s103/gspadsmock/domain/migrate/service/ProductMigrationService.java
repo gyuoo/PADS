@@ -1,14 +1,13 @@
 package com.ssafy.s103.gspadsmock.domain.migrate.service;
 
 import com.ssafy.s103.gspadsmock.domain.gsproduct.entity.GsShopProduct;
-import com.ssafy.s103.gspadsmock.domain.gsproduct.repository.GSProductDao;
+import com.ssafy.s103.gspadsmock.domain.gsproduct.repository.GsProductDao;
 import com.ssafy.s103.gspadsmock.domain.migrate.entity.ProductSample;
 import com.ssafy.s103.gspadsmock.domain.migrate.repository.ProductSampleRepository;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
@@ -24,14 +23,14 @@ public class ProductMigrationService implements ApplicationRunner {
 
     private final ProductSampleRepository productSampleRepository;
 
-    private final GSProductDao productRepository;
+    private final GsProductDao productRepository;
 
     private final Random random = new Random();
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
 
-    public ProductMigrationService(ProductSampleRepository productSampleRepository, GSProductDao productRepository) {
+    public ProductMigrationService(ProductSampleRepository productSampleRepository, GsProductDao productRepository) {
         this.productSampleRepository = productSampleRepository;
         this.productRepository = productRepository;
     }
