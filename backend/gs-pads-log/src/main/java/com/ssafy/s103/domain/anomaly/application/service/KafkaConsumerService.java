@@ -3,6 +3,7 @@ package com.ssafy.s103.domain.anomaly.application.service;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.s103.domain.anomaly.application.repository.AnomalyLogRepository;
 import com.ssafy.s103.domain.anomaly.application.repository.AnomalyReportRepository;
@@ -24,7 +25,8 @@ public class KafkaConsumerService {
 	@KafkaListener(topics = "${spring.kafka.topic.log-topic}", groupId = "${spring.kafka.consumer.group-id}")
 	public void listenLogRequest(ConsumerRecord<String, String> record) {
 		try {
-			AnomalyLogCreateRequest anomalyLogRequest = objectMapper.readValue(record.value(), AnomalyLogCreateRequest.class);
+			AnomalyLogCreateRequest anomalyLogRequest = objectMapper.readValue(record.value(),
+				AnomalyLogCreateRequest.class);
 			AnomalyLog anomalyLog = anomalyLogRequest.toAnomalyLog();
 			anomalyLogRepository.save(anomalyLog);
 			anomalyReportRepository.saveAll(anomalyLogRequest.toAnomalyLogDetailList(anomalyLog));
@@ -34,5 +36,4 @@ public class KafkaConsumerService {
 			log.error("메시지 처리 중 오류 발생: ", e);
 		}
 	}
-
 }
