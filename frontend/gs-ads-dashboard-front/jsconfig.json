@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+      "paths": {
+        "@/*": [		// @ 별칭 등록
+          "./src/*"	
+        ]
+      }
+    },
+    "exclude": [
+      "node_modules",
+      "dist",
+      "public"
+    ]
+  }

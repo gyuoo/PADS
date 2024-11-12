@@ -1,0 +1,15 @@
+server:
+  port: 8082
+spring:
+  profiles:
+    active: local
+  datasource:
+    hikari:
+      minimum-idle: 5
+  jpa:
+    hibernate:
+      ddl-auto: create
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
