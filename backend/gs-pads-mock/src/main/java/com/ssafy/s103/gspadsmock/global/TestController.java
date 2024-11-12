@@ -20,7 +20,6 @@ public class TestController {
 
     public TestController(GsProductService gsProductService) {
         this.gsProductService = gsProductService;
-
     }
 
     @GetMapping("/products")

@@ -3,15 +3,17 @@ spring:
     active: local
   jpa:
     open-in-view: false
-    show-sql: true
     hibernate:
       ddl-auto: update
 
   batch:
     job:
-      enabled: false
+      enabled: true
+      name: fetch-gs-product
     jdbc:
       initialize-schema: always
+  main:
+    allow-bean-definition-overriding: true
 
 management:
   endpoints:
@@ -21,3 +23,4 @@ management:
   endpoint:
     prometheus:
       enabled: true
+
