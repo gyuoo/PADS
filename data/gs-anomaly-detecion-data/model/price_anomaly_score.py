@@ -10,7 +10,7 @@ class PriceAnomalyDetector(AbstractDetector):
     REQUIRED_COLUMNS = ['prd_id', 'brand_name', 'class_name','supplier_code','cate2_nm', 'price']
     GROUP_COLUMNS = ['supplier_code', 'cate2_nm', 'brandclass_name']
 
-    def __init__(self, z_threshold=0.8):
+    def __init__(self, coefficient=0.8):
         """
         클래스 초기화 메서드.
 
@@ -18,7 +18,7 @@ class PriceAnomalyDetector(AbstractDetector):
         - z_threshold: float, 이상치 판단 기준이 되는 Z-score 임계값
         """
         super().__init__()
-        self.z_threshold = z_threshold
+        self.coefficient = coefficient
 
     def calculate_anomaly(self, data: pd.DataFrame, **kwargs):
         """
@@ -36,7 +36,8 @@ class PriceAnomalyDetector(AbstractDetector):
             zscore_column = f'{col}_zscore'
             score_column = f'{col}_score'
             data[zscore_column] = data.groupby(col)['price'].transform(lambda x: zscore(x, ddof=0))
-            data[score_column] = 1- np.exp(-self.z_threshold*data[zscore_column].abs())
+            data[zscore_column] = data[zscore_column].fillna(0)
+            data[score_column] = 1- np.exp(-self.coefficient*data[zscore_column].abs())
             score_columns.append(score_column)
 
         # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산)
