@@ -25,7 +25,7 @@ public class MailController {
 
     private final Map<String, String> verificationCodes = new HashMap<>();
     private final MailService mailService;
-    private int number; // 이메일 인증 번호
+    private int verificationCode; // 이메일 인증 번호
 
     // 인증 이메일 전송
     @PostMapping("/send")
@@ -33,11 +33,11 @@ public class MailController {
         @RequestBody MemberEmailVerifyRequest memberEmailVerifyRequest) {
         HashMap<String, Object> map = new HashMap<>();
         try {
-            number = mailService.sendMail(memberEmailVerifyRequest.email());
-            String num = String.valueOf(number);
-            verificationCodes.put(memberEmailVerifyRequest.email(), num);
+            verificationCode = mailService.sendMail(memberEmailVerifyRequest.email());
+            String code = String.valueOf(verificationCode);
+            verificationCodes.put(memberEmailVerifyRequest.email(), code);
             map.put("success", Boolean.TRUE);
-            map.put("number", num);
+            map.put("verificationCode", code);
         } catch (Exception e) {
             map.put("success", Boolean.FALSE);
             map.put("error", e.getMessage());
@@ -58,7 +58,8 @@ public class MailController {
                 null);
         }
 
-        boolean isMatch = memberVerificationCodeRequest.number().equals(String.valueOf(number));
+        boolean isMatch = memberVerificationCodeRequest.code().equals(String.valueOf(
+            verificationCode));
         if (!isMatch) {
             return new ApiResponse<>(CODE_MISMATCH.getMessage(), CODE_MISMATCH.getCode(), false,
                 null);
