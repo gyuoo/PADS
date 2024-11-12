@@ -32,7 +32,7 @@ public class MailController {
         @RequestBody MemberVerificationCodeRequest memberVerificationCodeRequest) {
         String email = memberVerificationCodeRequest.email();
         String code = memberVerificationCodeRequest.code();
-        
+
         boolean isVerify = mailService.verifyEmailCode(email, code);
         if (!isVerify) {
             return ResponseEntity.badRequest().build();

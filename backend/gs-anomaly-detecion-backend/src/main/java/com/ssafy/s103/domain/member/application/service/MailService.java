@@ -21,9 +21,25 @@ public class MailService {
     @Value("${spring.mail.username}")
     private String senderEmail;
 
-    // 랜덤으로 숫자 생성
-    private int createNumber() {
-        return (int) (Math.random() * 900000) + 100000;
+    public void sendMail(String email) {
+        if (redisUtil.existData(email)) {
+            redisUtil.deleteData(email);
+        }
+        MimeMessage message = createMail(email);
+        try {
+            javaMailSender.send(message); // 메일 발송
+        } catch (MailException e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException(EMAIL_SEND_ERROR.getMessage());
+        }
+    }
+
+    public Boolean verifyEmailCode(String email, String code) {
+        String codeFoundByEmail = redisUtil.getData(email);
+        if (codeFoundByEmail == null) {
+            return false;
+        }
+        return codeFoundByEmail.equals(code);
     }
 
     private MimeMessage createMail(String email) {
@@ -50,24 +66,7 @@ public class MailService {
         return message;
     }
 
-    public void sendMail(String mail) {
-        if (redisUtil.existData(mail)) {
-            redisUtil.deleteData(mail);
-        }
-        MimeMessage message = createMail(mail);
-        try {
-            javaMailSender.send(message); // 메일 발송
-        } catch (MailException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException(EMAIL_SEND_ERROR.getMessage());
-        }
-    }
-
-    public Boolean verifyEmailCode(String email, String code) {
-        String codeFoundByEmail = redisUtil.getData(email);
-        if (codeFoundByEmail == null) {
-            return false;
-        }
-        return codeFoundByEmail.equals(code);
+    private int createNumber() {
+        return (int) (Math.random() * 900000) + 100000;
     }
 }
