@@ -16,8 +16,6 @@ spring:
     show-sql: true # SQL 쿼리 로그 출력
   session:
     store-type: redis
-    redis:
-      namespace: shboard:session
   redis:
     serializer: jackson2JsonRedisSerializer
 
