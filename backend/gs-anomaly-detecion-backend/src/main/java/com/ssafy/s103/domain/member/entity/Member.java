@@ -15,7 +15,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Getter
@@ -49,14 +48,11 @@ public class Member implements Serializable {
         this.email = email;
         this.username = extractNameFromEmail(email);
         this.password = password;
-        this.role = Role.ROLE_MEMBER;
+        this.role = Role.ROLE_ADMIN;
     }
 
     private String extractNameFromEmail(String email) {
         return email.split("@")[0];
     }
 
-    public boolean isPasswordMatch(PasswordEncoder passwordEncoder, String password) {
-        return passwordEncoder.matches(password, this.password);
-    }
 }

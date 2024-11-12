@@ -5,6 +5,7 @@ import com.ssafy.s103.global.security.handler.CustomAccessDeniedHandler;
 import com.ssafy.s103.global.security.handler.CustomLoginAuthenticationEntryPoint;
 import com.ssafy.s103.global.security.handler.CustomLoginFailureHandler;
 import com.ssafy.s103.global.security.handler.CustomLoginSuccessHandler;
+import com.ssafy.s103.global.security.handler.CustomLogoutSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,14 +21,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 @Configuration
 @EnableWebSecurity
+@EnableRedisHttpSession
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
     private final CustomLoginFailureHandler customLoginFailureHandler;
+    private final CustomLogoutSuccessHandler customLogoutSuccessHandler;
     private final CustomLoginAuthenticationEntryPoint authenticationEntryPoint;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final CustomAccessDeniedHandler accessDeniedHandler;
@@ -49,7 +53,12 @@ public class SecurityConfig {
                 .logoutUrl("/api/v1/members/logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
+                .logoutSuccessHandler(customLogoutSuccessHandler)
                 .permitAll())
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 정책 변경
+                .maximumSessions(1) // 최대 세션 수 설정
+                .maxSessionsPreventsLogin(false)) // 최대 세션 도달 시 처리
             .addFilterBefore(ajaxAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(config -> config
                 .authenticationEntryPoint(authenticationEntryPoint)

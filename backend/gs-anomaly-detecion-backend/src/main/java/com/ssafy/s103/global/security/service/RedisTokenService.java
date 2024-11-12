@@ -56,6 +56,11 @@ public class RedisTokenService {
 
         log.info("getTokenForSeries {} = {}", redisKey, tokenJson);
 
+        if (tokenJson == null) {
+            log.warn("Token data is null for key: {}", redisKey);
+            return null;
+        }
+        
         try {
             return objectMapper.readValue(tokenJson, TokenData.class);
         } catch (Exception e) {
