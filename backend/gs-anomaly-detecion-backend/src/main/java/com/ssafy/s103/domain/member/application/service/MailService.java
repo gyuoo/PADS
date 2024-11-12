@@ -5,8 +5,11 @@ import static com.ssafy.s103.global.exception.ErrorCode.EMAIL_SEND_ERROR;
 import com.ssafy.s103.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.nio.file.Files;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -45,16 +48,12 @@ public class MailService {
     private MimeMessage createMail(String email) {
         String code = String.valueOf(createNumber());
         MimeMessage message = javaMailSender.createMimeMessage();
+        String body = loadHtmlTemplate(code);
 
         try {
             message.setFrom(senderEmail);
             message.setRecipients(MimeMessage.RecipientType.TO, email);
             message.setSubject("[Pads] 인증 번호 안내 드립니다.");
-            String body = """
-                <h3>요청하신 인증 번호입니다. 아래 번호를 입력해 주세요.</h3>
-                <h1>%s</h1>
-                <h3>감사합니다.</h3>
-                """.formatted(code);
             message.setText(body, "UTF-8", "html");
 
             // Redis 에 해당 인증코드 인증 시간 설정
@@ -68,5 +67,15 @@ public class MailService {
 
     private int createNumber() {
         return (int) (Math.random() * 900000) + 100000;
+    }
+
+    private String loadHtmlTemplate(String code) {
+        try {
+            ClassPathResource resource = new ClassPathResource("emailBody.html");
+            String content = Files.readString(resource.getFile().toPath());
+            return content.replace("{{ code }}", code);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load HTML template", e);
+        }
     }
 }
