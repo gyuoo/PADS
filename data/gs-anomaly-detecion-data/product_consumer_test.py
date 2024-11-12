@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 from kafka import KafkaConsumer, KafkaProducer
 import logging
 import multiprocessing
@@ -8,7 +7,7 @@ import boto3
 import pandas as pd
 from io import StringIO
 from pydantic import BaseModel, ValidationError
-from .model import AnomalyDetector
+from model import AnomalyDetector
 
 
 class DetectionReqeust(BaseModel):
@@ -16,9 +15,6 @@ class DetectionReqeust(BaseModel):
     csv_path: str
     image_path: str
 
-
-# 환경변수 load
-load_dotenv()
 
 # Kafka Producer config
 bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
