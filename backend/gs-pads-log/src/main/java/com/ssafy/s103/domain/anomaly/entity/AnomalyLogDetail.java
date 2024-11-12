@@ -1,5 +1,6 @@
 package com.ssafy.s103.domain.anomaly.entity;
 
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AnomalyReport {
+public class AnomalyLogDetail {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -22,20 +23,20 @@ public class AnomalyReport {
 	@JoinColumn(name = "anomaly_log_id", nullable = false)
 	private AnomalyLog anomalyLog;
 
-	@Column(nullable = false)
 	private String code;
 
-	@Column(nullable = false)
 	private String subCode;
 
-	@Column(nullable = false)
 	private Integer score;
 
+	private String message;
+
 	@Builder
-	public AnomalyReport(AnomalyLog anomalyLog, String code, String subCode ,Integer score) {
+	public AnomalyLogDetail(AnomalyLog anomalyLog, String code, String subCode, Integer score, String message) {
 		this.anomalyLog = anomalyLog;
 		this.code = code;
 		this.subCode = subCode;
 		this.score = score;
+		this.message = message;
 	}
 }
