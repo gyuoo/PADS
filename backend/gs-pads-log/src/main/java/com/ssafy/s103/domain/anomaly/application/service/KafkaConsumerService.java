@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KafkaConsumerService {
 
 	private final ObjectMapper objectMapper;
-	private final RedisService redisService;
+	private final AnomalyTrakingService anomalyTrakingService;
 	private final AnomalyService anomalyService;
 
 	@KafkaListener(topics = "${spring.kafka.topic.log-topic}", groupId = "${spring.kafka.consumer.group-id}")
@@ -25,7 +25,7 @@ public class KafkaConsumerService {
 			AnomalyLogCreateRequest anomalyLogRequest = objectMapper.readValue(record.value(),
 				AnomalyLogCreateRequest.class);
 			anomalyService.saveAnomalyLog(anomalyLogRequest);
-			redisService.filterAndSaveAnomalyCategory(anomalyLogRequest.report(), anomalyLogRequest.productId());
+			anomalyTrakingService.filterAndSaveAnomalyCategory(anomalyLogRequest.report(), anomalyLogRequest.productId());
 			log.info("받은 메시지: " + record.value());
 		} catch (Exception e) {
 			log.error("메시지 처리 중 오류 발생: ", e);
