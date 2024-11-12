@@ -1,13 +1,13 @@
-package com.ssafy.s103.domain.user.controller;
+package com.ssafy.s103.domain.member.controller;
 
 import static com.ssafy.s103.global.exception.ErrorCode.CODE_MISMATCH;
 import static com.ssafy.s103.global.exception.ErrorCode.EMAIL_NOT_FOUND;
 import static com.ssafy.s103.global.exception.SuccessCode.SEND_MAIL_SUCCESS;
 import static com.ssafy.s103.global.exception.SuccessCode.VERIFICATION_SUCCESS;
 
-import com.ssafy.s103.domain.user.application.service.MailService;
-import com.ssafy.s103.domain.user.dto.request.UserEmailVerifyRequestDto;
-import com.ssafy.s103.domain.user.dto.request.UserVerificationCodeRequestDto;
+import com.ssafy.s103.domain.member.application.service.MailService;
+import com.ssafy.s103.domain.member.dto.request.MemberEmailVerifyRequest;
+import com.ssafy.s103.domain.member.dto.request.MemberVerificationCodeRequest;
 import com.ssafy.s103.global.response.ApiResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/mail")
+@RequestMapping("/api/v1/mails")
 public class MailController {
 
     private final Map<String, String> verificationCodes = new HashMap<>();
@@ -30,12 +30,12 @@ public class MailController {
     // 인증 이메일 전송
     @PostMapping("/send")
     public ApiResponse<HashMap<String, Object>> sendMail(
-        @RequestBody UserEmailVerifyRequestDto userEmailVerifyRequestDto) {
+        @RequestBody MemberEmailVerifyRequest memberEmailVerifyRequest) {
         HashMap<String, Object> map = new HashMap<>();
         try {
-            number = mailService.sendMail(userEmailVerifyRequestDto.email());
+            number = mailService.sendMail(memberEmailVerifyRequest.email());
             String num = String.valueOf(number);
-            verificationCodes.put(userEmailVerifyRequestDto.email(), num);
+            verificationCodes.put(memberEmailVerifyRequest.email(), num);
             map.put("success", Boolean.TRUE);
             map.put("number", num);
         } catch (Exception e) {
@@ -50,21 +50,21 @@ public class MailController {
     // 인증번호 일치 여부 확인
     @GetMapping("/check")
     public ApiResponse<Boolean> checkMail(
-        @RequestBody UserVerificationCodeRequestDto userVerificationCodeRequestDto) {
+        @RequestBody MemberVerificationCodeRequest memberVerificationCodeRequest) {
 
-        boolean hasEmail = verificationCodes.containsKey(userVerificationCodeRequestDto.email());
+        boolean hasEmail = verificationCodes.containsKey(memberVerificationCodeRequest.email());
         if (!hasEmail) {
             return new ApiResponse<>(EMAIL_NOT_FOUND.getMessage(), EMAIL_NOT_FOUND.getCode(), false,
                 null);
         }
 
-        boolean isMatch = userVerificationCodeRequestDto.number().equals(String.valueOf(number));
+        boolean isMatch = memberVerificationCodeRequest.number().equals(String.valueOf(number));
         if (!isMatch) {
             return new ApiResponse<>(CODE_MISMATCH.getMessage(), CODE_MISMATCH.getCode(), false,
                 null);
         }
 
-        verificationCodes.remove(userVerificationCodeRequestDto.email());
+        verificationCodes.remove(memberVerificationCodeRequest.email());
         return new ApiResponse<>(VERIFICATION_SUCCESS.getMessage(), VERIFICATION_SUCCESS.getCode(),
             true,
             null);

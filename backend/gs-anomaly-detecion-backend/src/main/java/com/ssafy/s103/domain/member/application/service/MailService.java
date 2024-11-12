@@ -1,4 +1,4 @@
-package com.ssafy.s103.domain.user.application.service;
+package com.ssafy.s103.domain.member.application.service;
 
 import static com.ssafy.s103.global.exception.ErrorCode.EMAIL_SEND_ERROR;
 
@@ -22,7 +22,7 @@ public class MailService {
 
     // 랜덤으로 숫자 생성
     public void createNumber() {
-        number = (int) (Math.random() * (90000)) + 100000;
+        number = (int) (Math.random() * 900000) + 100000;
     }
 
     public MimeMessage createMail(String mail) {
