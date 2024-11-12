@@ -23,8 +23,7 @@ class AnomalyDetector:
         Returns:
         - DataFrame: 모든 이상치 점수가 포함된 데이터프레임
         """
-        columns = data.columns
-        columns.drop('prd_id')
+        columns = data.columns.drop('prd_id')
 
         # 각 Detector의 calculate_anomaly 호출
         for detector in self.detectors:

@@ -17,13 +17,14 @@ class DetectionReqeust(BaseModel):
 
 
 # Kafka Producer config
-bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
+# bootstrap_servers = os.getenv('KAFKA_BOOTSTRAP_SERVERS')
 producer = KafkaProducer(
-    bootstrap_servers=[bootstrap_servers],
-    value_serializer=lambda v: json.dumps(v).encode('utf-8')  # JSON 직렬화 설정
+    bootstrap_servers=['localhost:9092','localhost:9094','localhost:9096'],
+    value_serializer=lambda v: json.dumps(v, ensure_ascii=False).encode('utf-8')  # JSON 직렬화 설정
 )
 
 kafka_log_topic = os.getenv('PADS_LOG_TOPIC')
+kafka_ack_topic = os.getenv('PADS_ACK_TOPIC')
 
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 file_handler = logging.FileHandler('product_consumer.log', encoding='utf-8')
@@ -48,11 +49,11 @@ s3_client = boto3.client(service_name='s3',
 anomaly_detector = AnomalyDetector()
 
 
-def send_json_message(topic, message, key=None):
+def send_json_message(topic, message, producer, key=None):
     """Kafka 토픽에 JSON 메시지를 전송"""
     key = key.encode('utf-8') if key else None
-    producer.send(topic, key=key, value=message)
-    producer.flush()
+    resp = producer.send(topic, key=key, value=message).get(timeout=10)
+    logger.info(resp)
 
 
 def process_csv_from_s3(request: DetectionReqeust):
@@ -64,14 +65,14 @@ def process_csv_from_s3(request: DetectionReqeust):
 
 def data_to_log_mapping(row):
     row_data = row.drop('prd_id').to_dict()
-    json_str = json.dumps(row_data)
+    json_str = json.dumps(row_data, ensure_ascii=False)
     return json_str
 
 
 def start_consumer(consumer_id):
     topic_name = os.getenv('PADS_PRODUCT_TOPIC')
     log_topic_name = os.getenv('PADS_LOG_TOPIC')
-    bootstrap_servers = [os.getenv('KAFKA_BOOTSTRAP_SERVERS')]
+    bootstrap_servers = ['localhost:9092','localhost:9094','localhost:9096']
 
     consumer = KafkaConsumer(
         topic_name,
@@ -95,6 +96,11 @@ def start_consumer(consumer_id):
             logger.error("Json format 오류")
             continue
 
+        ack_message = {
+            "batch_id": detection_request.batch_id
+        }
+        print(ack_message)
+        send_json_message(kafka_ack_topic, ack_message, producer)
         logger.info(f"Consumer {consumer_id} - 받은 메시지: {data}")
 
         resp_data = process_csv_from_s3(detection_request)
@@ -105,18 +111,10 @@ def start_consumer(consumer_id):
                 "report": data_to_log_mapping(row),
                 "status": "processed"
             }
-            send_json_message(kafka_log_topic, json_message)
+            send_json_message(kafka_log_topic, json_message, producer)
+            logger.debug(f"{kafka_log_topic} - {json_message}")
+        logger.info("row 처리 완료")
 
 
 if __name__ == '__main__':
-    consumer_processes = []
-    available_cpu_cores = os.cpu_count()
-
-    for i in range(3):
-        if i < available_cpu_cores:
-            process = multiprocessing.Process(target=start_consumer, args=(i + 1,))
-            consumer_processes.append(process)
-            process.start()
-
-    for process in consumer_processes:
-        process.join()
+    start_consumer(1)
