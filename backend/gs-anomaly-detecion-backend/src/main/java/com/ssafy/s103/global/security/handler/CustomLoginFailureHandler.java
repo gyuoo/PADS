@@ -20,14 +20,5 @@ public class CustomLoginFailureHandler implements AuthenticationFailureHandler {
         log.error(ErrorCode.LOGIN_FAILED.getMessage());
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-
-        String jsonResponse = String.format(
-            "{\"message\":\"%s\", \"code\":\"%s\"}",
-            ErrorCode.LOGIN_FAILED.getMessage(),
-            ErrorCode.LOGIN_FAILED.getCode()
-        );
-
-        response.getWriter().write(jsonResponse);
     }
 }

@@ -45,8 +45,9 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/v1/members/**",
                     "/"
-                ).permitAll())
-//                .anyRequest().authenticated())
+                ).permitAll()
+//                .anyRequest().authenticated()
+                .anyRequest().hasRole("ADMIN"))
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .logout(logout -> logout

@@ -28,9 +28,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         log.info(SuccessCode.LOGOUT_SUCCESS.getMessage());
 
         if (authentication != null && authentication.getName() != null) {
-            String username = authentication.getName();
-            redisTokenService.removeUserTokens(username);  // 사용자의 Redis 세션 데이터 삭제
-
             // 세션 삭제
             String sessionId =
                 request.getSession(false) != null ? request.getSession(false).getId() : null;
@@ -40,8 +37,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         }
 
         response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType("application/json");
-        response.getWriter().write("{\"message\": \"Logout successful\"}");
 
     }
 }
