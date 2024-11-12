@@ -1,0 +1,29 @@
+spring:
+  config:
+    import: application-secret.yml
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  #      password: ${spring.data.redis.password}
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/anomaly
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true # SQL 쿼리 로그 출력
+  session:
+    store-type: redis
+  redis:
+    serializer: jackson2JsonRedisSerializer
+
+server:
+  servlet:
+    session:
+      cookie:
+        path: /
+        name: JSESSIONID
+        http-only: true
+      timeout: 3600
