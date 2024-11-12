@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from abstract_detector import AbstractDetector
+from model.abstract_detector import AbstractDetector
 
 
 class ReviewAnomalyDetector(AbstractDetector):
@@ -32,10 +32,9 @@ class ReviewAnomalyDetector(AbstractDetector):
         data['review_count_score'] = 1 - np.exp(self.REVIEW_COEFFICIENT * data['review_count'].abs())
         data['convert_review_score'] = np.exp(self.CONVERT_REVIEW_COEFFICIENT * data['review_score'].abs())
 
-        # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산)
-        data['review_anomaly_score'] = (data['convert_review_score'] * data['review_count_score']) * 100
+        # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산), reveiw_anomaly : E001
+        data['E001_score'] = (data['convert_review_score'] * data['review_count_score']) * 100
+        data['E001_message'] = "TBD"
 
         data = data.drop(columns=self.TO_REMOVE)
-
-        # 결과로 반환할 컬럼만 선택
         return data

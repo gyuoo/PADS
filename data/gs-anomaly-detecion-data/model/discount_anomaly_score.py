@@ -1,5 +1,5 @@
 import pandas as pd
-from abstract_detector import AbstractDetector
+from model.abstract_detector import AbstractDetector
 
 
 class DiscountAnomalyDetector(AbstractDetector):
@@ -19,5 +19,7 @@ class DiscountAnomalyDetector(AbstractDetector):
         """
         self.validate_data(data)
 
-        data['discount_anomaly_score'] = (data['discprice'] > data['price']) * 100
+        # discount_anomaly : B001
+        data['B001_score'] = (data['discprice'] > data['price']) * 100
+        data['B001_message'] = "정상 데이터 입니다." if data['B001_score']==0 else "할인 가격이 정가보다 높습니다."
         return data
