@@ -1,10 +1,11 @@
 package com.ssafy.s103.global.security.handler;
 
 import com.ssafy.s103.global.exception.SuccessCode;
-import com.ssafy.s103.global.response.ApiResponse;
+import com.ssafy.s103.global.security.service.RedisTokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,7 +14,10 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
+
+    private final RedisTokenService redisTokenService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -22,14 +26,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         log.info(SuccessCode.LOGIN_SUCCESS.getMessage());
 
-        ApiResponse<Void> apiResponse = ApiResponse.of(
-            SuccessCode.LOGIN_SUCCESS.getMessage(),
-            SuccessCode.LOGIN_SUCCESS.getCode(),
-            null,
-            "/dashboard"
-        );
+        response.setStatus(HttpServletResponse.SC_OK);
 
-        response.setContentType("application/json");
-        response.getWriter().write(apiResponse.toString());
     }
 }

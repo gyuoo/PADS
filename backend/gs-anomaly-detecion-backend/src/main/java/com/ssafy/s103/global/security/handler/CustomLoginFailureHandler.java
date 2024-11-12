@@ -1,7 +1,6 @@
 package com.ssafy.s103.global.security.handler;
 
 import com.ssafy.s103.global.exception.ErrorCode;
-import com.ssafy.s103.global.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,15 +20,5 @@ public class CustomLoginFailureHandler implements AuthenticationFailureHandler {
         log.error(ErrorCode.LOGIN_FAILED.getMessage());
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json");
-
-        ApiResponse<Void> apiResponse = ApiResponse.of(
-            ErrorCode.LOGIN_FAILED.getMessage(),
-            ErrorCode.LOGIN_FAILED.getCode(),
-            null,
-            null
-        );
-
-        response.getWriter().write(apiResponse.toString());
     }
 }

@@ -1,7 +1,7 @@
 import vue from '@vitejs/plugin-vue'
 import autoprefixer from 'autoprefixer'
-import { fileURLToPath } from 'node:url'
 import tailwind from 'tailwindcss'
+import { fileURLToPath, URL } from 'url'
 import { defineConfig } from 'vite'
 
 // https://vite.dev/config/
