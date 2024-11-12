@@ -15,18 +15,16 @@ import org.springframework.stereotype.Service;
 public class MailService {
 
     private final JavaMailSender javaMailSender;
-    private int number;
 
     @Value("${spring.mail.username}")
     private String senderEmail;
 
     // 랜덤으로 숫자 생성
-    public void createNumber() {
-        number = (int) (Math.random() * 900000) + 100000;
+    public int createNumber() {
+        return (int) (Math.random() * 900000) + 100000;
     }
 
-    public MimeMessage createMail(String mail) {
-        createNumber();
+    public MimeMessage createMail(String mail, int code) {
         MimeMessage message = javaMailSender.createMimeMessage();
 
         try {
@@ -35,7 +33,7 @@ public class MailService {
             message.setSubject("[Pads] 인증 번호 안내 드립니다.");
             String body = "";
             body += "<h3>" + "요청하신 인증 번호입니다. 아래 번호를 입력해 주세요." + "</h3>";
-            body += "<h1>" + number + "</h1>";
+            body += "<h1>" + code + "</h1>";
             body += "<h3>" + "감사합니다." + "</h3>";
             message.setText(body, "UTF-8", "html");
         } catch (MessagingException e) {
@@ -46,14 +44,14 @@ public class MailService {
     }
 
     public int sendMail(String mail) {
-        MimeMessage message = createMail(mail);
+        int code = createNumber();
+        MimeMessage message = createMail(mail, code);
         try {
             javaMailSender.send(message); // 메일 발송
         } catch (MailException e) {
             e.printStackTrace();
             throw new IllegalArgumentException(EMAIL_SEND_ERROR.getMessage());
         }
-
-        return number;
+        return code;
     }
 }
