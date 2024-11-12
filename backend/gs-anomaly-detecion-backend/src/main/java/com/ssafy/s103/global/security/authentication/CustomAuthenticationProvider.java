@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     private final MemberDetailsService memberDetailsService;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication)
@@ -22,6 +24,10 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String rawPassword = (String) authentication.getCredentials();
 
         CustomUser member = (CustomUser) memberDetailsService.loadUserByUsername(email);
+
+        if (!passwordEncoder.matches(rawPassword, member.getPassword())) {
+            return null;
+        }
 
         return new CustomAuthenticationToken(member, null, member.getAuthorities());
     }
