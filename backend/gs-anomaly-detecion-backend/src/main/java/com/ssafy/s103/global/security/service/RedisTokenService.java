@@ -1,83 +1,75 @@
 package com.ssafy.s103.global.security.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.ssafy.s103.global.security.deserializer.PersistentRememberMeTokenDeserializer;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.web.authentication.rememberme.PersistentRememberMeToken;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
-public class RedisTokenService implements PersistentTokenRepository {
+@Slf4j
+public class RedisTokenService {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
-    private static final String REMEMBER_MY_KEY = "rememberMe:token:";
+    private static final String TOKEN_KEY_PREFIX = "session:token:";
 
     public RedisTokenService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.objectMapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(PersistentRememberMeToken.class,
-            new PersistentRememberMeTokenDeserializer());
-        this.objectMapper.registerModule(module);
     }
 
     private String getRedisKey(String series) {
-        return REMEMBER_MY_KEY + series;
+        return TOKEN_KEY_PREFIX + series;
     }
 
-    @Override
-    public void createNewToken(PersistentRememberMeToken token) {
-        String redisKey = getRedisKey(token.getSeries());
+    public void createNewToken(String username, String series, String tokenValue, Date lastUsed) {
+        String redisKey = getRedisKey(series);
         log.info("createKey redisKey {}", redisKey);
-        log.info("createKey token {}", token.getTokenValue());
+        log.info("createKey token {}", tokenValue);
 
+        TokenData tokenData = new TokenData(username, series, tokenValue, lastUsed);
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String tokenJson = objectMapper.writeValueAsString(token);
+            String tokenJson = objectMapper.writeValueAsString(tokenData);
             log.info("createKey tokenJson = {}", tokenJson);
             redisTemplate.opsForValue().set(redisKey, tokenJson, 3, TimeUnit.DAYS);
         } catch (Exception e) {
-            throw new RuntimeException("토큰을 JSON으로 직렬화하는 데 실패했습니다.", e);
+            throw new RuntimeException("Failed to serialize token to JSON", e);
         }
     }
 
-    @Override
     public void updateToken(String series, String tokenValue, Date lastUsed) {
-        PersistentRememberMeToken token = getTokenForSeries(series);
-        if (token != null) {
-            PersistentRememberMeToken newToken = new PersistentRememberMeToken(
-                token.getUsername(), series, tokenValue, lastUsed
-            );
-            createNewToken(newToken);
+        TokenData tokenData = getTokenForSeries(series);
+        if (tokenData != null) {
+            createNewToken(tokenData.getUsername(), series, tokenValue, lastUsed);
         }
     }
 
-    @Override
-    public PersistentRememberMeToken getTokenForSeries(String seriesId) {
+    public TokenData getTokenForSeries(String seriesId) {
         String redisKey = getRedisKey(seriesId);
         String tokenJson = (String) redisTemplate.opsForValue().get(redisKey);
 
         log.info("getTokenForSeries {} = {}", redisKey, tokenJson);
 
+        if (tokenJson == null) {
+            log.warn("Token data is null for key: {}", redisKey);
+            return null;
+        }
+        
         try {
-            return objectMapper.readValue(tokenJson, PersistentRememberMeToken.class);
+            return objectMapper.readValue(tokenJson, TokenData.class);
         } catch (Exception e) {
-            throw new RuntimeException("getTokenForSeries 역직렬화에 실패했습니다.", e);
+            throw new RuntimeException("getTokenForSeries 역직렬화 실패", e);
         }
     }
 
-
-    @Override
     public void removeUserTokens(String username) {
-        Set<String> keys = redisTemplate.keys(REMEMBER_MY_KEY + "*");
+        Set<String> keys = redisTemplate.keys(TOKEN_KEY_PREFIX + "*");
         if (keys != null) {
             for (String key : keys) {
                 log.info("key value {}", key);
@@ -85,16 +77,27 @@ public class RedisTokenService implements PersistentTokenRepository {
 
                 if (tokenJson != null) {
                     try {
-                        PersistentRememberMeToken token = objectMapper.readValue(tokenJson,
-                            PersistentRememberMeToken.class);
-                        if (token.getUsername().equals(username)) {
+                        TokenData tokenData = objectMapper.readValue(tokenJson, TokenData.class);
+                        if (tokenData.getUsername().equals(username)) {
                             redisTemplate.delete(key);
                         }
                     } catch (Exception e) {
-                        throw new RuntimeException("removeUserTokens 역직렬화에 실패했습니다.", e);
+                        throw new RuntimeException("removeUserTokens 역직렬화 실패", e);
                     }
                 }
             }
         }
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TokenData {
+
+        private String username;
+        private String series;
+        private String tokenValue;
+        private Date lastUsed;
+
     }
 }
