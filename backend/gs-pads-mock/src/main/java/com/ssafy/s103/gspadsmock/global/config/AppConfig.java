@@ -19,13 +19,4 @@ public class AppConfig {
     public RestClient.Builder restClientBuilder() {
         return RestClient.builder();
     }
-
-    @Bean
-    public JobRepository jobRepository() throws Exception {
-        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
-        factory.setDataSource(dataSource);
-        factory.setTransactionManager(transactionManager);
-        factory.setIsolationLevelForCreate("ISOLATION_DEFAULT");
-        return factory.getObject();
-    }
 }

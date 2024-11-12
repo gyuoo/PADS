@@ -33,9 +33,9 @@ public class AnomalyProductProcessor implements ItemProcessor<AnomalyProduct, An
 
     @AfterStep
     public void updateProduct(StepExecution stepExecution) {
-        log.info("Batch ID : {}" , this.batch.getId());
 
         if (!productsToUpdate.isEmpty()) {
+            log.info("Batch ID : {}", this.batch.getId());
             this.batch = productBatchRepository.save(new AnomalyProductBatch());
             productRepository.bulkUpdateBatchId(this.productsToUpdate, this.batch.getId());
         }
