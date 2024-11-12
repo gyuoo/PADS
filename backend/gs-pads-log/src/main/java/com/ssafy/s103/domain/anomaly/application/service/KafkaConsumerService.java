@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.s103.domain.anomaly.application.repository.AnomalyLogRepository;
-import com.ssafy.s103.domain.anomaly.application.repository.AnomalyReportRepository;
+import com.ssafy.s103.domain.anomaly.application.repository.AnomalyLogDetailRepository;
 import com.ssafy.s103.domain.anomaly.dto.request.AnomalyLogCreateRequest;
 import com.ssafy.s103.domain.anomaly.entity.AnomalyLog;
 
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KafkaConsumerService {
 
 	private final AnomalyLogRepository anomalyLogRepository;
-	private final AnomalyReportRepository anomalyReportRepository;
+	private final AnomalyLogDetailRepository anomalyLogDetailRepository;
 	private final ObjectMapper objectMapper;
 
 	@KafkaListener(topics = "${spring.kafka.topic.log-topic}", groupId = "${spring.kafka.consumer.group-id}")
@@ -29,7 +29,7 @@ public class KafkaConsumerService {
 				AnomalyLogCreateRequest.class);
 			AnomalyLog anomalyLog = anomalyLogRequest.toAnomalyLog();
 			anomalyLogRepository.save(anomalyLog);
-			anomalyReportRepository.saveAll(anomalyLogRequest.toAnomalyLogDetailList(anomalyLog));
+			anomalyLogDetailRepository.saveAll(anomalyLogRequest.toAnomalyLogDetailList(anomalyLog));
 
 			log.info("받은 메시지: " + record.value());
 		} catch (Exception e) {

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.ssafy.s103.domain.anomaly.entity.AnomalyLogDetail;
 
 @Repository
-public interface AnomalyReportRepository extends JpaRepository<AnomalyLogDetail, Long> {
+public interface AnomalyLogDetailRepository extends JpaRepository<AnomalyLogDetail, Long> {
 }
 
