@@ -29,7 +29,7 @@ public class AnomalyScheduleQuartz {
         Trigger gsFetchJobTrigger = TriggerBuilder.newTrigger()
                 .withIdentity(AnomalyScheduleJob.JOB_NAME + "Trigger")
                 .startNow()
-                .withSchedule(CronScheduleBuilder.cronSchedule("0 0/5 * * * ?"))
+                .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
                 .forJob(gsFetchJob)
                 .build();
 

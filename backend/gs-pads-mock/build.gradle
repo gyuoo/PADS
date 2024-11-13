@@ -42,6 +42,7 @@ dependencies {
 
 	implementation 'org.apache.commons:commons-csv:1.12.0'
 
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 
 	runtimeOnly 'org.postgresql:postgresql'
 	compileOnly 'org.projectlombok:lombok'
