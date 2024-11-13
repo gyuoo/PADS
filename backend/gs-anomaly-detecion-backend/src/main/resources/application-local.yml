@@ -16,6 +16,22 @@ spring:
     show-sql: true # SQL 쿼리 로그 출력
   session:
     store-type: redis
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${spring.mail.username}
+    password: ${spring.mail.password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+    auth-code-expiration-millis: 1800000  # 30 * 60 * 1000 == 30일
   redis:
     serializer: jackson2JsonRedisSerializer
 
