@@ -21,4 +21,10 @@ public class GsProductController {
         List<GsShopProduct> result = gsProductService.getAllProducts();
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getCount() {
+        long productsCount = gsProductService.getProductCount();
+        return ResponseEntity.ok(productsCount);
+    }
 }
