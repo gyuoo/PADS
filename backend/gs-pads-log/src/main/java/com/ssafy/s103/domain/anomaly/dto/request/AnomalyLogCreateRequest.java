@@ -10,7 +10,7 @@ import com.ssafy.s103.domain.anomaly.entity.AnomalyLog;
 import com.ssafy.s103.domain.anomaly.entity.AnomalyLogDetail;
 
 public record AnomalyLogCreateRequest(
-	@JsonProperty("prd_id") Long productId,
+	@JsonProperty("prd_id") Long prdId,
 	@JsonProperty("total_score") Integer totalScore,
 	@JsonProperty("report") Map<String, String> report
 ) {
@@ -20,7 +20,7 @@ public record AnomalyLogCreateRequest(
 
 	public AnomalyLog toAnomalyLog() {
 		return AnomalyLog.builder()
-			.productId(productId)
+			.prdId(prdId)
 			.totalScore(totalScore)
 			.build();
 	}

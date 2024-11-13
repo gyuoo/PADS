@@ -32,7 +32,7 @@ public class KafkaConsumerService {
 		AnomalyLogCreateRequest anomalyLogRequest = objectMapper.readValue(record.value(),
 			AnomalyLogCreateRequest.class);
 		anomalyService.saveAnomalyLog(anomalyLogRequest);
-		anomalyTrakingService.filterAndSaveAnomalyCategory(anomalyLogRequest.report(), anomalyLogRequest.productId());
+		anomalyTrakingService.filterAndSaveAnomalyCategory(anomalyLogRequest.report(), anomalyLogRequest.prdId());
 		log.info("받은 메시지: " + record.value());
 	}
 }
