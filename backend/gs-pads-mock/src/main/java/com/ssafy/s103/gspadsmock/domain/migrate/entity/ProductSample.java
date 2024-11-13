@@ -7,7 +7,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import lombok.Data;
+import lombok.ToString;
 
+@ToString
 @Table(name = "productsample")
 @Entity
 @Data
