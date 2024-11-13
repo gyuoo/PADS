@@ -1,0 +1,8 @@
+package com.ssafy.s103.domain.anomalyproduct.application.repository;
+
+import com.ssafy.s103.domain.anomalyproduct.entity.AnomalyProduct;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AnomalyProductRepository extends JpaRepository<AnomalyProduct, Integer> {
+    
+}
