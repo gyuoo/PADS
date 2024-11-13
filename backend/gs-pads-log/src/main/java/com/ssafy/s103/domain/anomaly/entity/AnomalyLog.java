@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AnomalyLog {
 	@Id
@@ -22,7 +23,7 @@ public class AnomalyLog {
 	private Long id;
 
 	@Column(nullable = false)
-	private String productId;
+	private Long prdId;
 
 	@Column(nullable = false)
 	private Integer totalScore;
@@ -32,8 +33,8 @@ public class AnomalyLog {
 	private LocalDateTime createdAt;
 
 	@Builder
-	public AnomalyLog(String productId, Integer totalScore) {
-		this.productId = productId;
+	public AnomalyLog(Long prdId, Integer totalScore) {
+		this.prdId = prdId;
 		this.totalScore = totalScore;
 	}
 }
