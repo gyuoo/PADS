@@ -44,10 +44,13 @@ public class SecurityConfig {
             .authorizeHttpRequests(request -> request
                 .requestMatchers(
                     "/api/v1/members/**",
+                    "/api/v1/mails/**",
                     "/"
                 ).permitAll()
-//                .anyRequest().authenticated()
-                .anyRequest().hasRole("ADMIN"))
+                .requestMatchers(
+                    "/api/v1/products/**"
+                ).authenticated()
+                .anyRequest().hasRole("MEMBER"))
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .logout(logout -> logout
