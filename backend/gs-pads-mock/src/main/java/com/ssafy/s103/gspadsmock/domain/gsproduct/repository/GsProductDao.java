@@ -1,6 +1,8 @@
 package com.ssafy.s103.gspadsmock.domain.gsproduct.repository;
 
 import com.ssafy.s103.gspadsmock.domain.gsproduct.entity.GsShopProduct;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -18,54 +20,58 @@ public class GsProductDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void saveAll(List<GsShopProduct> dataList) {
-        String sql = "INSERT INTO gs_shop_product_data (prd_id, view_name, prd_nm, cate1_nm, cate2_nm, cate3_nm, cate4_nm, " +
-                "brd_name, supplier_code, class_name, cls_cd, org_item_cd, deal_flag, tv_flag, tempout_flag, price, " +
-                "discprice, buy_count, review_score, review_count, prd_discount_date, " +
-                "attr_char_val_1, attr_char_val_2, attr_char_val_3, attr_char_val_4, attr_char_val_5, attr_char_val_6, " +
-                "attr_char_val_7, attr_char_val_8, coupon_desc, coupon_num, delivery_code, dtct_cd, dlv_pick_mthod_cd, " +
-                "prd_adult_flag, create_dt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.batchUpdate(sql, dataList, dataList.size(), (ps, argument) -> {
-            ps.setString(1, argument.getPrdId());
-            ps.setString(2, argument.getViewName());
-            ps.setString(3, argument.getPrdNm());
-            ps.setString(4, argument.getCate1Nm());
-            ps.setString(5, argument.getCate2Nm());
-            ps.setString(6, argument.getCate3Nm());
-            ps.setString(7, argument.getCate4Nm());
-            ps.setString(8, argument.getBrdName());
-            ps.setString(9, argument.getSupplierCode());
-            ps.setString(10, argument.getClassName());
-            ps.setString(11, argument.getClsCd());
-            ps.setObject(12, argument.getOrgItemCd());
-            ps.setBoolean(13, argument.getDealFlag());
-            ps.setBoolean(14, argument.getTvFlag());
-            ps.setBoolean(15, argument.getTempoutFlag());
-            ps.setObject(16, argument.getPrice());
-            ps.setObject(17, argument.getDiscprice());
-            ps.setObject(18, argument.getBuyCount());
-            ps.setObject(19, argument.getReviewScore());
-            ps.setObject(20, argument.getReviewCount());
-            ps.setString(21, argument.getPrdDiscountDate());
-            ps.setString(22, argument.getAttrCharVal1());
-            ps.setString(23, argument.getAttrCharVal2());
-            ps.setString(24, argument.getAttrCharVal3());
-            ps.setString(25, argument.getAttrCharVal4());
-            ps.setString(26, argument.getAttrCharVal5());
-            ps.setString(27, argument.getAttrCharVal6());
-            ps.setString(28, argument.getAttrCharVal7());
-            ps.setString(29, argument.getAttrCharVal8());
-            ps.setString(30, argument.getCouponDesc());
-            ps.setString(31, argument.getCouponNum());
-            ps.setString(32, argument.getDeliveryCode());
-            ps.setString(33, argument.getDtctCd());
-            ps.setString(34, argument.getDlvPickMthodCd());
-            ps.setBoolean(35, argument.getPrdAdultFlag());
-            ps.setTimestamp(36, Timestamp.from(OffsetDateTime.now().toInstant()));
-        });
-    }
-    public void save(GsShopProduct data) {
+    private static final String INSERT_SQL = "INSERT INTO gs_shop_product_data (prd_id, view_name, prd_nm, cate1_nm, cate2_nm, cate3_nm, cate4_nm, " +
+            "brd_name, supplier_code, class_name, cls_cd, org_item_cd, deal_flag, tv_flag, tempout_flag, price, " +
+            "discprice, buy_count, review_score, review_count, prd_discount_date, " +
+            "attr_char_val_1, attr_char_val_2, attr_char_val_3, attr_char_val_4, attr_char_val_5, attr_char_val_6, " +
+            "attr_char_val_7, attr_char_val_8, coupon_desc, coupon_num, delivery_code, dtct_cd, dlv_pick_mthod_cd, " +
+            "prd_adult_flag, create_dt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
+    public void saveAll(List<GsShopProduct> dataList) {
+        jdbcTemplate.batchUpdate(INSERT_SQL, dataList, dataList.size(), this::setPreparedStatement);
+    }
+
+    public void save(GsShopProduct data) {
+        jdbcTemplate.update(INSERT_SQL, ps -> setPreparedStatement(ps, data));
+    }
+
+    private void setPreparedStatement(PreparedStatement ps, GsShopProduct data) throws SQLException {
+        ps.setString(1, data.getPrdId());
+        ps.setString(2, data.getViewName());
+        ps.setString(3, data.getPrdNm());
+        ps.setString(4, data.getCate1Nm());
+        ps.setString(5, data.getCate2Nm());
+        ps.setString(6, data.getCate3Nm());
+        ps.setString(7, data.getCate4Nm());
+        ps.setString(8, data.getBrdName());
+        ps.setString(9, data.getSupplierCode());
+        ps.setString(10, data.getClassName());
+        ps.setString(11, data.getClsCd());
+        ps.setObject(12, data.getOrgItemCd());
+        ps.setBoolean(13, data.getDealFlag());
+        ps.setBoolean(14, data.getTvFlag());
+        ps.setBoolean(15, data.getTempoutFlag());
+        ps.setObject(16, data.getPrice());
+        ps.setObject(17, data.getDiscprice());
+        ps.setObject(18, data.getBuyCount());
+        ps.setObject(19, data.getReviewScore());
+        ps.setObject(20, data.getReviewCount());
+        ps.setString(21, data.getPrdDiscountDate());
+        ps.setString(22, data.getAttrCharVal1());
+        ps.setString(23, data.getAttrCharVal2());
+        ps.setString(24, data.getAttrCharVal3());
+        ps.setString(25, data.getAttrCharVal4());
+        ps.setString(26, data.getAttrCharVal5());
+        ps.setString(27, data.getAttrCharVal6());
+        ps.setString(28, data.getAttrCharVal7());
+        ps.setString(29, data.getAttrCharVal8());
+        ps.setString(30, data.getCouponDesc());
+        ps.setString(31, data.getCouponNum());
+        ps.setString(32, data.getDeliveryCode());
+        ps.setString(33, data.getDtctCd());
+        ps.setString(34, data.getDlvPickMthodCd());
+        ps.setBoolean(35, data.getPrdAdultFlag());
+        ps.setTimestamp(36, Timestamp.from(OffsetDateTime.now().toInstant()));
     }
 
     public void insertGSProduct(List<GsShopProduct> dataList) {
