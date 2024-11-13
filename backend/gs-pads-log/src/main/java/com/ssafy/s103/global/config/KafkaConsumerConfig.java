@@ -17,6 +17,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
 import org.springframework.util.backoff.ExponentialBackOff;
+import org.springframework.util.backoff.FixedBackOff;
 
 @Configuration
 public class KafkaConsumerConfig {
@@ -26,12 +27,6 @@ public class KafkaConsumerConfig {
 
 	@Value("${spring.kafka.consumer.group-id}")
 	private String groupId;
-
-	private final KafkaTemplate<String, String> kafkaTemplate;
-
-	public KafkaConsumerConfig(KafkaTemplate<String, String> kafkaTemplate) {
-		this.kafkaTemplate = kafkaTemplate;
-	}
 
 	@Bean
 	public ConsumerFactory<? super String, ? super Object> consumerFactory() {
@@ -45,31 +40,9 @@ public class KafkaConsumerConfig {
 	}
 
 	@Bean
-	public DefaultErrorHandler errorHandler() {
-		DeadLetterPublishingRecoverer recoverer = new DeadLetterPublishingRecoverer(kafkaTemplate,
-			(consumerRecord, e) -> new TopicPartition("dead-letter-topic", consumerRecord.partition()));
-
-		ExponentialBackOff backoff = new ExponentialBackOff();
-		backoff.setInitialInterval(1000L);
-		backoff.setMultiplier(2);
-		backoff.setMaxInterval(8000L);
-
-		DefaultErrorHandler errorHandler = new DefaultErrorHandler(recoverer, backoff);
-
-		errorHandler.setRetryListeners((ConsumerRecord<?, ?> record, Exception ex, int deliveryAttempt) -> {
-			if (deliveryAttempt >= 5) {
-				recoverer.accept(record, ex);
-			}
-		});
-
-		return errorHandler;
-	}
-
-	@Bean
 	public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
 		ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory());
-		factory.setCommonErrorHandler(errorHandler());
 		return factory;
 	}
 }
