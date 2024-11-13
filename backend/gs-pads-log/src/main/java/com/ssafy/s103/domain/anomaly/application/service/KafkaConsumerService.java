@@ -20,16 +20,12 @@ public class KafkaConsumerService {
 	private final AnomalyService anomalyService;
 
 	@KafkaListener(topics = "${spring.kafka.topic.log-topic}", groupId = "${spring.kafka.consumer.group-id}")
-	public void listenLogRequest(ConsumerRecord<String, String> record) {
-		try {
-			AnomalyLogCreateRequest anomalyLogRequest = objectMapper.readValue(record.value(),
-				AnomalyLogCreateRequest.class);
-			anomalyService.saveAnomalyLog(anomalyLogRequest);
-			anomalyTrakingService.filterAndSaveAnomalyCategory(anomalyLogRequest.report(), anomalyLogRequest.productId());
-			log.info("받은 메시지: " + record.value());
-		} catch (Exception e) {
-			log.error("메시지 처리 중 오류 발생: ", e);
-		}
-	}
+	public void listenLogRequest(ConsumerRecord<String, String> record) throws Exception {
 
+		AnomalyLogCreateRequest anomalyLogRequest = objectMapper.readValue(record.value(),
+			AnomalyLogCreateRequest.class);
+		anomalyService.saveAnomalyLog(anomalyLogRequest);
+		anomalyTrakingService.filterAndSaveAnomalyCategory(anomalyLogRequest.report(), anomalyLogRequest.productId());
+		log.info("받은 메시지: " + record.value());
+	}
 }
