@@ -1,8 +1,10 @@
 package com.ssafy.s103.gspadsmock.domain.anomalyproduct.batch;
 
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.AnomalyProduct;
+import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.Message;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductBatchRepository;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductRepository;
+import com.ssafy.s103.gspadsmock.domain.anomalyproduct.service.AnomalyProductService;
 import com.ssafy.s103.gspadsmock.global.service.S3Service;
 import java.io.File;
 import java.io.FileWriter;
@@ -16,28 +18,22 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 
+@RequiredArgsConstructor
 @Slf4j
 public class AnomalyProductWriter implements ItemWriter<AnomalyProduct> {
     private final AnomalyProductBatchRepository productBatchRepository;
     private final AnomalyProductRepository productRepository;
+    private final AnomalyProductService service;
     private final S3Service s3Service;
     private final String filePath;
     private final String[] headers;
-
-    public AnomalyProductWriter(AnomalyProductBatchRepository productBatchRepository,
-                                AnomalyProductRepository productRepository, S3Service s3Service, String filePath, String[] headers) {
-        this.productBatchRepository = productBatchRepository;
-        this.productRepository = productRepository;
-        this.s3Service = s3Service;
-        this.filePath = filePath;
-        this.headers = headers;
-    }
 
     @Override
     public void write(Chunk<? extends AnomalyProduct> chunk) throws Exception {
@@ -74,6 +70,10 @@ public class AnomalyProductWriter implements ItemWriter<AnomalyProduct> {
         String s3FolderPath = "datacsv/" + datePath;
         String s3FileUrl = s3Service.uploadFile(s3FolderPath, fileToUpload);
         log.info("File uploaded to S3: {}", s3FileUrl);
+
+        productBatchRepository.updateS3Url(s3FileUrl, batchId);
+
+        service.sendMessage(new Message(batchId, s3FileUrl));
     }
 
     private String createFilePath(Path directoryPath, String batchId) {

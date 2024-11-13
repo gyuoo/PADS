@@ -20,4 +20,10 @@ public class AnomalyBatchDaoImpl implements AnomalyBatchDao{
         jdbcTemplate.update(sql, newBatch.getId(), newBatch.getCreateDt());
         return newBatch.getId();
     }
+
+    @Override
+    public void updateS3Url(String s3Url, String batchId) {
+        String sql = "UPDATE anomaly_product_batch SET s3_url = ? WHERE id = ?";
+        jdbcTemplate.update(sql, s3Url, batchId);
+    }
 }

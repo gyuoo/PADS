@@ -4,6 +4,7 @@ import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.AnomalyProduct;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.AnomalyStatus;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductBatchRepository;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductRepository;
+import com.ssafy.s103.gspadsmock.domain.anomalyproduct.service.AnomalyProductService;
 import com.ssafy.s103.gspadsmock.global.service.S3Service;
 import com.ssafy.s103.gspadsmock.global.util.ClassUtil;
 import java.util.Arrays;
@@ -41,6 +42,7 @@ public class AnomalyProductBatchConfig {
     private final AnomalyProductBatchRepository productBatchRepository;
     private final AnomalyProductRepository productRepository;
     private final S3Service s3Service;
+    private final AnomalyProductService anomalyProductService;
     @Value("${csv.base-path}")
     private String filePath;
 
@@ -97,6 +99,7 @@ public class AnomalyProductBatchConfig {
     public ItemWriter<AnomalyProduct> productWriter() {
         String[] fields = ClassUtil.getClassField(new AnomalyProduct());
         log.info("{}", Arrays.toString(fields));
-        return new AnomalyProductWriter(productBatchRepository, productRepository,s3Service, filePath, fields);
+        return new AnomalyProductWriter(productBatchRepository, productRepository, anomalyProductService, s3Service,
+                filePath, fields);
     }
 }

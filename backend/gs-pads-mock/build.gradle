@@ -44,7 +44,8 @@ dependencies {
 
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 
-
+	//kafka
+	implementation 'org.springframework.kafka:spring-kafka'
 
 	runtimeOnly 'org.postgresql:postgresql'
 	compileOnly 'org.projectlombok:lombok'
