@@ -22,4 +22,5 @@ class DiscountAnomalyDetector(AbstractDetector):
         # discount_anomaly : B001
         data['B001_score'] = (data['discprice'] > data['price']) * 100
         data['B001_message'] = ""
+        data['B000_score'] = data['B001_score']
         return data
