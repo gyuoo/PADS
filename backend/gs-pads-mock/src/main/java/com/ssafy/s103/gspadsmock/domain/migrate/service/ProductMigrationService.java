@@ -4,55 +4,45 @@ import com.ssafy.s103.gspadsmock.domain.gsproduct.entity.GsShopProduct;
 import com.ssafy.s103.gspadsmock.domain.gsproduct.repository.GsProductDao;
 import com.ssafy.s103.gspadsmock.domain.migrate.entity.ProductSample;
 import com.ssafy.s103.gspadsmock.domain.migrate.repository.ProductSampleRepository;
-import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-@Service
+@Component
 public class ProductMigrationService implements ApplicationRunner {
-
     private final ProductSampleRepository productSampleRepository;
-
     private final GsProductDao productRepository;
-
     private final Random random = new Random();
-
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
 
     public ProductMigrationService(ProductSampleRepository productSampleRepository, GsProductDao productRepository) {
         this.productSampleRepository = productSampleRepository;
         this.productRepository = productRepository;
     }
 
-    // 무한히 실행하는 메서드
-
-    @Transactional
     public void migrateProducts() {
-        // 1~10개의 데이터를 랜덤으로 조회
-        List<ProductSample> productSamples = productSampleRepository.findRandomLimit(random.nextInt(20) + 1);
-
+        ProductSample productSamples = productSampleRepository.findRandomLimit().orElse(null);
         // 조회된 데이터를 product 테이블에 삽입 후, 삭제
-        List<GsShopProduct> gsShopProducts = new ArrayList<>();
-        for (ProductSample sample : productSamples) {
-            gsShopProducts.add(sample.toGsShopProduct());// product 테이블에 저장
-            productSampleRepository.delete(sample); // product_sample 테이블에서 삭제
+        if (productSamples != null) {
+            GsShopProduct gsShopProducts = productSamples.toGsShopProduct();
+
+            productSampleRepository.delete(productSamples); // product_sample 테이블에서 삭제
+            productRepository.save(gsShopProducts);
         }
-        productRepository.saveAll(gsShopProducts);
     }
 
-    private int getRandomDelay(int min, int max) {
-        return random.nextInt((max - min) + 1) + min; // min에서 max 사이의 랜덤 값 반환
+    private int getRandomDelay() {
+        return random.nextInt((2000 - 100) + 1) + 100; // min에서 max 사이의 랜덤 값 반환
+    }
+
+    public void stop() {
+        executorService.shutdownNow();
     }
 
     @Override
@@ -61,8 +51,8 @@ public class ProductMigrationService implements ApplicationRunner {
             while (true) {
                 try {
                     migrateProducts(); // 데이터 마이그레이션
-                    int delay = getRandomDelay(1, 180); // 1초 ~ 180초(3분) 사이 랜덤 지연 시간 생성
-                    TimeUnit.SECONDS.sleep(delay); // 지정된 분만큼 대기
+                    int delay = getRandomDelay(); // 100밀리초 ~ 2000밀리초(2초) 사이 랜덤 지연 시간 생성
+                    TimeUnit.MILLISECONDS.sleep(delay); // 지정된 밀리초만큼 대기
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
@@ -71,9 +61,5 @@ public class ProductMigrationService implements ApplicationRunner {
                 }
             }
         });
-    }
-
-    public void stop() {
-        executorService.shutdownNow();
     }
 }

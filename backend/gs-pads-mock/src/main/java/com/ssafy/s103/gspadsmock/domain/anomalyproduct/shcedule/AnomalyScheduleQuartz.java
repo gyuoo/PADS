@@ -1,4 +1,4 @@
-package com.ssafy.s103.gspadsmock.domain.gsproduct.schedule;
+package com.ssafy.s103.gspadsmock.domain.anomalyproduct.shcedule;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -13,23 +13,22 @@ import org.springframework.context.annotation.Configuration;
 
 @Slf4j
 @Configuration
-public class GsShopProductQuartz {
+public class AnomalyScheduleQuartz {
     private final Scheduler scheduler;
 
-    public GsShopProductQuartz(Scheduler scheduler) {
+    public AnomalyScheduleQuartz(Scheduler scheduler) {
         this.scheduler = scheduler;
     }
 
     @PostConstruct
     public void fetchGsProductSchedule() throws SchedulerException {
-        JobDetail gsFetchJob = JobBuilder.newJob(GsShopProductJob.class)
-                .withIdentity(GsShopProductJob.JOB_NAME)
+        JobDetail gsFetchJob = JobBuilder.newJob(AnomalyScheduleJob.class)
+                .withIdentity(AnomalyScheduleJob.JOB_NAME)
                 .build();
 
         Trigger gsFetchJobTrigger = TriggerBuilder.newTrigger()
-                .withIdentity(GsShopProductJob.JOB_NAME + "Trigger")
+                .withIdentity(AnomalyScheduleJob.JOB_NAME + "Trigger")
                 .startNow()
-//                .withSchedule(CronScheduleBuilder.cronSchedule("0 0/1 * * * ?"))
                 .withSchedule(CronScheduleBuilder.cronSchedule("0 0/5 * * * ?"))
                 .forJob(gsFetchJob)
                 .build();

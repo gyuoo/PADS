@@ -16,7 +16,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 @Configuration
 public class GsProductBatch {
-    public static final String GS_PRODUCT_FETCH_BATCH = "fetchGsProduct";
+    public static final String GS_PRODUCT_FETCH_BATCH = "fetch-gs-product";
     private final JobRepository jobRepository;
     private final CustomTasklet gsProductTask;
     private final PlatformTransactionManager platformTransactionManager;
