@@ -1,14 +1,12 @@
 package com.ssafy.s103.gspadsmock.domain.anomalyproduct.batch;
 
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.AnomalyProduct;
-import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.AnomalyProductBatch;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductBatchRepository;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductRepository;
 import com.ssafy.s103.gspadsmock.global.service.S3Service;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -21,10 +19,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.springframework.batch.core.annotation.AfterChunk;
-import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.item.Chunk;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 
 @Slf4j
