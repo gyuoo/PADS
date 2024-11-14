@@ -14,7 +14,7 @@ build_BE:
     - chmod +x ./gradlew
     - ./gradlew clean build -x test -Dspring.profiles.active=dev
     # - cp ./build/libs/s103-0.0.1-SNAPSHOT.jar /home/ubuntu/s103/backend/mock/
-    - mv ./build/libs/s103-0.0.1-SNAPSHOT.jar ./build/libs/gs-pads-mock-0.0.1-SNAPSHOT.jar
+    # - mv ./build/libs/s103-0.0.1-SNAPSHOT.jar ./build/libs/gs-pads-mock-0.0.1-SNAPSHOT.jar
     - echo "[Info] Deploying backend"
     - mkdir -p ~/.ssh
     - echo "$SSH_PEM_KEY" > ~/.ssh/id_rsa
