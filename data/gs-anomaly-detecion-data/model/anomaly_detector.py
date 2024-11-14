@@ -3,7 +3,7 @@ import model
 
 
 class AnomalyDetector:
-    def __init__(self):
+    def __init__(self, model_initializer):
         """
         AnomalyDetector 초기화 메서드. 각 하위 이상치 탐지 클래스를 리스트로 관리합니다.
         """
@@ -12,7 +12,8 @@ class AnomalyDetector:
             model.PriceAnomalyDetector(),
             model.ReviewAnomalyDetector(),
             model.ImageAnomalyDetector(),
-            model.OverallAnomalyScore()
+            model.OverallAnomalyScore(),
+            model.CategoryAnomalyDetector(model_initializer)
         ]
 
     def process(self, data:pd.DataFrame):

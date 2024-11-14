@@ -5,3 +5,4 @@ from .overall_anomaly_score import OverallAnomalyScore
 from .price_anomaly_score import PriceAnomalyDetector
 from .review_anomaly_score import ReviewAnomalyDetector
 from.statistics_updater import StatisticsUpdater
+from .category_anomaly_detector import CategoryAnomalyDetector
