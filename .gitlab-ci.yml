@@ -19,8 +19,8 @@ build_BE:
     - mkdir -p ~/.ssh
     - echo "$SSH_PEM_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
+    - ls -al
     - ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
-    - ls -al backend/gs-anomaly-detecion-backend/build/libs
     - scp -i ~/.ssh/id_rsa backend/gs-anomaly-detecion-backend/build/libs/gs-pads-mock-0.0.1-SNAPSHOT.jar ubuntu@$SSH_HOST:$DEPLOY_PATH
     - ssh -i ~/.ssh/id_rsa ubuntu@$SSH_HOST "sh /home/ubuntu/s103/backend/mock/gs-mock-backend.sh"
     - echo "Complete"
