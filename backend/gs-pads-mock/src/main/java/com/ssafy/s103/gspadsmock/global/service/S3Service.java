@@ -26,7 +26,8 @@ public class S3Service {
 
         try {
             amazonS3.putObject(new PutObjectRequest(bucket, s3Key, file));
-            return amazonS3.getUrl(bucket, s3Key).toString();
+//            return amazonS3.getUrl(bucket, s3Key).toString();
+            return s3Key;
         } catch (Exception e) {
             log.error("S3 업로드 중 오류 발생: ", e);
             throw new RuntimeException("파일 업로드에 실패했습니다.");

@@ -97,9 +97,11 @@ public class AnomalyProductBatchConfig {
 
     @Bean
     public ItemWriter<AnomalyProduct> productWriter() {
-        String[] fields = ClassUtil.getClassField(new AnomalyProduct());
+        String[] fields = ClassUtil.getClassField(new AnomalyProduct(), false);
+        String[] snakeFields = ClassUtil.getClassField(new AnomalyProduct(), true);
+
         log.info("{}", Arrays.toString(fields));
         return new AnomalyProductWriter(productBatchRepository, productRepository, anomalyProductService, s3Service,
-                filePath, fields);
+                filePath, fields, snakeFields);
     }
 }

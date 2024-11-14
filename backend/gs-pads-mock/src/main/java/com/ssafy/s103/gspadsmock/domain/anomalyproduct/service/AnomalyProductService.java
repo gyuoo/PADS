@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AnomalyProductService {
-    private final String TOPIC_NAME = "test_product_topic";
+    private final String TOPIC_NAME = "pads_product_topic";
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendMessage(Object message) {

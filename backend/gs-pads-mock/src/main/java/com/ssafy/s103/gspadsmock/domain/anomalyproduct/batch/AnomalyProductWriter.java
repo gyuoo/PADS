@@ -34,6 +34,8 @@ public class AnomalyProductWriter implements ItemWriter<AnomalyProduct> {
     private final S3Service s3Service;
     private final String filePath;
     private final String[] headers;
+    private final String[] snakeHeaders;
+
 
     @Override
     public void write(Chunk<? extends AnomalyProduct> chunk) throws Exception {
@@ -56,7 +58,7 @@ public class AnomalyProductWriter implements ItemWriter<AnomalyProduct> {
         File fileToUpload = new File(filePath);
         try (FileWriter fileWriter = new FileWriter(fileToUpload, true);
              CSVPrinter csvPrinter = new CSVPrinter(fileWriter,
-                     CSVFormat.DEFAULT.builder().setHeader(headers).build())) {
+                     CSVFormat.DEFAULT.builder().setHeader(snakeHeaders).build())) {
 
             for (AnomalyProduct item : chunk.getItems()) {
                 csvPrinter.printRecord(itemToRecord(item));

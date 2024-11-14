@@ -14,6 +14,9 @@ public class Message {
     @JsonProperty("csv_path")
     private String csvPath;
 
+    @JsonProperty("image_path")
+    private String imagePath;
+
     public Message() {
     }
 
