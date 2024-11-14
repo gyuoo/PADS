@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 
 @Builder
-public record BatchDetailResponse(
+public record BatchDetailsResponse(
     Long proudctId,
     Long batchSize,
     LocalDateTime startDateTime,
