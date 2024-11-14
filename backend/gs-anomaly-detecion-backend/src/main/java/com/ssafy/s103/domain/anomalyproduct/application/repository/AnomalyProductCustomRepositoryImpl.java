@@ -43,6 +43,7 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 						return AnomalyProductResponse.from(
 							firstTuple.get(anomalyProduct.prdId),
 							firstTuple.get(anomalyProduct.viewName),
+							firstTuple.get(anomalyLog.createdAt),
 							firstTuple.get(anomalyLog.totalScore),
 							anomalyCodes
 						);
@@ -61,6 +62,7 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 			.select(
 				anomalyProduct.prdId,
 				anomalyProduct.viewName,
+				anomalyLog.createdAt,
 				anomalyLog.totalScore,
 				anomalyLogDetail.code
 			)
