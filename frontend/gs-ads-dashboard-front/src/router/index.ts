@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Main from '@/views/dashboard/Main.vue'
 import ProductMain from '@/views/product/ProductMain.vue'
+import RegisterForm from '@/views/authentication/RegisterForm.vue'
+import LoginForm from '@/views/authentication/LoginForm.vue'
 // 라우터 설정
 const routes = [
   {
@@ -12,6 +14,16 @@ const routes = [
     path: '/product',
     name: 'product',
     component: ProductMain,
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: RegisterForm,
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginForm,
   },
 ]
 
