@@ -5,6 +5,7 @@ from model.abstract_detector import AbstractDetector
 
 class ImageAnomalyDetector(AbstractDetector):
     REQUIRED_COLUMN = ['prd_id']
+    
     def __init__(self):
         super().__init__()
 
