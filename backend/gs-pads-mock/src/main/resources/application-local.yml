@@ -1,6 +1,3 @@
 spring:
   config:
     import: application-secret.yml
-  kafka:
-    producer:
-      bootstrap-servers: k11s103.p.ssafy.io:9092
