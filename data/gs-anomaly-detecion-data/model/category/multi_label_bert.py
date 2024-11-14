@@ -2,6 +2,7 @@ import torch
 from transformers import AutoTokenizer, AutoModel
 import torch.nn as nn
 
+
 class MultiLabelBERT(nn.Module):
     def __init__(self, model_name, num_labels_cate1, num_labels_cate2, num_labels_cate3, num_labels_class):
         super(MultiLabelBERT, self).__init__()

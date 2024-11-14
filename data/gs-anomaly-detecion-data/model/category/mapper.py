@@ -3,6 +3,7 @@ import os
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 
+
 class Mapper:
     """
     매핑 파일을 통해 LabelEncoder를 관리하는 클래스입니다.
