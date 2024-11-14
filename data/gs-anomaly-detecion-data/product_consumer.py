@@ -7,7 +7,7 @@ import boto3
 import pandas as pd
 from io import StringIO
 from pydantic import BaseModel, ValidationError
-from model import AnomalyDetector
+from model import AnomalyDetector, ModelInitializer
 
 
 class DetectionReqeust(BaseModel):
@@ -15,7 +15,7 @@ class DetectionReqeust(BaseModel):
     csv_path: str
     image_path: Optional[str] = None
 
-    
+
 # 로거 설정
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 file_handler = logging.FileHandler('product_consumer.log', encoding='utf-8')
@@ -31,8 +31,10 @@ kafka_product_topic = os.getenv('PADS_PRODUCT_TOPIC')
 kafka_log_topic = os.getenv('PADS_LOG_TOPIC')
 kafka_ack_topic = os.getenv('PADS_ACK_TOPIC')
 kafka_fail_topic = "pads_fail_topic"
+model_path = os.getenv('MODEL_PATH')
 
-if not bootstrap_servers or not kafka_product_topic or not kafka_log_topic or not kafka_ack_topic:
+if not bootstrap_servers or not kafka_product_topic \
+        or not kafka_log_topic or not kafka_ack_topic or not model_path:
     raise EnvironmentError("환경 변수 Load 실패")
 
 # Kafka Producer 세팅
@@ -62,7 +64,10 @@ except Exception as e:
     raise
 
 # Detector Import
-anomaly_detector = AnomalyDetector()
+model_name = "klue/bert-base"
+mapping_path = "dataset"
+model_init = ModelInitializer(model_name, model_path, mapping_path)
+anomaly_detector = AnomalyDetector(model_init)
 
 
 def send_json_message(topic, message, key=None, timeout=10):
