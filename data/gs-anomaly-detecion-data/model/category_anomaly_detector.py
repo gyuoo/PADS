@@ -4,17 +4,18 @@ import torch
 import torch.nn.functional as F
 from abstract_detector import AbstractDetector
 
+
 class CategoryAnomalyDetector(AbstractDetector):
     REQUIRED_COLUMNS = ['prd_id', 'view_name', 'cate1_nm', 'cate2_nm', 'cate3_nm', 'class_name']
     TOP_K = 7  # Top 7까지 가져오도록 설정
     BASE_SCORES = {4: 40, 5: 60, 6: 80, 7: 100}  # Top4부터 Top7까지의 기본 점수 설정
 
-    def __init__(self, model_initializer):
+    def __init__(self, model_initializer=None):
         """
         CategoryAnomalyDetector 초기화 메서드.
         모델, 토크나이저, 라벨 인코더를 설정하며, 기본적으로 CPU 사용.
         """
-        
+        super().__init__()
         self.model = model_initializer.model
         self.tokenizer = model_initializer.tokenizer
         self.label_encoders = model_initializer.label_encoders
@@ -94,6 +95,7 @@ class CategoryAnomalyDetector(AbstractDetector):
         data['A002_score'] = 0
         data['A003_score'] = 0
         data['A004_score'] = 0
+        data['A000_message'] = ""
         data['A001_message'] = ""
         data['A002_message'] = ""
         data['A003_message'] = ""

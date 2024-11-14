@@ -3,6 +3,7 @@ import httpx
 import asyncio
 from model.abstract_detector import AbstractDetector
 
+
 class ImageAnomalyDetector(AbstractDetector):
     REQUIRED_COLUMN = ['prd_id']
     

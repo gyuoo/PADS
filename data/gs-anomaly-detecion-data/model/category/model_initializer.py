@@ -4,6 +4,7 @@ from transformers import AutoTokenizer
 from multi_label_bert import MultiLabelBERT
 from mapper import Mapper  # Mapper 클래스를 import 합니다.
 
+
 class ModelInitializer:
     """
     모델과 토크나이저, 그리고 각 카테고리의 레이블 인코더를 초기화하는 클래스입니다.

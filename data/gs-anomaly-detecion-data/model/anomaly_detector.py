@@ -3,7 +3,7 @@ import model
 
 
 class AnomalyDetector:
-    def __init__(self, model_initializer):
+    def __init__(self, model_initializer=None):
         """
         AnomalyDetector 초기화 메서드. 각 하위 이상치 탐지 클래스를 리스트로 관리합니다.
         """
