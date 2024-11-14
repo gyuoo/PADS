@@ -11,9 +11,10 @@ import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
-@Hidden
 @Entity
+@Getter
 @Builder
 @AllArgsConstructor
 @Schema(name = "이상 탐지 상품 데이터")
