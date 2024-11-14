@@ -1,142 +1,109 @@
 <template>
-  <div class="h-full flex flex-col space-y-5">
-    <div class="flex space-x-5 rounded-sm">
-      <div class="bg-white shadow p-3 flex-grow">
-        <div class="flex justify-center items-center space-x-2">
-          <Input id="search" type="text" placeholder="상품명" class="border-none focus:outline-none" />
-          <div class="pr-2">
-            <Search class="text-[#3366CC]" />
-          </div>
-        </div>
-      </div>
-      <div class="bg-white shadow p-3 flex-grow">
-        <Select>
-          <SelectTrigger class="w-full border-none focus:outline-none">
-            <SelectValue placeholder="이상치 선택" />
-          </SelectTrigger>
-          <SelectContent class="w-max">
-            <SelectGroup>
-              <SelectLabel>이상치 기준</SelectLabel>
-              <SelectItem value="v1"> 이상치dsdsdsddsdsdsdA </SelectItem>
-              <SelectItem value="v2"> 이상치 B </SelectItem>
-              <SelectItem value="v3"> 이상치 C </SelectItem>
-              <SelectItem value="v4"> 이상치 D </SelectItem>
-              <SelectItem value="v5"> 이상치 E </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
-      <div class="bg-white shadow p-3 flex-grow">
-        <div class="flex space-x-1">
-          <div class="flex justify-center items-center flex-grow">
-            <Popover>
-              <PopoverTrigger as-child>
-                <Button variant="ghost"> {{ startDate }} </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <Calendar v-model="startDate" :weekday-format="'short'" />
-              </PopoverContent>
-            </Popover>
-            <CalendarIcon class="text-[#3366CC]"></CalendarIcon>
-          </div>
-          <div class="flex justify-center items-center flex-grow">
-            <Popover>
-              <PopoverTrigger as-child>
-                <Button variant="ghost"> {{ endDate }} </Button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <Calendar v-model="endDate" :weekday-format="'short'" />
-              </PopoverContent>
-            </Popover>
-            <CalendarIcon class="text-[#3366CC]"></CalendarIcon>
-          </div>
-        </div>
-      </div>
-      <div class="bg-white shadow p-3 flex-grow">
-        <Input id="score-range" type="number" placeholder="스코어" class="border-none focus:outline-none" />
-      </div>
-      <div class="bg-white shadow p-3 flex-grow">
-        <Select>
-          <SelectTrigger class="border-none focus:outline-none">
-            <SelectValue placeholder="개수" />
-          </SelectTrigger>
-          <SelectContent class="">
-            <SelectGroup>
-              <SelectItem value="10"> 10개 </SelectItem>
-              <SelectItem value="15"> 15개 </SelectItem>
-              <SelectItem value="20"> 20개 </SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+  <div class="bg-white rounded-2xl shadow-lg p-6 w-full h-full">
+    <div class="mb-10 flex space-x-4">
+      <input
+        v-model="filters.viewName"
+        type="text"
+        placeholder="상품명으로 검색"
+        class="border rounded-lg p-2 w-1/4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+      />
+      <select
+        v-model="filters.code"
+        class="border rounded-lg p-2 w-1/4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+      >
+        <option value="">이상치 코드 선택</option>
+        <option v-for="(desc, code) in anomalyDescriptions" :key="code" :value="code">
+          {{ desc }}
+        </option>
+      </select>
+      <input
+        v-model.number="filters.totalScore"
+        type="number"
+        placeholder="최소 스코어"
+        class="border rounded-lg p-2 w-1/4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
+      />
+      <button
+        @click="applyFilters"
+        class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 focus:outline-none"
+      >
+        필터 적용
+      </button>
+      <button
+        @click="resetFilters"
+        class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-400 focus:outline-none"
+      >
+        필터 초기화
+      </button>
     </div>
 
-    <div class="flex-1 p-3 bg-white shadow flex flex-col space-y-10 justify-center items-center">
-      <Table class="flex=1">
-        <TableHeader class="text-base">
-          <TableRow class="hover:bg-transparent">
-            <TableHead class="text-center font-semibold text-[#333333]">
-              상품명
-            </TableHead>
-            <TableHead class="text-center font-semibold text-[#333333]">
-              이상치
-            </TableHead>
-            <TableHead class="text-center font-semibold text-[#333333]">
-              최근 검사일
-            </TableHead>
-            <TableHead class="text-center font-semibold text-[#333333]">
-              스코어
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow v-for="d in data" :key="d.prId" class="cursor-pointer" @click="goToDetail(d.prId)">
-            <TableCell class="text-center">
-              {{ d.name }}
-            </TableCell>
-            <TableCell class="text-center">
-              <div class="flex space-x-2 justify-center items-center">
-                <Badge v-if="d.anomaly.length != 0" v-for="(anomaly, index) in d.anomaly" :key="index">{{ anomaly }}
-                </Badge>
-                <span v-else>-</span>
+    <div class="overflow-x-auto">
+      <table class="min-w-full rounded-lg">
+        <thead>
+          <tr>
+            <th v-for="column in columns" :key="column.field" @click="sortBy(column.field)" :class="column.class"
+              class="px-4 pb-4 text-left text-sm font-semibold text-gray-600 cursor-pointer whitespace-nowrap">
+              {{ column.label }}
+              <span>
+                <img :src="getSortIcon(column.field)" alt="정렬 아이콘" class="inline-block w-4 h-4 ml-3" />
+              </span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="product in sortedProducts" :key="product.prdId" class="hover:bg-gray-50" @click="goToDetail(product.prdId)">
+            <td class="px-4 py-2 text-sm text-gray-700">{{ product.viewName }}</td>
+            <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap">
+              <div class="flex space-x-2 items-center">
+                <template v-if="product.anomalyCodes.length > 3">
+                  <Badge v-for="(anomaly, index) in product.anomalyCodes.slice(0, 3)" :key="index" class="mt-1">
+                    {{ getAnomalyDescription(anomaly) }}
+                  </Badge>
+                  <span class="text-red-700">+{{ product.anomalyCodes.length - 3 }}</span>
+                </template>
+                <template v-else>
+                  <Badge v-for="(anomaly, index) in product.anomalyCodes" :key="index">
+                    {{ getAnomalyDescription(anomaly) }}
+                  </Badge>
+                </template>
               </div>
-            </TableCell>
-            <TableCell class="text-center">
-              {{ d.lastCheck }}
-            </TableCell>
-            <TableCell class="text-center">
-              <div class="flex items-center justify-center space-x-2">
-                <span class="">{{ d.score.toFixed(1) }}</span>
-                <div class="flex-1 bg-gray-200 rounded-full h-2.5">
-                  <div :style="{ width: d.score + '%' }" :class="{
-                    'bg-red-500': d.score >= 80,
-                    'bg-orange-500': d.score >= 50 && d.score < 80,
-                    'bg-yellow-500': d.score >= 20 && d.score < 50,
-                    'bg-green-500': d.score < 20,
-                  }" class="h-2.5 rounded-full"></div>
+            </td>
+            <td class="px-4 py-2 text-sm text-gray-700">
+              {{ new Date(product.createdAt).toLocaleDateString() }}
+              {{ new Date(product.createdAt).toLocaleTimeString([], {
+                hour: '2-digit', minute: '2-digit', hour12: false
+              }) }}
+            </td>
+            <td class="px-4 py-2 text-sm text-gray-700">
+              <div class="flex items-center">
+                <span class="w-12 text-sm font-semibold text-gray-700">{{ product.totalScore }} 점</span>
+                <div class="w-2/3 bg-gray-200 rounded-full h-3">
+                  <div class="h-3 rounded-full" :class="{
+                    'bg-orange-600': product.totalScore >= 50 && product.totalScore < 70,
+                    'bg-red-600': product.totalScore >= 70 && product.totalScore < 90,
+                    'bg-red-700': product.totalScore >= 90
+                  }" :style="{ width: product.totalScore + '%' }"></div>
                 </div>
               </div>
-            </TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-      <Pagination v-model:page="curPage" v-slot="{ page }" :total="totalPages * 10">
-        <PaginationList v-slot="{ items }" class="flex items-center gap-5">
-          <PaginationFirst class="border-none" />
-          <PaginationPrev class="border-none" />
-
-          <!-- 현재 페이지 그룹 표시 -->
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 overflow-x-auto">
+      <Pagination v-slot="{ page }" :total="totalItems" :page-size="itemsPerPage" @page-change="changePage">
+        <PaginationList v-slot="{ items }" class="flex items-center gap-1 justify-center whitespace-nowrap">
+          <PaginationFirst />
+          <PaginationPrev />
           <template v-for="(item, index) in items">
             <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-              <Button class="w-10 h-10 p-0" :variant="item.value === page ? 'default' : 'ghost'">
+              <Button class="w-10 h-10 p-0" :variant="item.value === currentPage ? 'default' : 'outline'">
                 {{ item.value }}
               </Button>
             </PaginationListItem>
-            <!-- <PaginationEllipsis v-else :key="item.type" :index="index" /> -->
+            <PaginationEllipsis v-else :key="item.type" :index="index" />
           </template>
-
-          <PaginationNext class="border-none" />
-          <PaginationLast class="border-none" />
+          <PaginationNext />
+          <PaginationLast />
         </PaginationList>
       </Pagination>
     </div>
@@ -144,160 +111,125 @@
 </template>
 
 <script setup lang="ts">
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-
-import {
-  Pagination,
-  PaginationFirst,
-  PaginationLast,
-  PaginationList,
-  PaginationListItem,
-  PaginationNext,
-  PaginationPrev,
-} from '@/components/ui/pagination'
-
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
-import { Input } from '@/components/ui/input'
-import {
-  type DateValue,
-  getLocalTimeZone,
-  today,
-} from '@internationalized/date'
-import { Calendar as CalendarIcon, Search } from 'lucide-vue-next'
-import { type Ref, ref, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue';
+import { getAnomalyProducts } from '@/api/dashboard';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Pagination, PaginationEllipsis, PaginationFirst, PaginationLast, PaginationList, PaginationListItem, PaginationNext, PaginationPrev } from '@/components/ui/pagination';
 import { useRouter } from 'vue-router'
 
-const router = useRouter()
-const startDate = ref(today(getLocalTimeZone())) as Ref<DateValue>
-const endDate = ref(today(getLocalTimeZone())) as Ref<DateValue>
-const totalPages = ref(34) // 전체 페이지 수// 현재 페이지 그룹의 시작 페이지
-const curPage = ref(1)
-watch(
-  () => curPage.value,
-  (newPage) => {
-    console.log('페이지가 변경되었습니다. 현재 페이지:', newPage)
-    // 페이지 변경 시 수행할 작업을 여기에 추가합니다.
-  },
-)
-const data = [
-  {
-    prId: 10515454,
-    name: 'INV001',
-    anomaly: ['이상치 A', '이상치 B'],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 80,
-  },
-  {
-    prId: 10515455,
-    name: 'INV001',
-    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E'],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 13.5,
-  },
-  {
-    prId: 10515455,
-    name: 'INV001',
-    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E'],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 13.5,
-  },
-  {
-    prId: 10515455,
-    name: 'INV001',
-    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E'],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 13.5,
-  },
-  {
-    prId: 10515455,
-    name: 'INV001',
-    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E'],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 13.5,
-  },
-  {
-    prId: 10515455,
-    name: 'INV001',
-    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E'],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 13.5,
-  },
-  {
-    prId: 10515456,
-    name: 'INV001',
-    anomaly: ['이상치 A'],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 54.7,
-  },
-  {
-    prId: 10515454,
-    name: 'INV001',
-    anomaly: [],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 33,
-  },
-  {
-    prId: 10515454,
-    name: 'INV001',
-    anomaly: ['이상치 A', '이상치 B', '이상치 C', '이상치 E', '이상치 D'],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 97,
-  },
-  {
-    prId: 10515454,
-    name: 'INV001',
-    anomaly: ['이상치 A', '이상치 B', '이상치 C'],
-    regDate: '2024-10-30',
-    category: 'Credit Card',
-    lastCheck: '2024-10-30 17:35:20',
-    score: 43,
-  },
-]
+interface AnomalyProduct {
+  prdId: number;
+  viewName: string;
+  createdAt: Date;
+  anomalyCodes: string[];
+  totalScore: number;
+}
 
-const goToDetail = (prId: number) => {
-  router.push({ name: 'ProductDetail', params: { id: prId } })
+const router = useRouter()
+const anormalProducts = ref<AnomalyProduct[]>([]);
+const totalItems = ref<number>(0);
+const today = ref<string>('');
+const sortColumn = ref<string>('viewName');
+const sortOrder = ref<'asc' | 'desc'>('asc');
+const currentPage = ref<number>(1);
+const itemsPerPage = 10;
+const filters = ref({
+  viewName: '',
+  code: '',
+  totalScore: null
+});
+
+const columns = [
+  { field: 'viewName', label: '상품명', class: 'w-40' },
+  { field: 'anomalyCodes', label: '이상치', class: 'w-40' },
+  { field: 'updatedAt', label: '업데이트 시간', class: 'w-36' },
+  { field: 'totalScore', label: '스코어', class: 'w-32' },
+];
+
+const anomalyDescriptions: Record<string, string> = {
+  A: '카테고리 이상',
+  B: '할인 이상',
+  C: '이미지 이상',
+  D: '가격 이상',
+  E: '리뷰 이상'
+};
+
+const goToDetail = (prdId: number) => {
+  router.push({ name: 'ProductDetail', params: { id: prdId } })
+}
+
+function getAnomalyDescription(code: string): string {
+  return anomalyDescriptions[code] || code;
+}
+
+onMounted(() => {
+  const date = new Date();
+  today.value = date.toLocaleString('en-US', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: 'short',
+    day: '2-digit',
+  });
+  fetchAnomalyProducts();
+});
+
+async function fetchAnomalyProducts() {
+  try {
+    anormalProducts.value = await getAnomalyProducts(
+      filters.value.viewName || null,
+      filters.value.code ? [filters.value.code] : [],
+      filters.value.totalScore || null,
+      currentPage.value - 1
+    );
+  } catch (error) {
+    console.error("이상 상품 데이터를 불러오는 중 오류가 발생했습니다.", error);
+  }
+}
+
+function applyFilters() {
+  currentPage.value = 1;
+  fetchAnomalyProducts();
+}
+
+function resetFilters() {
+  filters.value.viewName = '';
+  filters.value.code = '';
+  filters.value.totalScore = null;
+  applyFilters();
+}
+
+const sortedProducts = computed(() => {
+  return [...anormalProducts.value].sort((a, b) => {
+    const fieldA = a[sortColumn.value as keyof typeof a];
+    const fieldB = b[sortColumn.value as keyof typeof b];
+    if (fieldA < fieldB) return sortOrder.value === 'asc' ? -1 : 1;
+    if (fieldA > fieldB) return sortOrder.value === 'asc' ? 1 : -1;
+    return 0;
+  });
+});
+
+function sortBy(column: string) {
+  if (sortColumn.value === column) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortColumn.value = column;
+    sortOrder.value = 'asc';
+  }
+  fetchAnomalyProducts();
+}
+
+function getSortIcon(column: string) {
+  if (sortColumn.value === column) {
+    return sortOrder.value === 'asc'
+      ? 'https://velog.velcdn.com/images/gangintheremark/post/b481b151-bfee-406f-9d33-9de897efed9b/image.png'
+      : 'https://velog.velcdn.com/images/gangintheremark/post/09a348f3-b576-404a-803c-dc25b31a9be0/image.png';
+  }
+  return 'https://velog.velcdn.com/images/gangintheremark/post/b481b151-bfee-406f-9d33-9de897efed9b/image.png';
+}
+
+function changePage(page: number) {
+  currentPage.value = page;
+  fetchAnomalyProducts();
 }
 </script>
-
-<style scoped></style>
