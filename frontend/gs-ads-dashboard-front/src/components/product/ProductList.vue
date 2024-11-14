@@ -3,12 +3,7 @@
     <div class="flex space-x-5 rounded-sm">
       <div class="bg-white shadow p-3 flex-grow">
         <div class="flex justify-center items-center space-x-2">
-          <Input
-            id="search"
-            type="text"
-            placeholder="상품명"
-            class="border-none focus:outline-none"
-          />
+          <Input id="search" type="text" placeholder="상품명" class="border-none focus:outline-none" />
           <div class="pr-2">
             <Search class="text-[#3366CC]" />
           </div>
@@ -58,12 +53,7 @@
         </div>
       </div>
       <div class="bg-white shadow p-3 flex-grow">
-        <Input
-          id="score-range"
-          type="number"
-          placeholder="스코어"
-          class="border-none focus:outline-none"
-        />
+        <Input id="score-range" type="number" placeholder="스코어" class="border-none focus:outline-none" />
       </div>
       <div class="bg-white shadow p-3 flex-grow">
         <Select>
@@ -81,9 +71,7 @@
       </div>
     </div>
 
-    <div
-      class="flex-1 p-3 bg-white shadow flex flex-col space-y-10 justify-center items-center"
-    >
+    <div class="flex-1 p-3 bg-white shadow flex flex-col space-y-10 justify-center items-center">
       <Table class="flex=1">
         <TableHeader class="text-base">
           <TableRow class="hover:bg-transparent">
@@ -102,18 +90,14 @@
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow v-for="d in data" :key="d.prId">
+          <TableRow v-for="d in data" :key="d.prId" class="cursor-pointer" @click="goToDetail(d.prId)">
             <TableCell class="text-center">
               {{ d.name }}
             </TableCell>
             <TableCell class="text-center">
               <div class="flex space-x-2 justify-center items-center">
-                <Badge
-                  v-if="d.anomaly.length != 0"
-                  v-for="(anomaly, index) in d.anomaly"
-                  :key="index"
-                  >{{ anomaly }}</Badge
-                >
+                <Badge v-if="d.anomaly.length != 0" v-for="(anomaly, index) in d.anomaly" :key="index">{{ anomaly }}
+                </Badge>
                 <span v-else>-</span>
               </div>
             </TableCell>
@@ -124,43 +108,27 @@
               <div class="flex items-center justify-center space-x-2">
                 <span class="">{{ d.score.toFixed(1) }}</span>
                 <div class="flex-1 bg-gray-200 rounded-full h-2.5">
-                  <div
-                    :style="{ width: d.score + '%' }"
-                    :class="{
-                      'bg-red-500': d.score >= 80,
-                      'bg-orange-500': d.score >= 50 && d.score < 80,
-                      'bg-yellow-500': d.score >= 20 && d.score < 50,
-                      'bg-green-500': d.score < 20,
-                    }"
-                    class="h-2.5 rounded-full"
-                  ></div>
+                  <div :style="{ width: d.score + '%' }" :class="{
+                    'bg-red-500': d.score >= 80,
+                    'bg-orange-500': d.score >= 50 && d.score < 80,
+                    'bg-yellow-500': d.score >= 20 && d.score < 50,
+                    'bg-green-500': d.score < 20,
+                  }" class="h-2.5 rounded-full"></div>
                 </div>
               </div>
             </TableCell>
           </TableRow>
         </TableBody>
       </Table>
-      <Pagination
-        v-model:page="curPage"
-        v-slot="{ page }"
-        :total="totalPages * 10"
-      >
+      <Pagination v-model:page="curPage" v-slot="{ page }" :total="totalPages * 10">
         <PaginationList v-slot="{ items }" class="flex items-center gap-5">
           <PaginationFirst class="border-none" />
           <PaginationPrev class="border-none" />
 
           <!-- 현재 페이지 그룹 표시 -->
           <template v-for="(item, index) in items">
-            <PaginationListItem
-              v-if="item.type === 'page'"
-              :key="index"
-              :value="item.value"
-              as-child
-            >
-              <Button
-                class="w-10 h-10 p-0"
-                :variant="item.value === page ? 'default' : 'ghost'"
-              >
+            <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
+              <Button class="w-10 h-10 p-0" :variant="item.value === page ? 'default' : 'ghost'">
                 {{ item.value }}
               </Button>
             </PaginationListItem>
@@ -220,7 +188,9 @@ import {
 } from '@internationalized/date'
 import { Calendar as CalendarIcon, Search } from 'lucide-vue-next'
 import { type Ref, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const startDate = ref(today(getLocalTimeZone())) as Ref<DateValue>
 const endDate = ref(today(getLocalTimeZone())) as Ref<DateValue>
 const totalPages = ref(34) // 전체 페이지 수// 현재 페이지 그룹의 시작 페이지
@@ -324,6 +294,10 @@ const data = [
     score: 43,
   },
 ]
+
+const goToDetail = (prId: number) => {
+  router.push({ name: 'ProductDetail', params: { id: prId } })
+}
 </script>
 
 <style scoped></style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded shadow-lg p-4 w-full h-full pb-9">
+  <div class="bg-white rounded-2xl shadow-lg p-4 w-full h-full pb-9">
     <div class="justify-between items-center mb-4">
       <div class="text-xl font-semibold text-gray-800 mb-1">이상치 유형별 발생 횟수</div>
       <div class="flex items-center text-gray-500 text-sm">

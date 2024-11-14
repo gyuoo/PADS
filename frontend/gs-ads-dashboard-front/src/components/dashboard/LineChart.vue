@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-white rounded-lg shadow-lg p-6 w-full h-full flex flex-col overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-lg p-6 w-full h-full flex flex-col overflow-hidden">
         <div class="text-3xl font-semibold text-gray-700 px-2 flex items-center justify-between mb-1">
           <div class="mb-1">
             월별 이상치 집계  
