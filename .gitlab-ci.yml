@@ -1,25 +1,57 @@
+before_script:
+    - apt-get update || { echo "apt-get update failed"; exit 1; }
+
 stages:
   - build
- 
+  - deploye
+
 build_BE:
   stage: build
-  image: gradle:8.8-jdk21
   before_script:
-    - echo "[INFO] YML Settings"
-    - chmod +x backend/gs-anomaly-detecion-backend/gradlew
+    - echo "[INFO] Before Script"
+    - echo "install java"
+    - apt-get install openjdk-21-jdk -y
+    - java -version
+    - export JAVA_HOME="/usr/lib/jvm/java-21-openjdk-amd64"
+    - export PATH="$JAVA_HOME/bin:$PATH"
+
   script:
     - cd backend/gs-anomaly-detecion-backend
+    - chmod +x ./gradlew
     - ./gradlew clean build -x test -Dspring.profiles.active=dev
-    - ls -al ./build/libs
-    - pwd
-    - cp ./build/libs/s103-0.0.1-SNAPSHOT.jar /home/ubuntu/s103/backend/mock/
-    - mv /home/ubuntu/s103/backend/mock/s103-0.0.1-SNAPSHOT.jar /home/ubuntu/s103/backend/mock/gs-pads-mock-0.0.1-SNAPSHOT.jar
-    - sh /home/ubuntu/s103/backend/mock/gs-mock-backend.sh
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "develop"'
+    # - cp ./build/libs/s103-0.0.1-SNAPSHOT.jar /home/ubuntu/s103/backend/mock/
+    - mv ./build/libs/s103-0.0.1-SNAPSHOT.jar ./build/libs/gs-pads-mock-0.0.1-SNAPSHOT.jar
+    # - sh /home/ubuntu/s103/backend/mock/gs-mock-backend.sh
+
+  only:
+    - develope
+
   tags: 
     - dev
- 
+
+deploy_BE:
+  stage: deploye
+  variables:
+    DEPLOY_PATH: '/home/ubuntu/s103/backend/mock'
+
+  script:
+    - echo "[Info] Deploying backend"
+    - apt-get install openssh-client -y
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PEM_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+    - scp -i ~/.ssh/id_rsa backend/gs-anomaly-detecion-backend/build/libs/*.jar ubuntu@$SSH_HOST:$DEPLOY_PATH
+    - ssh -i ~/.ssh/id_rsa ubuntu@$SSH_HOST "sh /home/ubuntu/s103/backend/mock/gs-mock-backend.sh"
+    - echo "Complete"
+
+
+  only:
+    - develope
+
+  tags: 
+    - dev
+
 # build_FE:
 #   stage: build
 #   image: node
