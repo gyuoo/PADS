@@ -15,7 +15,7 @@ class DetectionReqeust(BaseModel):
     csv_path: str
     image_path: Optional[str] = None
 
-    
+
 # 로거 설정
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 file_handler = logging.FileHandler('product_consumer.log', encoding='utf-8')
@@ -33,8 +33,8 @@ kafka_ack_topic = os.getenv('PADS_ACK_TOPIC')
 kafka_fail_topic = "pads_fail_topic"
 model_path = os.getenv('MODEL_PATH')
 
-if not bootstrap_servers or not kafka_product_topic\
-    or not kafka_log_topic or not kafka_ack_topic or not model_path:
+if not bootstrap_servers or not kafka_product_topic \
+        or not kafka_log_topic or not kafka_ack_topic or not model_path:
     raise EnvironmentError("환경 변수 Load 실패")
 
 # Kafka Producer 세팅
@@ -65,7 +65,7 @@ except Exception as e:
 
 # Detector Import
 model_name = "klue/bert-base"
-mapping_path = "/dataset"
+mapping_path = "dataset"
 model_init = ModelInitializer(model_name, model_path, mapping_path)
 anomaly_detector = AnomalyDetector(model_init)
 

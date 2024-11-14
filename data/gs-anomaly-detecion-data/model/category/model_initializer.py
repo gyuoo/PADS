@@ -1,8 +1,7 @@
 import os
 import torch
 from transformers import AutoTokenizer
-from multi_label_bert import MultiLabelBERT
-from mapper import Mapper  # Mapper 클래스를 import 합니다.
+from model import MultiLabelBERT, Mapper
 
 
 class ModelInitializer:
@@ -18,7 +17,7 @@ class ModelInitializer:
         self.mappers = self._initialize_label_encoders()
         self.label_encoders = {category: mapper.get_label_encoder() for category, mapper in self.mappers.items()}
         self.num_labels = self._get_num_labels()
-        
+
         # 모델과 토크나이저 초기화
         self.model, self.tokenizer = self._initialize_model_and_tokenizer()
 
@@ -56,13 +55,13 @@ class ModelInitializer:
         """
         # 모델 초기화
         model = MultiLabelBERT(
-            model_name=self.model_name, 
-            num_labels_cate1=self.num_labels['cate1_nm'], 
-            num_labels_cate2=self.num_labels['cate2_nm'], 
-            num_labels_cate3=self.num_labels['cate3_nm'], 
+            model_name=self.model_name,
+            num_labels_cate1=self.num_labels['cate1_nm'],
+            num_labels_cate2=self.num_labels['cate2_nm'],
+            num_labels_cate3=self.num_labels['cate3_nm'],
             num_labels_class=self.num_labels['class_name']
         )
-        
+
         # 모델 가중치 로드
         model.load_state_dict(torch.load(self.model_path, map_location=torch.device('cpu')))
         model.eval()

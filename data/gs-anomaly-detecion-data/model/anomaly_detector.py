@@ -12,8 +12,8 @@ class AnomalyDetector:
             model.PriceAnomalyDetector(),
             model.ReviewAnomalyDetector(),
             model.ImageAnomalyDetector(),
-            model.OverallAnomalyScore(),
-            model.CategoryAnomalyDetector(model_initializer)
+            model.CategoryAnomalyDetector(model_initializer),
+            model.OverallAnomalyScore()
         ]
 
     def process(self, data:pd.DataFrame):
