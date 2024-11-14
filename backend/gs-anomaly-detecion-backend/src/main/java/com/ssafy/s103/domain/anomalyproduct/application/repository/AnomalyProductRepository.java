@@ -14,4 +14,5 @@ public interface AnomalyProductRepository extends JpaRepository<AnomalyProduct, 
         "JOIN AnomalyProductBatch apb ON ap.batchId = apb.id " +
         "WHERE ap.prdId = :prdId")
     BatchResponse findBatchResponseByPrdId(@Param("prdId") Long prdId);
+
 }

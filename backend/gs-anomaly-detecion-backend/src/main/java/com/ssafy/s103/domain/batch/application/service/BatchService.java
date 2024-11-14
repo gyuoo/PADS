@@ -2,7 +2,6 @@ package com.ssafy.s103.domain.batch.application.service;
 
 import com.ssafy.s103.domain.anomalyproduct.application.repository.AnomalyProductRepository;
 import com.ssafy.s103.domain.anomalyproduct.entity.AnomalyProduct;
-import com.ssafy.s103.domain.batch.dto.response.BatchResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,9 +16,17 @@ public class BatchService {
         return anomalyProductRepository.findAll();
     }
 
-    public BatchResponse getBatchInformation(Long productId) {
-        return anomalyProductRepository.findBatchResponseByPrdId(productId);
-    }
+//    public List<BatchResponse> getBatchProductsPreview() {
+//        List<AnomalyProduct> anomalyProducts = anomalyProductRepository.findAll(); // 전체 AnomalyProduct 조회
+//
+//        List<BatchResponse> batchResponses = new ArrayList<>();
+//        for (AnomalyProduct anomalyProduct : anomalyProducts) {
+//            BatchResponse batchResponse = anomalyProductRepository.findBatchResponseByPrdId(
+//                anomalyProduct.getPrdId());
+//            batchResponses.add(batchResponse);
+//        }
+//        return batchResponses;
+//    }
 
 //    public List<BatchResponse> getAllBatchProducts() {
 //        List<AnomalyProduct> anomalyProducts = anomalyProductRepository.findAll();
