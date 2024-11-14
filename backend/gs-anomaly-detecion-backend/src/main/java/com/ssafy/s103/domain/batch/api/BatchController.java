@@ -1,7 +1,7 @@
 package com.ssafy.s103.domain.batch.api;
 
-import com.ssafy.s103.domain.anomalyproduct.entity.AnomalyProduct;
 import com.ssafy.s103.domain.batch.application.service.BatchService;
+import com.ssafy.s103.domain.batch.dto.response.BatchResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,21 +16,9 @@ public class BatchController {
 
     private final BatchService batchService;
 
-    @GetMapping
-    public ResponseEntity<List<AnomalyProduct>> getAllBatchProducts() {
-        List<AnomalyProduct> batchProducts = batchService.getAllBatchProducts();
-        return ResponseEntity.ok(batchProducts);
+    @GetMapping()
+    public ResponseEntity<List<BatchResponse>> getAllBatchProducts() {
+        List<BatchResponse> batch = batchService.getAllBatchProducts();
+        return ResponseEntity.ok(batch);
     }
-
-//    @GetMapping()
-//    public ResponseEntity<List<BatchResponse>> getAllBatchProducts() {
-//        List<BatchResponse> batch = batchService.getAllBatchProducts();
-//        return ResponseEntity.ok(batch);
-//    }
-//
-//    @GetMapping("/preview")
-//    public ResponseEntity<List<BatchResponse>> getProductsBatchPreview() {
-//        List<BatchResponse> batch = batchService.getBatchProductsPreview();
-//        return ResponseEntity.ok(batch);
-//    }
 }
