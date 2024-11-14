@@ -47,7 +47,6 @@ class PriceAnomalyDetector(AbstractDetector):
         self.validate_data(data)
 
         data['brandclass_name'] = data['brand_name'] + '_' + data['class_name']
-        data['D001_message'] = ""
         score_columns = []
 
         # 각 그룹별로 Z-score 계산
@@ -69,6 +68,8 @@ class PriceAnomalyDetector(AbstractDetector):
 
         # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산), price_anomaly : D001
         data['D001_score'] = data[score_columns].apply(lambda row: np.prod(row), axis=1) * 100
+        data['D001_message'] = ""
+        data['D000_score'] = data['D001_score']
 
         # 사용한 점수 및 Z-score 컬럼 삭제
         data = data.drop(columns=score_columns + [f'{col}_zscore' for col in self.GROUP_COLUMNS])
