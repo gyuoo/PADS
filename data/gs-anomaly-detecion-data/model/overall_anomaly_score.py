@@ -1,12 +1,14 @@
 import pandas as pd
 from model.abstract_detector import AbstractDetector
 
+
 class OverallAnomalyScore(AbstractDetector):
     REQUIRED_COLUMNS = ['prd_id', 'A000_score', 'B000_score', 'C000_score', 'D000_score', 'E000_score']
     POWER = 20
 
-    def __init__(self):
+    def __init__(self, power=20):
         super().__init__()
+        self.POWER = power
 
     def calculate_anomaly(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
         """

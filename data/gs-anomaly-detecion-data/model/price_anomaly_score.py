@@ -72,5 +72,6 @@ class PriceAnomalyDetector(AbstractDetector):
         data['D000_score'] = data['D001_score']
 
         # 사용한 점수 및 Z-score 컬럼 삭제
+        score_columns.append('brandclass_name')
         data = data.drop(columns=score_columns + [f'{col}_zscore' for col in self.GROUP_COLUMNS])
         return data
