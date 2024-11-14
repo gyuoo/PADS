@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.ssafy.s103.domain.anomalyproduct.dto.response.AnomalyProductListResponse;
 import com.ssafy.s103.domain.anomalyproduct.dto.response.AnomalyProductResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -23,9 +26,8 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public AnomalyProductListResponse findAnomalyProducts(String viewName, List<String> codes, Integer totalScore) {
-		List<Tuple> anomalyTuples = fetchAnomalyTuples(viewName, codes, totalScore);
-
+	public Page<AnomalyProductResponse> findAnomalyProducts(String viewName, List<String> codes, Integer totalScore, Pageable pageable) {
+		List<Tuple> anomalyTuples = fetchAnomalyTuples(viewName, codes, totalScore, pageable);
 		Map<Long, AnomalyProductResponse> anomalyProductMap = anomalyTuples.stream()
 			.collect(Collectors.groupingBy(
 				tuple -> tuple.get(anomalyProduct.prdId),
@@ -50,10 +52,39 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 
 		List<AnomalyProductResponse> anomalyProductResponses = new ArrayList<>(anomalyProductMap.values());
 
-		return AnomalyProductListResponse.from(anomalyProductResponses);
+		return new PageImpl<>(anomalyProductResponses);
 	}
 
-	private List<Tuple> fetchAnomalyTuples(String viewName, List<String> codes, Integer totalScore) {
+	private List<Tuple> fetchAnomalyTuples(String viewName, List<String> codes, Integer totalScore, Pageable pageable) {
+		BooleanBuilder filter = filter(viewName, codes, totalScore);
+		return queryFactory
+			.select(
+				anomalyProduct.prdId,
+				anomalyProduct.viewName,
+				anomalyLog.totalScore,
+				anomalyLogDetail.code
+			)
+			.from(anomalyProduct)
+			.join(anomalyLog).on(anomalyProduct.prdId.eq(anomalyLog.prdId)).fetchJoin()
+			.join(anomalyLogDetail).on(anomalyLog.id.eq(anomalyLogDetail.anomalyLog.id)).fetchJoin()
+			.where(filter)
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+	}
+
+	private long fetchTotalCount(String viewName, List<String> codes, Integer totalScore) {
+		BooleanBuilder filter = filter(viewName, codes, totalScore);
+		return queryFactory
+			.select(anomalyProduct.prdId.countDistinct())
+			.from(anomalyProduct)
+			.join(anomalyLog).on(anomalyProduct.prdId.eq(anomalyLog.prdId))
+			.join(anomalyLogDetail).on(anomalyLog.id.eq(anomalyLogDetail.anomalyLog.id))
+			.where(filter)
+			.fetchOne();
+	}
+
+	private BooleanBuilder filter(String viewName, List<String> codes, Integer totalScore) {
 		BooleanBuilder filter = new BooleanBuilder();
 		if (viewName != null) {
 			filter.and(anomalyProduct.viewName.containsIgnoreCase(viewName));
@@ -66,18 +97,6 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 		}
 		filter.and(anomalyLogDetail.subCode.eq("000"))
 			.and(anomalyLogDetail.score.gt(0));
-
-		return queryFactory
-			.select(
-				anomalyProduct.prdId,
-				anomalyProduct.viewName,
-				anomalyLog.totalScore,
-				anomalyLogDetail.code
-			)
-			.from(anomalyProduct)
-			.join(anomalyLog).on(anomalyProduct.prdId.eq(anomalyLog.prdId)).fetchJoin()
-			.join(anomalyLogDetail).on(anomalyLog.id.eq(anomalyLogDetail.anomalyLog.id)).fetchJoin()
-			.where(filter)
-			.fetch();
+		return filter;
 	}
 }
