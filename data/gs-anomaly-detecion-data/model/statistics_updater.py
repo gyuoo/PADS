@@ -35,6 +35,10 @@ class StatisticsUpdater:
         - column: str, 업데이트할 컬럼 이름 ('supplier_code', 'cate2_nm', 'brandclass_name')
         - new_data: DataFrame, 새로운 데이터가 포함된 데이터프레임
         """
+        # 증분 데이터 없을 경우 리턴
+        if new_data.empty or column not in new_data.columns:
+            return
+
         stats = self.stats_data[column]
 
         for value in new_data[column].unique():

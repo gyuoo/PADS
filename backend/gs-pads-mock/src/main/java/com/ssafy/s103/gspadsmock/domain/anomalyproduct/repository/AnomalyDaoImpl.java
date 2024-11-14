@@ -25,7 +25,7 @@ public class AnomalyDaoImpl implements AnomalyDao {
     @Override
     public void saveBulk(List<AnomalyProduct> data) {
         String sql = "INSERT INTO anomaly_product (prd_id, view_name, cate1_nm, cate2_nm, cate3_nm, supplier_code, " +
-                "class_name, price, disc_price, buy_count, review_score, review_count, prd_adult_flag, brd_name, status, create_dt, update_dt) "
+                "class_name, price, discprice, buy_count, review_score, review_count, prd_adult_flag, brand_name, status, create_dt, update_dt) "
                 +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -40,12 +40,12 @@ public class AnomalyDaoImpl implements AnomalyDao {
                         product.getSupplierCode(),
                         product.getClassName(),
                         product.getPrice(),
-                        product.getDiscPrice(),
+                        product.getDiscprice(),
                         product.getBuyCount(),
                         product.getReviewScore(),
                         product.getReviewCount(),
                         product.getPrdAdultFlag(),
-                        product.getBrdName(),
+                        product.getBrandName(),
                         AnomalyStatus.SCHEDULED.name(),
                         product.getCreateDt(),
                         product.getUpdateDt()

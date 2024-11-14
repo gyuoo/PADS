@@ -1,9 +1,6 @@
 package com.ssafy.s103.gspadsmock.domain.anomalyproduct.shcedule;
 
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.batch.AnomalyProductBatchConfig;
-import com.ssafy.s103.gspadsmock.domain.gsproduct.batch.GsProductBatch;
-import com.ssafy.s103.gspadsmock.domain.gsproduct.service.RedisTimeService;
-import com.ssafy.s103.gspadsmock.global.util.TimeFormat;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

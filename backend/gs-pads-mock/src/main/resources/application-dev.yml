@@ -1,3 +1,29 @@
 spring:
-  config:
-    import: application-secret.yml
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+
+  data:
+    redis:
+      host: k11s103.p.ssafy.io
+      port: 6379
+      password: ${REDIS_PASSWORD}
+  kafka:
+    producer:
+      bootstrap-servers: k11s103.p.ssafy.io:9092
+
+
+csv:
+  base-path: "datacsv"
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    s3:
+      bucket-name: ${AWS_S3_BUCKET_NAME}
+    region:
+      static: ap-southeast-2
