@@ -73,17 +73,6 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 			.fetch();
 	}
 
-	private long fetchTotalCount(String viewName, List<String> codes, Integer totalScore) {
-		BooleanBuilder filter = filter(viewName, codes, totalScore);
-		return queryFactory
-			.select(anomalyProduct.prdId.countDistinct())
-			.from(anomalyProduct)
-			.join(anomalyLog).on(anomalyProduct.prdId.eq(anomalyLog.prdId))
-			.join(anomalyLogDetail).on(anomalyLog.id.eq(anomalyLogDetail.anomalyLog.id))
-			.where(filter)
-			.fetchOne();
-	}
-
 	private BooleanBuilder filter(String viewName, List<String> codes, Integer totalScore) {
 		BooleanBuilder filter = new BooleanBuilder();
 		if (viewName != null) {
