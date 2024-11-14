@@ -16,7 +16,7 @@ public class BatchController {
 
     private final BatchService batchService;
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<BatchResponse>> getAllBatchProducts() {
         List<BatchResponse> batch = batchService.getAllBatchProducts();
         return ResponseEntity.ok(batch);
