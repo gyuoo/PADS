@@ -6,7 +6,7 @@ import lombok.Builder;
 @Builder
 public record BatchDetailsResponse(
     Long proudctId,
-    Long batchSize,
+    String productName,
     LocalDateTime startDateTime,
     String status
 ) {
