@@ -24,7 +24,7 @@ build_BE:
     # - sh /home/ubuntu/s103/backend/mock/gs-mock-backend.sh
 
   only:
-    - develope
+    - develop
 
   tags: 
     - dev
@@ -47,7 +47,7 @@ deploy_BE:
 
 
   only:
-    - develope
+    - develop
 
   tags: 
     - dev
