@@ -1,0 +1,72 @@
+stages:
+  - build
+
+build_BE:
+  stage: build
+  image: gradle:8.8-jdk21
+  variables:
+    DEPLOY_PATH: '/home/ubuntu/s103/backend/mock'
+  before_script:
+    - apt-get update || { echo "apt-get update failed"; exit 1; }
+    - apt-get install openssh-client -y
+  script:
+    - cd backend/gs-pads-mock
+    - chmod +x ./gradlew
+    - ./gradlew clean build -x test -Dspring.profiles.active=dev
+    # - cp ./build/libs/s103-0.0.1-SNAPSHOT.jar /home/ubuntu/s103/backend/mock/
+    # - mv ./build/libs/s103-0.0.1-SNAPSHOT.jar ./build/libs/gs-pads-mock-0.0.1-SNAPSHOT.jar
+    - echo "[Info] Deploying backend"
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PEM_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ls -al ./build/libs
+    - ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+    - scp -i ~/.ssh/id_rsa ./build/libs/gs-pads-mock-0.0.1-SNAPSHOT.jar ubuntu@$SSH_HOST:$DEPLOY_PATH
+    - ssh -i ~/.ssh/id_rsa ubuntu@$SSH_HOST "sh /home/ubuntu/s103/backend/mock/gs-mock-backend.sh"
+    - echo "Complete"
+    # - sh /home/ubuntu/s103/backend/mock/gs-mock-backend.sh
+
+  only:
+    - develop
+
+  tags: 
+    - dev
+
+# deploy_BE:
+#   stage: deploye
+#   variables:
+#     DEPLOY_PATH: '/home/ubuntu/s103/backend/mock'
+
+#   script:
+#     - echo "[Info] Deploying backend"
+#     - mkdir -p ~/.ssh
+#     - echo "$SSH_PEM_KEY" > ~/.ssh/id_rsa
+#     - chmod 600 ~/.ssh/id_rsa
+#     - ssh-keyscan -H $SSH_HOST >> ~/.ssh/known_hosts
+#     - scp -i ~/.ssh/id_rsa backend/gs-anomaly-detecion-backend/build/libs/*.jar ubuntu@$SSH_HOST:$DEPLOY_PATH
+#     - ssh -i ~/.ssh/id_rsa ubuntu@$SSH_HOST "sh /home/ubuntu/s103/backend/mock/gs-mock-backend.sh"
+#     - echo "Complete"
+
+
+#   only:
+#     - develop
+
+#   tags: 
+#     - dev
+
+# build_FE:
+#   stage: build
+#   image: node
+#   before_script:
+#     - echo "[INFO] YML Settings"
+#     - cd frontend/melting
+#     - printenv | grep 'VITE_' > .env
+#   script:
+#     - yarn install
+#     - yarn build
+#     - sudo cp -R dist ~/melting/melting-fe
+#     - sh ~/melting/melting-fe/react.sh
+#   rules:
+#     - if: '$CI_COMMIT_BRANCH == "dev-fe"'
+#   tags: 
+#     - prod
