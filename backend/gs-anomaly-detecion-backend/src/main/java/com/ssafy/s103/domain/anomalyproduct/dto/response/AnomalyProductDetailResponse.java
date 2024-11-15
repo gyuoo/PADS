@@ -41,11 +41,11 @@ public record AnomalyProductDetailResponse(
 			anomalyProduct.getCate3Nm(),
 			anomalyProduct.getClassName(),
 			anomalyProduct.getPrice(),
-			anomalyProduct.getDiscPrice(),
+			anomalyProduct.getDiscprice(),
 			anomalyProduct.getBuyCount(),
 			anomalyProduct.getReviewScore(),
 			anomalyProduct.getReviewCount(),
-			anomalyProduct.getBrdName(),
+			anomalyProduct.getBrandName(),
 			anomalyLog.getTotalScore(),
 			anomalyLogDetailResponses
 		);

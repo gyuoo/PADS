@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 import com.ssafy.s103.domain.anomalyproduct.dto.response.AnomalyProductResponse;
 
 public interface AnomalyProductCustomRepository {
-	Page<AnomalyProductResponse> findAnomalyProducts(String viewName, List<String> codes, Integer totalScore, Pageable pageable);
+	public List<AnomalyProductResponse> findAnomalyProducts(String viewName, String code, Integer totalScore);
 }

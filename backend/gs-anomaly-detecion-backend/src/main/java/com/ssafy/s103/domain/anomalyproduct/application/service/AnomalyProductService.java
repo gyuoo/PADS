@@ -25,12 +25,14 @@ public class AnomalyProductService {
 	private final AnomalyLogService anomalyLogService;
 	private final AnomalyProductRepository anomalyProductRepository;
 
+	public long getCount() { return anomalyProductRepository.count(); }
+
 	public int getScheduledCount() {
 		return anomalyProductRepository.countByStatus(AnomalyStatus.SCHEDULED);
 	}
 
-	public Page<AnomalyProductResponse> getAnomalyProducts(String viewName, List<String> codes, Integer totalScore, Pageable pageable) {
-		return anomalyProductRepository.findAnomalyProducts(viewName, codes, totalScore, pageable);
+	public List<AnomalyProductResponse> getAnomalyProducts(String viewName, String code, Integer totalScore) {
+		return anomalyProductRepository.findAnomalyProducts(viewName, code, totalScore);
 	}
 
 	public AnomalyProductDetailResponse getAnomalyProductDetail(Long prdId) {

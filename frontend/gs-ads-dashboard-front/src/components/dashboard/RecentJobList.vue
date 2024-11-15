@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-6 w-full h-full">
+  <div class="bg-white rounded-2xl shadow-lg p-6 w-full h-full">
       <div class="text-3xl font-semibold text-gray-700 px-2 flex items-center justify-between mb-1">
           <div class="mb-1">
               최근 검사 내역
