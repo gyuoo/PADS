@@ -28,7 +28,6 @@ public class KafkaConsumerService {
 		dltTopicSuffix = ".dlt"
 	)
 	public void listenLogRequest(ConsumerRecord<String, String> record) throws Exception {
-
 		AnomalyLogCreateRequest anomalyLogRequest = objectMapper.readValue(record.value(),
 			AnomalyLogCreateRequest.class);
 		anomalyService.saveAnomalyLog(anomalyLogRequest);
