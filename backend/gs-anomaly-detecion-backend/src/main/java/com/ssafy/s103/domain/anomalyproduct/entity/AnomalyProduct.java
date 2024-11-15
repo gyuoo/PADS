@@ -1,7 +1,5 @@
 package com.ssafy.s103.domain.anomalyproduct.entity;
 
-import com.ssafy.s103.domain.gsproduct.entity.GsShopProduct;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +9,9 @@ import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
-@Hidden
+@Getter
 @Entity
 @Builder
 @AllArgsConstructor
@@ -44,8 +43,8 @@ public class AnomalyProduct {
     @Column(name = "price")
     private Integer price;
 
-    @Column(name = "disc_price")
-    private Integer discPrice;
+    @Column(name = "discprice")
+    private Integer discprice;
 
     @Column(name = "buy_count")
     private Integer buyCount;
@@ -59,8 +58,8 @@ public class AnomalyProduct {
     @Column(name = "prd_adult_flag")
     private Boolean prdAdultFlag;
 
-    @Column(name = "brd_name")
-    private String brdName;
+    @Column(name = "brand_name")
+    private String brandName;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -78,26 +77,4 @@ public class AnomalyProduct {
     public AnomalyProduct() {
     }
 
-    public static AnomalyProduct gsProductConvertOf(GsShopProduct data, LocalDateTime fetchTime) {
-        fetchTime = fetchTime.withMinute((fetchTime.getMinute() / 5) * 5).withSecond(0).withNano(0);
-
-        return AnomalyProduct.builder()
-            .prdId(Long.parseLong(data.getPrdId()))  // String을 Long으로 변환
-            .viewName(data.getViewName())
-            .cate1Nm(data.getCate1Nm())
-            .cate2Nm(data.getCate2Nm())
-            .cate3Nm(data.getCate3Nm())
-            .supplierCode(data.getSupplierCode())
-            .className(data.getClassName())
-            .price(data.getPrice())  // Integer를 Double로 변환
-            .discPrice(data.getDiscprice())  // Integer를 Double로 변환
-            .buyCount(data.getBuyCount())
-            .reviewScore(data.getReviewScore())  // Integer를 Double로 변환
-            .reviewCount(data.getReviewCount())
-            .prdAdultFlag(data.getPrdAdultFlag())
-            .brdName(data.getBrdName())
-            .createDt(fetchTime)
-            .updateDt(fetchTime)
-            .build();
-    }
 }
