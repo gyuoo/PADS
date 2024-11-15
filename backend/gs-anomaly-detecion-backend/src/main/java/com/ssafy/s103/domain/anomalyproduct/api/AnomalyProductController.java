@@ -8,6 +8,7 @@ import com.ssafy.s103.domain.anomalyproduct.dto.response.AnomalyProductResponse;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -27,16 +28,15 @@ public class AnomalyProductController {
 	@GetMapping
 	public ResponseEntity<List<AnomalyProductResponse>> getAnomalyProducts(
 		@RequestParam(required = false) String viewName,
-		@RequestParam(required = false) List<String> codes,
-		@RequestParam(required = false) Integer totalScore,
-		@PageableDefault(size = 10) Pageable pageable
+		@RequestParam(required = false) String code,
+		@RequestParam(required = false) Integer totalScore
 	) {
 		return ResponseEntity.ok(
-			anomalyProductService.getAnomalyProducts(viewName, codes, totalScore, pageable).getContent());
+			anomalyProductService.getAnomalyProducts(viewName, code, totalScore));
 	}
 
 	@GetMapping("/{prdId}")
-	public ResponseEntity<AnomalyProductDetailResponse> getAnomalyProducts(@PathVariable Long prdId) {
+	public ResponseEntity<AnomalyProductDetailResponse> getAnomalyProductDetail(@PathVariable Long prdId) {
 		return ResponseEntity.ok(anomalyProductService.getAnomalyProductDetail(prdId));
 	}
 
