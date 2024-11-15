@@ -11,13 +11,12 @@ export const getScheduleCount = () => {
         });
 }
 
-export const getAnomalyProducts = (viewName = null, codes = [], totalScore = null, page = 0) => {
+export const getAnomalyProducts = (viewName = null, code = [], totalScore = null, page = 0) => {
     return api.get('/products', {
         params: {
             viewName,
-            codes,
-            totalScore,
-            page
+            code,
+            totalScore
         },
     })
     .then((response) => {

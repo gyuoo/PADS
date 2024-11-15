@@ -30,6 +30,7 @@ import LineChart from './LineChart.vue';
 import { getScheduleCount } from '@/api/dashboard';
 
 const scheduledProductCount = ref(0); 
+
 onMounted(async () => {
     try {
       scheduledProductCount.value = await getScheduleCount();
