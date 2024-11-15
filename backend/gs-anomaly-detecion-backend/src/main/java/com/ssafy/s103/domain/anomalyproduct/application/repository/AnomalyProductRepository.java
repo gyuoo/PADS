@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface AnomalyProductRepository extends JpaRepository<AnomalyProduct, Integer>, AnomalyProductCustomRepository {
+public interface AnomalyProductRepository extends JpaRepository<AnomalyProduct, Long>, AnomalyProductCustomRepository {
     int countByStatus(AnomalyStatus status);
     
     @Query("SELECT new com.ssafy.s103.domain.batch.dto.response.BatchResponse(" +
