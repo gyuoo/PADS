@@ -13,6 +13,7 @@ import lombok.Getter;
 
 @Getter
 @Entity
+@Getter
 @Builder
 @AllArgsConstructor
 @Schema(name = "이상 탐지 상품 데이터")
