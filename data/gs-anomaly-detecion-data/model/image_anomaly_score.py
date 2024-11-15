@@ -3,8 +3,10 @@ import httpx
 import asyncio
 from model.abstract_detector import AbstractDetector
 
+
 class ImageAnomalyDetector(AbstractDetector):
     REQUIRED_COLUMN = ['prd_id']
+    
     def __init__(self):
         super().__init__()
 
@@ -35,6 +37,7 @@ class ImageAnomalyDetector(AbstractDetector):
 
         # 결과를 DataFrame에 추가
         data['C001_score'], data['C001_message'] = zip(*results)
+        data['C000_score'] = data['C001_score']
         return data
 
     def calculate_anomaly(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:

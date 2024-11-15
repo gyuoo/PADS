@@ -35,6 +35,7 @@ class ReviewAnomalyDetector(AbstractDetector):
         # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산), reveiw_anomaly : E001
         data['E001_score'] = (data['convert_review_score'] * data['review_count_score']) * 100
         data['E001_message'] = "TBD"
+        data['E000_score'] = data['E001_score']
 
         data = data.drop(columns=self.TO_REMOVE)
         return data
