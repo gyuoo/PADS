@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Main from '@/views/dashboard/Main.vue'
+import ProductDetailMain from '@/views/product/ProductDetailMain.vue'
 import ProductMain from '@/views/product/ProductMain.vue'
 import RegisterForm from '@/views/authentication/RegisterForm.vue'
 import LoginForm from '@/views/authentication/LoginForm.vue'
