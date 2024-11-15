@@ -1,10 +1,13 @@
 package com.ssafy.s103.gspadsmock.domain.anomalyproduct.batch;
 
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.AnomalyProduct;
-import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.AnomalyProductBatch;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.AnomalyStatus;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductBatchRepository;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductRepository;
+import com.ssafy.s103.gspadsmock.domain.anomalyproduct.service.AnomalyProductService;
+import com.ssafy.s103.gspadsmock.global.service.S3Service;
+import com.ssafy.s103.gspadsmock.global.util.ClassUtil;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javax.sql.DataSource;
@@ -19,10 +22,10 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.Order;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -37,7 +40,11 @@ public class AnomalyProductBatchConfig {
     private final PlatformTransactionManager transactionManager;
     private final DataSource dataSource;
     private final AnomalyProductBatchRepository productBatchRepository;
-    private final AnomalyProductRepository anomalyProductRepository;
+    private final AnomalyProductRepository productRepository;
+    private final S3Service s3Service;
+    private final AnomalyProductService anomalyProductService;
+    @Value("${csv.base-path}")
+    private String filePath;
 
     @Bean
     public Job anomalyProductJob() throws Exception {
@@ -50,7 +57,7 @@ public class AnomalyProductBatchConfig {
     @Bean
     public Step anomalyProductSchduleStep() throws Exception {
         return new StepBuilder("schedule-anomaly-product-step", jobRepository)
-                .<AnomalyProduct, AnomalyProduct>chunk(100, transactionManager)
+                .<AnomalyProduct, AnomalyProduct>chunk(200, transactionManager)
                 .reader(productReadSchedule())
                 .processor(productProcessor())
                 .writer(productWriter())
@@ -63,8 +70,8 @@ public class AnomalyProductBatchConfig {
         parameterValues.put("status", AnomalyStatus.SCHEDULED.name());
         return new JdbcPagingItemReaderBuilder<AnomalyProduct>()
                 .name("jdbcPagingItemReader")
-                .pageSize(100)
-                .fetchSize(100)
+                .pageSize(200)
+                .fetchSize(200)
                 .dataSource(dataSource)
                 .rowMapper(new BeanPropertyRowMapper<>(AnomalyProduct.class))
                 .queryProvider(queryProvider())
@@ -76,7 +83,7 @@ public class AnomalyProductBatchConfig {
     public PagingQueryProvider queryProvider() throws Exception {
         SqlPagingQueryProviderFactoryBean queryProvider = new SqlPagingQueryProviderFactoryBean();
         queryProvider.setDataSource(dataSource);
-        queryProvider.setSelectClause("SELECT prd_id, create_dt, status");
+        queryProvider.setSelectClause("SELECT *");
         queryProvider.setFromClause("FROM anomaly_product ");
         queryProvider.setWhereClause("WHERE status = :status");
         queryProvider.setSortKey("create_dt"); // 페이징을 위해 정렬할 키 설정
@@ -85,12 +92,16 @@ public class AnomalyProductBatchConfig {
 
     @Bean
     public ItemProcessor<AnomalyProduct, AnomalyProduct> productProcessor() {
-        return new AnomalyProductProcessor(productBatchRepository, anomalyProductRepository);
+        return item -> item;
     }
 
     @Bean
     public ItemWriter<AnomalyProduct> productWriter() {
-        return chunk -> {
-        };
+        String[] fields = ClassUtil.getClassField(new AnomalyProduct(), false);
+        String[] snakeFields = ClassUtil.getClassField(new AnomalyProduct(), true);
+
+        log.info("{}", Arrays.toString(fields));
+        return new AnomalyProductWriter(productBatchRepository, productRepository, anomalyProductService, s3Service,
+                filePath, fields, snakeFields);
     }
 }

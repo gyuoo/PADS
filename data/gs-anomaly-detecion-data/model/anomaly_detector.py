@@ -1,16 +1,19 @@
 import pandas as pd
-from model import DiscountAnomalyDetector, PriceAnomalyDetector, ReviewAnomalyDetector
+import model
 
 
 class AnomalyDetector:
-    def __init__(self):
+    def __init__(self, model_initializer=None):
         """
         AnomalyDetector 초기화 메서드. 각 하위 이상치 탐지 클래스를 리스트로 관리합니다.
         """
         self.detectors = [
-            DiscountAnomalyDetector(),
-            PriceAnomalyDetector(),
-            ReviewAnomalyDetector()
+            model.DiscountAnomalyDetector(),
+            model.PriceAnomalyDetector(),
+            model.ReviewAnomalyDetector(),
+            model.ImageAnomalyDetector(),
+            model.CategoryAnomalyDetector(model_initializer),
+            model.OverallAnomalyScore()
         ]
 
     def process(self, data:pd.DataFrame):
