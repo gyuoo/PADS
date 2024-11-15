@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref, onMounted } from 'vue';
+import { defineProps, ref, watch } from 'vue';
 
 const props = defineProps<{
   label: string;
@@ -16,9 +16,14 @@ const props = defineProps<{
 const animatedCount = ref(0);
 
 const animateCount = (targetValue: number) => {
+  if (targetValue <= 0) {
+    animatedCount.value = targetValue;
+    return;
+  }
+
   const duration = 500;
   const startTime = performance.now();
-  const initialCount = 0;
+  const initialCount = animatedCount.value;
 
   const updateCount = (currentTime: number) => {
     const elapsed = currentTime - startTime;
@@ -33,9 +38,13 @@ const animateCount = (targetValue: number) => {
   requestAnimationFrame(updateCount);
 };
 
-onMounted(() => {
-  animateCount(props.count);
-});
+watch(
+  () => props.count,
+  (newCount) => {
+    animateCount(newCount);
+  },
+  { immediate: true } 
+);
 </script>
 
 <style scoped></style>
