@@ -99,7 +99,7 @@ const goToDetail = (prdId: number) => {
 const columns = [
   { field: 'viewName', label: '상품명', class: 'w-40' },
   { field: 'anomalyCodes', label: '이상치', class: 'w-40' },
-  { field: 'updatedAt', label: '업데이트 시간', class: 'w-36' },
+  { field: 'createdAt', label: '업데이트 시간', class: 'w-36' },
   { field: 'totalScore', label: '스코어', class: 'w-32' },
 ];
 
