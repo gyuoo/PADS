@@ -26,7 +26,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="product in sortedProducts" :key="product.prdId" class="hover:bg-gray-50">
+          <tr v-for="product in sortedProducts" :key="product.prdId" class="hover:bg-gray-50 cursor-pointer"
+          @click="goToDetail(product.prdId)">
             <td class="px-4 py-2 text-sm text-gray-700">{{ product.viewName }}</td>
             <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap">
               <div class="flex space-x-2 items-center">
@@ -71,6 +72,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router'
 import { getAnomalyProducts } from '@/api/dashboard';
 import { Badge } from '@/components/ui/badge';
 
@@ -82,6 +84,7 @@ interface AnomalyProduct {
   totalScore: number;
 }
 
+const router = useRouter()
 const anormalProducts = ref<AnomalyProduct[]>([]);
 const today = ref<string>('');
 const sortColumn = ref<string>('viewName');
@@ -89,6 +92,9 @@ const sortOrder = ref<'asc' | 'desc'>('asc');
 const currentPage = ref<number>(1);
 const isLoading = ref<boolean>(false);
 
+const goToDetail = (prdId: number) => {
+  router.push({ name: 'ProductDetail', params: { id: prdId } })
+}
 
 const columns = [
   { field: 'viewName', label: '상품명', class: 'w-40' },
