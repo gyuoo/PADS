@@ -4,9 +4,9 @@
         <div class="relative">
             <div class="text-gray-700 mb-2 text-left">이상치 총 스코어</div>
             <div class="w-full bg-gray-200 rounded-full h-5 overflow-hidden">
-                <div :style="{ width: score + '%', backgroundColor: scoreColor }"
+                <div :style="{ width: productData.totalScore + '%', backgroundColor: scoreColor }"
                     class="h-full flex items-center justify-center text-white text-xs font-medium transition-all duration-500 ease-in-out">
-                    {{ score }}%
+                    {{ productData.totalScore }}%
                 </div>
             </div>
         </div>
@@ -14,19 +14,29 @@
         <div class="w-full mt-8 flex justify-center">
             <canvas id="radarChart" style="max-width: 400px; max-height: 400px;"></canvas>
         </div>
-
         <div class="w-full mt-8">
             <table class="w-full text-left text-sm border-collapse">
+                <thead>
+                    <tr class="bg-gray-100 text-center">
+                        <th class="px-4 py-2">이상</th>
+                        <th class="px-4 py-2">세부</th>
+                        <th class="px-4 py-2">점수</th>
+                        <th class="px-4 py-2">메시지</th>
+                    </tr>
+                </thead>
                 <tbody>
-                    <tr v-for="(categoryScore, index) in categoryScores" :key="index" class="hover:bg-gray-100">
-                        <td class="px-4 py-3 text-gray-700 font-medium w-20"> {{ categoryScore.category }}</td>
-                        <td :class="categoryScore.score >= 80 ? 'text-red-500' : 'text-gray-700'"
-                            class="px-4 py-3 font-medium w-8">{{ categoryScore.score }}</td>
-                        <td v-if="categoryScore.category === '카테고리 이상'" class="text-gray-700 w-40">
-                            추천하는 카테고리는 <span class="text-green-600">신선/가공식품</span> 입니다
+                    <tr v-for="(anomaly, index) in filteredAnomalies" :key="index" class="hover:bg-gray-100">
+                        <td class="px-4 py-2 text-gray-700 font-medium w-24">
+                            {{ getCategoryName(anomaly.code) }}
                         </td>
-                        <td v-else class="text-gray-700 text-center w-40">
-                            -
+                        <td class="px-4 py-2 text-gray-700 font-medium w-20">
+                            {{ getSubCategoryText(anomaly.code, anomaly.subCode) }}
+                        </td>
+                        <!-- 점수 색상 동적으로 변경 -->
+                        <td :class="anomaly.score > 0 ? 'text-red-500' : 'text-gray-700'"
+                            class="px-4 py-2 font-medium w-20 text-center">{{ anomaly.score }} %</td>
+                        <td class="px-4 py-2 text-gray-700">
+                            {{ anomaly.message }}
                         </td>
                     </tr>
                 </tbody>
@@ -37,27 +47,81 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'; // 라우트 훅
 import { Chart, RadarController, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js'
+import { getAnomalyProductDetail } from '@/api/product'
 
 Chart.register(RadarController, RadialLinearScale, PointElement, LineElement, Filler, Tooltip)
 
-const score = ref(75)
+type AnomalyDetail = {
+    code: string;
+    subCode: string;
+    score: number;
+    message: string | null;
+};
 
-const categoryScores = ref([
-    { category: '할인이상', score: 20 },
-    { category: '이미지이상', score: 10 },
-    { category: '가격이상', score: 15 },
-    { category: '리뷰이상', score: 25 },
-    { category: '카테고리 이상', score: 95 },
-])
+const route = useRoute(); 
+
+const productData = ref({
+    anomalyLogDetails: [] as AnomalyDetail[],
+    totalScore: 0
+});
+
+const fetchProductData = async (prdId: number) => {
+    try {
+        productData.value = await getAnomalyProductDetail(prdId);
+    } catch (error) {
+        console.error("상품 데이터를 불러오는 데 실패했습니다:", error);
+    }
+};
 
 const scoreColor = computed(() => {
-    if (score.value <= 30) return '#4CAF50'
-    if (score.value <= 60) return '#FFA500'
-    return '#FF0000'
-})
+    if (productData.value.totalScore <= 30) return '#4CAF50';
+    if (productData.value.totalScore <= 60) return '#FFA500';
+    return '#FF0000';
+});
 
-onMounted(() => {
+const radarData = computed(() => {
+    const categories = ['A', 'B', 'C', 'D', 'E'];
+    const scores = categories.map(category => {
+        const anomaly = productData.value.anomalyLogDetails.find(
+            log => log.code === category && log.subCode === '000'
+        );
+        return anomaly ? anomaly.score : 0;
+    });
+    return { categories, scores };
+});
+
+const filteredAnomalies = computed(() => {
+    return productData.value.anomalyLogDetails.filter(log => log.code !== 't' && log.subCode !== '000');
+});
+
+const getCategoryName = (code: string): string => {
+    const categoryMap: Record<string, string> = {
+        'A': '카테고리',
+        'B': '할인',
+        'C': '이미지',
+        'D': '가격',
+        'E': '리뷰'
+    };
+
+    return categoryMap[code] || '알 수 없음';
+};
+
+const getSubCategoryText = (code: string, subCode: string): string => {
+    if (code === 'A') {
+        const subCategoryMapping: Record<'001' | '002' | '003' | '004', string> = {
+            '001': '대분류',
+            '002': '중분류',
+            '003': '소분류',
+            '004': '클래스'
+        };
+        return subCategoryMapping[subCode as '001' | '002' | '003' | '004'] || subCode;
+    }
+    return '-'; 
+};
+
+const renderRadarChart = () => {
     const canvas = document.getElementById('radarChart') as HTMLCanvasElement;
     const ctx = canvas?.getContext('2d');
 
@@ -65,18 +129,20 @@ onMounted(() => {
         new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: categoryScores.value.map(item => item.category),
-                datasets: [{
-                    label: '이상치 점수',
-                    data: categoryScores.value.map(item => item.score),
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 2
-                }]
+                labels: radarData.value.categories.map(category => getCategoryName(category)),
+                datasets: [
+                    {
+                        label: '이상치 점수',
+                        data: radarData.value.scores,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                    },
+                ],
             },
             options: {
                 responsive: true,
@@ -86,14 +152,19 @@ onMounted(() => {
                     r: {
                         angleLines: { display: true },
                         suggestedMin: 0,
-                        suggestedMax: 100
-                    }
-                }
-            }
+                        suggestedMax: 100,
+                    },
+                },
+            },
         });
-    } 
+    }
+};
+
+onMounted(async () => {
+    const prdId = Number(route.params.id);
+    await fetchProductData(prdId); 
+    renderRadarChart(); 
 });
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
