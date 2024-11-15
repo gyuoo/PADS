@@ -27,9 +27,9 @@ public class AnomalyTrakingService {
 		zSetOps.add(code, productId, currentTime);
 	}
 
-	public void filterAndSaveAnomalyCategory(Map<String, String> report, Long productId) {
+	public void filterAndSaveAnomalyCategory(Map<String, Object> report, Long productId) {
 		report.forEach((key, value) -> {
-			if (key.endsWith(SCORE_SUFFIX) && Integer.valueOf(value) >= ANOMALY_SCORE_THRESHOLD) {
+			if (key.endsWith(SCORE_SUFFIX) && Integer.valueOf((String)value) >= ANOMALY_SCORE_THRESHOLD) {
 				String code = key.substring(0, 1);
 				saveAnomalyCategory(code, productId);
 			}

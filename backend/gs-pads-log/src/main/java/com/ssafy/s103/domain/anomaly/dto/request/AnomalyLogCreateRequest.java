@@ -6,37 +6,40 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.s103.domain.anomaly.entity.AnomalyLog;
 import com.ssafy.s103.domain.anomaly.entity.AnomalyLogDetail;
 
 public record AnomalyLogCreateRequest(
 	@JsonProperty("prd_id") Long prdId,
-	@JsonProperty("total_score") Integer totalScore,
-	@JsonProperty("report") Map<String, String> report
+	@JsonProperty("report") String report
 ) {
 
 	private static final String SCORE_SUFFIX = "_score";
 	private static final String MESSAGE_SUFFIX = "_message";
 
-	public AnomalyLog toAnomalyLog() {
-		return AnomalyLog.builder()
-			.prdId(prdId)
-			.totalScore(totalScore)
-			.build();
+	public Map<String, Object> parseReport(ObjectMapper objectMapper) {
+		try {
+			return objectMapper.readValue(report, Map.class);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to parse report JSON", e);
+		}
 	}
 
-	public List<AnomalyLogDetail> toAnomalyLogDetailList(AnomalyLog anomalyLog) {
+	public List<AnomalyLogDetail> toAnomalyLogDetailList(AnomalyLog anomalyLog, ObjectMapper objectMapper) {
+		Map<String, Object> parsedReport = parseReport(objectMapper);
+
 		List<AnomalyLogDetail> anomalyLogDetailList = new ArrayList<>();
 		Map<String, Integer> scores = new HashMap<>();
 		Map<String, String> messages = new HashMap<>();
 
-		report.forEach((key, value) -> {
+		parsedReport.forEach((key, value) -> {
 			if (key.endsWith(SCORE_SUFFIX)) {
 				String code = key.substring(0, key.lastIndexOf(SCORE_SUFFIX));
-				scores.put(code, Integer.valueOf(value));
+				scores.put(code, Double.valueOf(value.toString()).intValue());
 			} else if (key.endsWith(MESSAGE_SUFFIX)) {
 				String code = key.substring(0, key.lastIndexOf(MESSAGE_SUFFIX));
-				messages.put(code, value);
+				messages.put(code, value.toString());
 			}
 		});
 
@@ -60,6 +63,19 @@ public record AnomalyLogCreateRequest(
 			.subCode(subCode)
 			.score(score)
 			.message(message)
+			.build();
+	}
+
+	public AnomalyLog toAnomalyLog(ObjectMapper objectMapper) {
+		Map<String, Object> parsedReport = parseReport(objectMapper);
+		Integer totalScore = null;
+		if (parsedReport.containsKey("total_score")) {
+			Object totalScoreObj = parsedReport.get("total_score");
+			totalScore = ((Number)totalScoreObj).intValue();
+		}
+		return AnomalyLog.builder()
+			.prdId(prdId)
+			.totalScore(totalScore)
 			.build();
 	}
 }
