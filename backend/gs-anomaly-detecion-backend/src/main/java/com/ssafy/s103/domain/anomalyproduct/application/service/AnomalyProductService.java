@@ -25,6 +25,8 @@ public class AnomalyProductService {
 	private final AnomalyLogService anomalyLogService;
 	private final AnomalyProductRepository anomalyProductRepository;
 
+	public long getCount() { return anomalyProductRepository.count(); }
+
 	public int getScheduledCount() {
 		return anomalyProductRepository.countByStatus(AnomalyStatus.SCHEDULED);
 	}

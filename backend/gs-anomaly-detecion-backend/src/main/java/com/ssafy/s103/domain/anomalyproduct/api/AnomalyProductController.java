@@ -37,7 +37,12 @@ public class AnomalyProductController {
 
 	@GetMapping("/{prdId}")
 	public ResponseEntity<AnomalyProductDetailResponse> getAnomalyProductDetail(@PathVariable Long prdId) {
-		return ResponseEntity.ok(anomalyProductService.getAnomalyProductDetail(prdId));
+		return ResponseEntity.ok(anomalyProductService.getAnomalyProductDetail(Long.valueOf(prdId)));
+	}
+
+	@GetMapping("/count")
+	public ResponseEntity<Long> getCount() {
+		return ResponseEntity.ok(anomalyProductService.getCount());
 	}
 
 	@GetMapping("/scheduled-count")
