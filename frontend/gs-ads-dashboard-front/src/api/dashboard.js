@@ -1,5 +1,16 @@
 import api from "@/api/api";
 
+export const getCount = () => {
+    return api.get(`/products/count`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            console.error("전체 상품의 개수를 불러올 수 없습니다.", error);
+            throw error;
+        });
+}
+
 export const getScheduleCount = () => {
     return api.get(`/products/scheduled-count`)
         .then((response) => {
