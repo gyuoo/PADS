@@ -46,7 +46,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="product in sortedProducts" :key="product.prdId" class="hover:bg-gray-50"
+          <tr v-for="product in sortedProducts" :key="product.prdId" class="hover:bg-gray-50 cursor-pointer"
             @click="goToDetail(product.prdId)">
             <td class="px-4 py-2 text-sm text-gray-700">{{ product.viewName }}</td>
             <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap">
@@ -88,9 +88,6 @@
     </div>
   </div>
 </template>
-
-
-
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { getAnomalyProducts } from '@/api/dashboard';
@@ -110,7 +107,6 @@ const anormalProducts = ref<AnomalyProduct[]>([]);
 const today = ref<string>('');
 const sortColumn = ref<string>('viewName');
 const sortOrder = ref<'asc' | 'desc'>('asc');
-const currentPage = ref<number>(1);
 const isLoading = ref<boolean>(false);
 const filters = ref({
   viewName: '',
@@ -159,7 +155,6 @@ async function fetchAnomalyProducts() {
       filters.value.viewName || null,
       filters.value.code || null,
       filters.value.totalScore || null,
-      currentPage.value - 1
     );
   } catch (error) {
     console.error("이상 상품 데이터를 불러오는 중 오류가 발생했습니다.", error);
@@ -169,7 +164,6 @@ async function fetchAnomalyProducts() {
 }
 
 function applyFilters() {
-  currentPage.value = 1;
   fetchAnomalyProducts();
 }
 

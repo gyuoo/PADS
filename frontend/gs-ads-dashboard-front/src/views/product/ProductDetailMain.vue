@@ -9,7 +9,6 @@
   </template>
   
   <script setup lang="ts">
-  import ProductList from '@/components/product/ProductList.vue'
   import Layout from '@/components/layout/Layout.vue'
 import ProductDetail from '../../components/product/ProductDetail.vue';
   
