@@ -1,6 +1,5 @@
 package com.ssafy.s103.domain.anomalylog.entity;
 
-import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,7 +11,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Hidden
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

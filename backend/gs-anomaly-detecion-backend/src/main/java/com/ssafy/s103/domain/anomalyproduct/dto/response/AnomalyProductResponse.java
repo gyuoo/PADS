@@ -6,14 +6,14 @@ import java.util.List;
 public record AnomalyProductResponse(
 	Long prdId,
 	String viewName,
-	LocalDateTime createdAt,
+	String createdAt,
 	Integer totalScore,
 	List<String> anomalyCodes
 ) {
 	public static AnomalyProductResponse from(
 		Long productId,
 		String viewName,
-		LocalDateTime createdAt,
+		String createdAt,
 		Integer totalScore,
 		List<String> anomalyCodes
 	) {
