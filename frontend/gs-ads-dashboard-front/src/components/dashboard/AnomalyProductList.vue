@@ -129,7 +129,7 @@ onMounted(() => {
 async function fetchAnomalyProducts() {
   try {
     isLoading.value = true;
-    anormalProducts.value = await getAnomalyProducts(null, [], 50, currentPage.value - 1);
+    anormalProducts.value = await getAnomalyProducts(null, [], 80, currentPage.value - 1);
   } catch (error) {
     console.error("이상 상품 데이터를 불러오는 중 오류가 발생했습니다.", error);
   } finally {
@@ -164,10 +164,5 @@ function getSortIcon(column: string) {
       : 'https://velog.velcdn.com/images/gangintheremark/post/09a348f3-b576-404a-803c-dc25b31a9be0/image.png';
   }
   return 'https://velog.velcdn.com/images/gangintheremark/post/b481b151-bfee-406f-9d33-9de897efed9b/image.png';
-}
-
-function changePage(page: number) {
-  currentPage.value = page;
-  fetchAnomalyProducts();
 }
 </script>
