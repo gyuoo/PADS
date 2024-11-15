@@ -1,42 +1,38 @@
 <template>
   <div class="bg-white rounded-2xl shadow-lg p-6 w-full h-full">
     <div class="mb-10 flex space-x-4">
-      <input
-        v-model="filters.viewName"
-        type="text"
-        placeholder="상품명으로 검색"
-        class="border rounded-lg p-2 w-1/4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-      />
-      <select
-        v-model="filters.code"
-        class="border rounded-lg p-2 w-1/4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-      >
+      <input v-model="filters.viewName" type="text" placeholder="상품명으로 검색"
+        class="border rounded-lg p-2 w-1/4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
+      <select v-model="filters.code"
+        class="border rounded-lg p-2 w-1/4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200">
         <option value="">이상치 코드 선택</option>
         <option v-for="(desc, code) in anomalyDescriptions" :key="code" :value="code">
           {{ desc }}
         </option>
       </select>
-      <input
-        v-model.number="filters.totalScore"
-        type="number"
-        placeholder="최소 스코어"
-        class="border rounded-lg p-2 w-1/4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200"
-      />
-      <button
-        @click="applyFilters"
-        class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 focus:outline-none"
-      >
+      <input v-model.number="filters.totalScore" type="number" placeholder="최소 스코어"
+        class="border rounded-lg p-2 w-1/4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-200" />
+      <button @click="applyFilters"
+        class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 focus:outline-none">
         필터 적용
       </button>
-      <button
-        @click="resetFilters"
-        class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-400 focus:outline-none"
-      >
+      <button @click="resetFilters"
+        class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm hover:bg-gray-400 focus:outline-none">
         필터 초기화
       </button>
     </div>
 
-    <div class="overflow-x-auto">
+    <!-- 로딩 스피너 -->
+    <div v-if="isLoading" class="flex justify-center items-center h-[550px]">
+      <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+    </div>
+
+    <!-- 데이터 테이블 -->
+    <div v-else class="overflow-x-auto h-[550px] overflow-y-auto">
       <table class="min-w-full rounded-lg">
         <thead>
           <tr>
@@ -50,7 +46,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="product in sortedProducts" :key="product.prdId" class="hover:bg-gray-50" @click="goToDetail(product.prdId)">
+          <tr v-for="product in sortedProducts" :key="product.prdId" class="hover:bg-gray-50"
+            @click="goToDetail(product.prdId)">
             <td class="px-4 py-2 text-sm text-gray-700">{{ product.viewName }}</td>
             <td class="px-4 py-2 text-sm text-gray-700 whitespace-nowrap">
               <div class="flex space-x-2 items-center">
@@ -78,9 +75,9 @@
                 <span class="w-12 text-sm font-semibold text-gray-700">{{ product.totalScore }} 점</span>
                 <div class="w-2/3 bg-gray-200 rounded-full h-3">
                   <div class="h-3 rounded-full" :class="{
-                    'bg-orange-600': product.totalScore >= 50 && product.totalScore < 70,
-                    'bg-red-600': product.totalScore >= 70 && product.totalScore < 90,
-                    'bg-red-700': product.totalScore >= 90
+                    'bg-green-600': product.totalScore >= 0 && product.totalScore < 40,
+                    'bg-orange-600': product.totalScore >= 40 && product.totalScore < 60,
+                    'bg-red-700': product.totalScore >= 60
                   }" :style="{ width: product.totalScore + '%' }"></div>
                 </div>
               </div>
@@ -89,33 +86,15 @@
         </tbody>
       </table>
     </div>
-    <div class="mt-4 overflow-x-auto">
-      <Pagination v-slot="{ page }" :total="totalItems" :page-size="itemsPerPage" @page-change="changePage">
-        <PaginationList v-slot="{ items }" class="flex items-center gap-1 justify-center whitespace-nowrap">
-          <PaginationFirst />
-          <PaginationPrev />
-          <template v-for="(item, index) in items">
-            <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-              <Button class="w-10 h-10 p-0" :variant="item.value === currentPage ? 'default' : 'outline'">
-                {{ item.value }}
-              </Button>
-            </PaginationListItem>
-            <PaginationEllipsis v-else :key="item.type" :index="index" />
-          </template>
-          <PaginationNext />
-          <PaginationLast />
-        </PaginationList>
-      </Pagination>
-    </div>
   </div>
 </template>
+
+
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { getAnomalyProducts } from '@/api/dashboard';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Pagination, PaginationEllipsis, PaginationFirst, PaginationLast, PaginationList, PaginationListItem, PaginationNext, PaginationPrev } from '@/components/ui/pagination';
 import { useRouter } from 'vue-router'
 
 interface AnomalyProduct {
@@ -128,12 +107,11 @@ interface AnomalyProduct {
 
 const router = useRouter()
 const anormalProducts = ref<AnomalyProduct[]>([]);
-const totalItems = ref<number>(0);
 const today = ref<string>('');
 const sortColumn = ref<string>('viewName');
 const sortOrder = ref<'asc' | 'desc'>('asc');
 const currentPage = ref<number>(1);
-const itemsPerPage = 10;
+const isLoading = ref<boolean>(false);
 const filters = ref({
   viewName: '',
   code: '',
@@ -176,14 +154,17 @@ onMounted(() => {
 
 async function fetchAnomalyProducts() {
   try {
+    isLoading.value = true;
     anormalProducts.value = await getAnomalyProducts(
       filters.value.viewName || null,
-      filters.value.code ? [filters.value.code] : [],
+      filters.value.code || null,
       filters.value.totalScore || null,
       currentPage.value - 1
     );
   } catch (error) {
     console.error("이상 상품 데이터를 불러오는 중 오류가 발생했습니다.", error);
+  } finally {
+    isLoading.value = false;
   }
 }
 

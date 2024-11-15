@@ -5,7 +5,14 @@
       <Badge class="bg-blue-100 text-blue-800 text-base">총 {{ anormalProducts.length }} 건</Badge>
     </div>
     <div class="text-sm text-gray-500 mb-5 px-2">{{ today }}</div>
-    <div class="overflow-x-auto">
+    <div v-if="isLoading" class="flex justify-center items-center h-[500px]">
+      <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+        viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+    </div>
+    <div class="overflow-x-auto h-[500px] overflow-y-auto">
       <table class="min-w-full rounded-lg">
         <thead>
           <tr>
@@ -58,24 +65,7 @@
         </tbody>
       </table>
     </div>
-    <div class="mt-4 overflow-x-auto">
-      <Pagination v-slot="{ page }" :total="totalItems" :page-size="itemsPerPage" @page-change="changePage">
-        <PaginationList v-slot="{ items }" class="flex items-center gap-1 justify-center whitespace-nowrap">
-          <PaginationFirst />
-          <PaginationPrev />
-          <template v-for="(item, index) in items">
-            <PaginationListItem v-if="item.type === 'page'" :key="index" :value="item.value" as-child>
-              <Button class="w-10 h-10 p-0" :variant="item.value === currentPage ? 'default' : 'outline'">
-                {{ item.value }}
-              </Button>
-            </PaginationListItem>
-            <PaginationEllipsis v-else :key="item.type" :index="index" />
-          </template>
-          <PaginationNext />
-          <PaginationLast />
-        </PaginationList>
-      </Pagination>
-    </div>
+
   </div>
 </template>
 
@@ -83,8 +73,6 @@
 import { ref, computed, onMounted } from 'vue';
 import { getAnomalyProducts } from '@/api/dashboard';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Pagination, PaginationEllipsis, PaginationFirst, PaginationLast, PaginationList, PaginationListItem, PaginationNext, PaginationPrev } from '@/components/ui/pagination';
 
 interface AnomalyProduct {
   prdId: number;
@@ -95,12 +83,12 @@ interface AnomalyProduct {
 }
 
 const anormalProducts = ref<AnomalyProduct[]>([]);
-const totalItems = ref<number>(0);
 const today = ref<string>('');
 const sortColumn = ref<string>('viewName');
 const sortOrder = ref<'asc' | 'desc'>('asc');
 const currentPage = ref<number>(1);
-const itemsPerPage = 10;
+const isLoading = ref<boolean>(false);
+
 
 const columns = [
   { field: 'viewName', label: '상품명', class: 'w-40' },
@@ -134,9 +122,12 @@ onMounted(() => {
 
 async function fetchAnomalyProducts() {
   try {
+    isLoading.value = true;
     anormalProducts.value = await getAnomalyProducts(null, [], 50, currentPage.value - 1);
   } catch (error) {
     console.error("이상 상품 데이터를 불러오는 중 오류가 발생했습니다.", error);
+  } finally {
+    isLoading.value = false;
   }
 }
 
