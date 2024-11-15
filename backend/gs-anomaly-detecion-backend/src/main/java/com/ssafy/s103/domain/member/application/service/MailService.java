@@ -2,11 +2,14 @@ package com.ssafy.s103.domain.member.application.service;
 
 import static com.ssafy.s103.global.exception.ErrorCode.EMAIL_SEND_ERROR;
 
+import com.ssafy.s103.domain.member.application.repository.MemberRepository;
+import com.ssafy.s103.domain.member.entity.Member;
 import com.ssafy.s103.global.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
@@ -18,16 +21,23 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MailService {
 
+    private final MemberRepository memberRepository;
     private final JavaMailSender javaMailSender;
     private final RedisUtil redisUtil;
 
     @Value("${spring.mail.username}")
     private String senderEmail;
 
+    public boolean isPresent(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+        return member.isPresent();
+    }
+
     public void sendMail(String email) {
         if (redisUtil.existData(email)) {
             redisUtil.deleteData(email);
         }
+
         MimeMessage message = createMail(email);
         try {
             javaMailSender.send(message); // 메일 발송
