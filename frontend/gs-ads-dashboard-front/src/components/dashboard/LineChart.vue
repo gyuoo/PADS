@@ -7,12 +7,14 @@
           </div>
       </div>
         <div class="flex-1 overflow-hidden">
-            <Line :data="chartData" :options="chartOptions" />
+            <Line v-if="chartDataReady" :data="chartData" :options="chartOptions" />
+            <div v-else class="text-center text-gray-500">데이터를 불러오는 중...</div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { Line } from 'vue-chartjs';
 import {
     Chart as ChartJS,
@@ -24,29 +26,60 @@ import {
     LinearScale,
     PointElement,
 } from 'chart.js';
+import { getMonthlyAnomalyCount } from '@/api/dashboard'; // API 호출 파일 경로에 맞게 수정
 
 ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
 
-const chartData = {
+const chartData = ref({
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
     datasets: [
         {
             label: 'total',
-            data: [165, 159, 180, 181, 156, 155, 140, 130, 140, 130, 123, 174],
+            data: [] as (number | null)[],  // data는 number 또는 null을 가질 수 있게 타입 지정
             fill: false,
             borderColor: 'rgb(75, 192, 192)',
             tension: 0.1,
         },
     ],
-};
-
+});
+const chartDataReady = ref(false);
 const chartOptions = {
     responsive: true,
     maintainAspectRatio: false, 
     plugins: {
         legend: {
-            display: false, 
+            display: false,
         },
     },
 };
+
+const getCurrentMonth = () => {
+    const date = new Date();
+    return date.getMonth() + 1; 
+};
+
+const fetchChartData = async () => {
+    try {
+        const data = await getMonthlyAnomalyCount(); 
+        const monthlyData = Array(12).fill(null);  
+        
+        const currentMonth = getCurrentMonth();
+
+        Object.entries(data).forEach(([month, count]) => {
+            const index = parseInt(month, 10) - 1; 
+            if (index + 1 <= currentMonth) {  
+                monthlyData[index] = count;
+            } else {
+                monthlyData[index] = null;  
+            }
+        });
+
+        chartData.value.datasets[0].data = monthlyData;
+        chartDataReady.value = true;
+    } catch (error) {
+        console.error("차트 데이터를 가져오는 데 실패했습니다.", error);
+    }
+};
+
+onMounted(fetchChartData);
 </script>
