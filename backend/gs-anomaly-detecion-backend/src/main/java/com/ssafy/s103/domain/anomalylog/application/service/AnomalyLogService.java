@@ -1,6 +1,8 @@
 package com.ssafy.s103.domain.anomalylog.application.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -25,5 +27,30 @@ public class AnomalyLogService {
 
 	public List<AnomalyLogDetail> getAnomalyLogDetails(AnomalyLog anomalyLog) {
 		return anomalyLogDetailRepository.findByAnomalyLog(anomalyLog);
+	}
+
+	public Map<Integer, Long> getMonthlyAnomalyCount() {
+		List<Object[]> results = anomalyLogRepository.countMonthAnomaly();
+
+		Map<Integer, Long> monthlyCounts = new HashMap<>();
+		for (Object[] result : results) {
+			Integer month = (Integer) result[0];
+			Long count = (Long) result[1];
+			monthlyCounts.put(month, count);
+		}
+		for (int i = 1; i <= 12; i++) {
+			monthlyCounts.putIfAbsent(i, 0L);
+		}
+		return monthlyCounts;
+	}
+
+	public Map<String, Long> getCountsByCodes() {
+		String[] codes = {"A", "B", "C", "D", "E"};
+		Map<String, Long> countByCode = new HashMap<>();
+		for (String code : codes) {
+			long count = anomalyLogDetailRepository.countByCodeAndSubCode(code);
+			countByCode.put(code, count);
+		}
+		return countByCode;
 	}
 }

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Main from '@/views/dashboard/Main.vue'
+import ProductDetailMain from '@/views/product/ProductDetailMain.vue'
 import ProductMain from '@/views/product/ProductMain.vue'
 import RegisterForm from '@/views/authentication/RegisterForm.vue'
 import LoginForm from '@/views/authentication/LoginForm.vue'
@@ -25,6 +26,11 @@ const routes = [
     name: 'Login',
     component: LoginForm,
   },
+  {
+    path: '/product/:id',
+    name: 'ProductDetail',
+    component: ProductDetailMain,
+  }
 ]
 
 // 라우터 생성

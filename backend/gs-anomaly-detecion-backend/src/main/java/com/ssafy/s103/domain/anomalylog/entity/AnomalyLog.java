@@ -15,7 +15,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Hidden
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
