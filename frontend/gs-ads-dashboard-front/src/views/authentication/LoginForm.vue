@@ -2,7 +2,13 @@
   <div class="login-container">
     <form @submit.prevent="handleLogin">
       <div class="form-group">
-        <input type="email" v-model="email" id="email" placeholder="이메일" required />
+        <input
+          type="email"
+          v-model="email"
+          id="email"
+          placeholder="이메일"
+          required
+        />
       </div>
       <div class="form-group">
         <input type="password" v-model="password" id="password" placeholder="비밀번호" required />
@@ -12,7 +18,8 @@
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </transition>
       <p>
-        아직 계정이 없으신가요? <router-link to="/register" class="register-link">회원가입</router-link>
+        아직 계정이 없으신가요?
+        <router-link to="/register" class="register-link">회원가입</router-link>
       </p>
     </form>
   </div>
