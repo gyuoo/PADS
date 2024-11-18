@@ -1,13 +1,13 @@
 <template>
   <div class="bg-white rounded-2xl shadow-lg p-4 w-full h-full pb-9">
-    <div class="justify-between items-center mb-4">
+    <div class="justify-between items-center mb-10">
       <div class="text-xl font-semibold text-gray-800 mb-1">이상치 유형별 발생 횟수</div>
       <div class="flex items-center text-gray-500 text-sm">
         <span>이상치 점수가 20 이상</span>
       </div>
     </div>
     <DonutChart :category="'total'" :data="chartData" :colors="colors" />
-    <div class="flex flex-wrap mt-4">
+    <div class="flex flex-wrap my-4">
       <div v-for="(item, index) in chartData" :key="item.name" class="flex items-center mr-4 mb-2">
         <span :style="{ backgroundColor: colors[index] }" class="w-3 h-3 rounded-full inline-block mr-2"></span>
         <span class="text-sm text-gray-700">{{ item.name }}</span>
@@ -19,8 +19,6 @@
 import { ref, onMounted } from 'vue';
 import { DonutChart } from '../ui/chart-donut';
 import { getCountsByCodes } from '@/api/dashboard'
-
-const today = new Date().toISOString().slice(0, 10) + ' 00:00';
 
 const chartData = ref([
   { name: '카테고리 이상', total: 0 },

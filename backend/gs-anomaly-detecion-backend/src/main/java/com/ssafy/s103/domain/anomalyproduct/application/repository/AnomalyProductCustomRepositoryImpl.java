@@ -1,8 +1,13 @@
 package com.ssafy.s103.domain.anomalyproduct.application.repository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import com.ssafy.s103.domain.anomalyproduct.dto.response.AnomalyProductResponse;
@@ -17,7 +22,7 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 	private EntityManager entityManager;
 
 	@Override
-	public List<AnomalyProductResponse> findAnomalyProducts(String viewName, String code, Integer totalScore) {
+	public Page<AnomalyProductResponse> findAnomalyProducts(String viewName, String code, Integer totalScore, Pageable pageable) {
 		StringBuilder sql = new StringBuilder(
 			"""
 				SELECT DISTINCT 
@@ -35,6 +40,7 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 				"""
 		);
 
+		// 동적 필터링
 		if (viewName != null && !viewName.isEmpty()) {
 			sql.append(" AND LOWER(ap.view_name) LIKE LOWER(CONCAT('%', :viewName, '%'))");
 		}
@@ -44,6 +50,8 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 		if (totalScore != null) {
 			sql.append(" AND al.total_score >= :totalScore");
 		}
+
+		sql.append(" ORDER BY ap.prd_id");
 
 		var query = entityManager.createNativeQuery(sql.toString());
 
@@ -57,32 +65,40 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 			query.setParameter("totalScore", totalScore);
 		}
 
+		// 쿼리 결과 가져오기
 		List<Object[]> results = query.getResultList();
 
-		return results.stream()
+		// 상품 단위로 그룹화
+		Map<Long, AnomalyProductResponse> groupedResults = results.stream()
 			.collect(Collectors.groupingBy(
-				result -> (Long)result[0],
+				result -> (Long) result[0],
 				Collectors.collectingAndThen(
 					Collectors.toList(),
-					groupedResults -> {
-						Object[] firstResult = groupedResults.get(0);
-						List<String> anomalyCodes = groupedResults.stream()
-							.map(result -> (String)result[4])
+					groupedResultsList -> {
+						Object[] firstResult = groupedResultsList.get(0);
+						List<String> anomalyCodes = groupedResultsList.stream()
+							.map(result -> (String) result[4])
 							.distinct()
 							.collect(Collectors.toList());
 
 						return AnomalyProductResponse.from(
-							(Long)firstResult[0],
-							(String)firstResult[1],
-							(String)firstResult[2],
-							(Integer)firstResult[3],
+							(Long) firstResult[0],
+							(String) firstResult[1],
+							(String) firstResult[2],
+							(Integer) firstResult[3],
 							anomalyCodes
 						);
 					}
 				)
-			))
-			.values()
-			.stream()
-			.collect(Collectors.toList());
+			));
+
+		List<AnomalyProductResponse> content = new ArrayList<>(groupedResults.values());
+
+		int start = (int) pageable.getOffset();
+		int end = Math.min(start + pageable.getPageSize(), content.size());
+		List<AnomalyProductResponse> pageContent = content.subList(start, end);
+
+		return new PageImpl<>(pageContent, pageable, content.size());
 	}
+
 }
