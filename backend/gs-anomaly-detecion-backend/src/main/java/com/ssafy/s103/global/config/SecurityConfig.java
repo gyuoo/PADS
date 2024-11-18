@@ -47,12 +47,15 @@ public class SecurityConfig {
             .authorizeHttpRequests(request -> request
                 .requestMatchers(
                     "/api/v1/members/**",
-                    "/api/v1/mails/**",
-                    "/api/v1/products/**",
-                    "/api/v1/logs/**"
+                    "/api/v1/mails/**"
                 ).permitAll()
-                .requestMatchers("/").authenticated()
-                .anyRequest().hasRole("ADMIN"))
+                .requestMatchers(
+                    "/api/v1/products/**",
+                    "/api/v1/logs/**",
+                    "/api/v1/jobs/**",
+                    "/"
+                ).hasAnyRole("ADMIN", "MEMBER")
+                .anyRequest().authenticated())
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .logout(logout -> logout
