@@ -21,8 +21,6 @@
         필터 초기화
       </button>
     </div>
-
-    <!-- 로딩 스피너 -->
     <div v-if="isLoading" class="flex justify-center items-center h-[550px]">
       <svg class="animate-spin h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none"
         viewBox="0 0 24 24">
@@ -30,9 +28,7 @@
         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
       </svg>
     </div>
-
-    <!-- 데이터 테이블 -->
-    <div v-else class="overflow-x-auto h-[550px] overflow-y-auto">
+    <div v-else class="overflow-x-auto h-6/7">
       <table class="min-w-full rounded-lg">
         <thead>
           <tr>
@@ -86,19 +82,36 @@
         </tbody>
       </table>
     </div>
+    <div class="flex justify-center items-center mt-4 space-x-2">
+  <button 
+    class="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50"
+    @click="changePage(currentPage - 1)"
+    :disabled="currentPage === 1"
+  >
+    이전
+  </button>
+  <span class="text-sm text-gray-700">페이지 {{ currentPage }} / {{ totalPages }}</span>
+  <button 
+    class="px-4 py-2 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 disabled:opacity-50"
+    @click="changePage(currentPage + 1)"
+    :disabled="currentPage === totalPages"
+  >
+    다음
+  </button>
+</div>
   </div>
 </template>
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { getAnomalyProducts } from '@/api/dashboard';
-import { Badge } from '@/components/ui/badge';
+import { getAnomalyProducts } from '../../api/dashboard';
+import { Badge } from '../../components/ui/badge';
 import { useRouter } from 'vue-router'
 
 interface AnomalyProduct {
   prdId: number;
   viewName: string;
   createdAt: Date;
-  anomalyCodes: string[];
+  anomalyCodes: string;
   totalScore: number;
 }
 
@@ -107,6 +120,8 @@ const anormalProducts = ref<AnomalyProduct[]>([]);
 const today = ref<string>('');
 const sortColumn = ref<string>('viewName');
 const sortOrder = ref<'asc' | 'desc'>('asc');
+const totalPages = ref<number>(0);
+const currentPage = ref<number>(1);
 const isLoading = ref<boolean>(false);
 const filters = ref({
   viewName: '',
@@ -151,11 +166,14 @@ onMounted(() => {
 async function fetchAnomalyProducts() {
   try {
     isLoading.value = true;
-    anormalProducts.value = await getAnomalyProducts(
+    const response = await getAnomalyProducts(
       filters.value.viewName || null,
       filters.value.code || null,
       filters.value.totalScore || null,
+      currentPage.value - 1, 
     );
+    anormalProducts.value = response.content;
+    totalPages.value = response.totalPages; 
   } catch (error) {
     console.error("이상 상품 데이터를 불러오는 중 오류가 발생했습니다.", error);
   } finally {
@@ -164,6 +182,7 @@ async function fetchAnomalyProducts() {
 }
 
 function applyFilters() {
+  currentPage.value = 1;
   fetchAnomalyProducts();
 }
 
@@ -172,6 +191,13 @@ function resetFilters() {
   filters.value.code = '';
   filters.value.totalScore = null;
   applyFilters();
+}
+
+function changePage(page: number) {
+  if (page > 0 && page <= totalPages.value) {
+    currentPage.value = page;
+    fetchAnomalyProducts();
+  }
 }
 
 const sortedProducts = computed(() => {
@@ -201,10 +227,5 @@ function getSortIcon(column: string) {
       : 'https://velog.velcdn.com/images/gangintheremark/post/09a348f3-b576-404a-803c-dc25b31a9be0/image.png';
   }
   return 'https://velog.velcdn.com/images/gangintheremark/post/b481b151-bfee-406f-9d33-9de897efed9b/image.png';
-}
-
-function changePage(page: number) {
-  currentPage.value = page;
-  fetchAnomalyProducts();
 }
 </script>

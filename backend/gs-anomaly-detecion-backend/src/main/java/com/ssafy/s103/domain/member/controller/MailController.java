@@ -35,8 +35,8 @@ public class MailController {
     // 인증번호 일치 여부 확인
     @GetMapping("/check")
     public ResponseEntity<Map<String, Boolean>> checkMail(
-            @RequestParam("email") String email,
-            @RequestParam("code") String code) {
+        @RequestParam String email,
+        @RequestParam String code) {
         boolean isVerify = mailService.verifyEmailCode(email, code);
         Map<String, Boolean> response = new HashMap<>();
         response.put("success", isVerify);

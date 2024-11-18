@@ -49,7 +49,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'; // 라우트 훅
 import { Chart, RadarController, RadialLinearScale, PointElement, LineElement, Filler, Tooltip } from 'chart.js'
-import { getAnomalyProductDetail } from '@/api/product'
+import { getAnomalyProductDetail } from '../../api/product'
 
 Chart.register(RadarController, RadialLinearScale, PointElement, LineElement, Filler, Tooltip)
 
