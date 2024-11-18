@@ -1,6 +1,6 @@
 <template>
   <div class="login-container">
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleLogin">
       <div class="form-group">
         <input type="email" v-model="email" id="email" placeholder="이메일" required />
       </div>
@@ -17,57 +17,56 @@
     </form>
   </div>
 </template>
-  
-<script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
 
-export default defineComponent({
-  name: 'LoginForm',
-  setup() {
-    const email = ref('');
-    const password = ref('');
-    const errorMessage = ref('');
-    const loading = ref(false);
-    const router = useRouter();
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import axios from 'axios'
 
-    const handleSubmit = async () => {
-      loading.value = true;
-      errorMessage.value = ''; // 초기화
+const email = ref('')
+const password = ref('')
+const errorMessage = ref('')
+const loading = ref(false)
+const store = useStore()
+const router = useRouter()
 
-      try {
-        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/members/login`, {
-          email: email.value,
-          password: password.value,
-        });
+const handleLogin = async () => {
+  loading.value = true
+  errorMessage.value = ''
 
-        if (response.status === 200) {
-          router.push('/'); // 로그인 성공 시 리다이렉트
-        }
-      } catch (error) {
-        if (error.response && error.response.status === 401) {
-          errorMessage.value = '이메일 또는 비밀번호가 잘못되었습니다.';
-        } else {
-          errorMessage.value = '로그인 중 문제가 발생했습니다. 다시 시도해 주세요.';
-        }
-        console.error('Login error:', error);
-      } finally {
-        loading.value = false;
+  try {
+    const response = await axios.post(
+      '/api/v1/members/login',
+      {
+        email: email.value,
+        password: password.value,
+      },
+      {
+        withCredentials: true,
       }
-    };
+    )
 
-    return {
-      email,
-      password,
-      errorMessage,
-      loading,
-      handleSubmit,
-    };
-  },
-});
+    console.log('Login successful:', response.data)
+
+    // 로그인 성공 시 Vuex 상태 업데이트
+    const sessionId = response.data.sessionId
+    store.dispatch('login', sessionId)
+
+    // 홈 페이지로 이동
+    router.push('/')
+  } catch (error) {
+    console.error('Login failed:', error.response?.data || error.message)
+    errorMessage.value =
+      error.response?.status === 401
+        ? '이메일 또는 비밀번호가 잘못되었습니다.'
+        : '로그인 중 문제가 발생했습니다. 다시 시도해주세요.'
+  } finally {
+    loading.value = false
+  }
+}
 </script>
-  
+
 <style scoped>
 .login-container {
   margin: auto;

@@ -8,12 +8,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface AnomalyProductRepository extends JpaRepository<AnomalyProduct, Long>, AnomalyProductCustomRepository {
+public interface AnomalyProductRepository extends JpaRepository<AnomalyProduct, Long>,
+    AnomalyProductCustomRepository {
+
     int countByStatus(AnomalyStatus status);
-    
+
     @Query("SELECT new com.ssafy.s103.domain.batch.dto.response.BatchResponse(" +
         "ap.prdId, ap.viewName, apb.createDt, ap.status) " +
         "FROM AnomalyProduct ap " +
         "JOIN FETCH AnomalyProductBatch apb ON ap.batchId = apb.id")
     Page<BatchResponse> findAllBatchResponses(Pageable pageable);
+
+    Page<AnomalyProduct> findByStatus(AnomalyStatus status, Pageable pageable);
+
+    Page<AnomalyProduct> findAll(Pageable pageable);
 }

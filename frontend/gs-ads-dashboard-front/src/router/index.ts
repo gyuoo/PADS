@@ -4,6 +4,7 @@ import ProductDetailMain from '@/views/product/ProductDetailMain.vue'
 import ProductMain from '@/views/product/ProductMain.vue'
 import RegisterForm from '@/views/authentication/RegisterForm.vue'
 import LoginForm from '@/views/authentication/LoginForm.vue'
+import BatchMain from '@/views/batch/BatchMain.vue'
 // 라우터 설정
 const routes = [
   {
@@ -15,6 +16,11 @@ const routes = [
     path: '/product',
     name: 'product',
     component: ProductMain,
+  },
+  {
+    path: '/batch',
+    name: 'batch',
+    component: BatchMain,
   },
   {
     path: '/register',
