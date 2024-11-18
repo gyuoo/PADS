@@ -5,7 +5,7 @@
       <button
         v-for="filter in filters"
         :key="filter.value"
-        @click="selectedStatus = filter.value"
+        @click="changeStatus(filter.value)"
         :class="[
           'px-4 py-2 rounded-lg transition',
           selectedStatus === filter.value
@@ -28,7 +28,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(batch, index) in filteredBatches" :key="index">
+        <tr v-for="(batch, index) in batches" :key="index">
           <td class="px-4 py-2 text-center bg-white">{{ batch.productId }}</td>
           <td class="px-4 py-2 text-center bg-white">{{ batch.productName }}</td>
           <td class="px-4 py-2 text-center bg-white">{{ batch.startDateTime }}</td>
@@ -42,7 +42,7 @@
                 'bg-red-500': batch.status === 'FAILED',
               }"
             >
-              {{ batch.description }}
+            {{ getStatusDescription(batch.status) }}
             </span>
           </td>
         </tr>
@@ -87,22 +87,23 @@ const filters = [
   { label: "실패", value: "FAILED" },
 ];
 
-const filteredBatches = computed(() => {
-  if (!selectedStatus.value) return batches.value;
-  return batches.value.filter((batch: any) => batch.status === selectedStatus.value);
-});
-
-const loadPage = async (page: number) => {
+const loadPage = async (page = 0) => {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/jobs?page=${page}&size=10`);
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/products/status`, {
+      params: {
+        page,
+        size: 10,
+        status: selectedStatus.value || null, // 상태가 없으면 null
+      },
+      withCredentials: true,
+    });
     const data = response.data;
 
     batches.value = data.content.map((batch: any) => ({
-      productId: batch.productId,
-      productName: batch.productName,
-      startDateTime: new Date(batch.startDateTime).toLocaleString(),
+      productId: batch.prdId,
+      productName: batch.viewName,
+      startDateTime: new Date(batch.createDt).toLocaleString(),
       status: batch.status,
-      description: getStatusDescription(batch.status),
     }));
 
     currentPage.value = data.number;
@@ -110,6 +111,11 @@ const loadPage = async (page: number) => {
   } catch (error) {
     console.error("Error fetching batch data:", error);
   }
+};
+
+const changeStatus = (status: string) => {
+  selectedStatus.value = status;
+  loadPage(0); // 상태 변경 시 항상 첫 페이지를 로드
 };
 
 const getStatusDescription = (status: string): string => {

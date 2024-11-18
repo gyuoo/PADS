@@ -191,13 +191,13 @@ export default defineComponent({
       if (!passwordError.value && verificationSuccess.value) {
         console.log('회원가입 진행 중...')
         try {
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL}/members/register`,
-            {
-              email: email.value,
-              password: password.value,
-            },
-          )
+          const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/members/register`, {
+            email: email.value,
+            password: password.value,
+          },
+          { 
+            withCredentials: true
+          });
 
           if (response.status === 201) {
             alert('회원가입이 완료되었습니다.')
