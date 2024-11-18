@@ -28,14 +28,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
 import axios from 'axios'
+import { useUserStore } from '@/store';
 
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
-const store = useStore()
 const router = useRouter()
 
 const handleLogin = async () => {
@@ -56,13 +55,12 @@ const handleLogin = async () => {
 
     console.log('Login successful:', response.data)
 
-    // 로그인 성공 시 Vuex 상태 업데이트
-    const sessionId = response.data.sessionId
-    store.dispatch('login', sessionId)
+    const userStore = useUserStore();
+    const sessionId = response.data.sessionId;
+    userStore.login(sessionId);
 
-    // 홈 페이지로 이동
     router.push('/')
-  } catch (error) {
+  } catch (error: any) {
     console.error('Login failed:', error.response?.data || error.message)
     errorMessage.value =
       error.response?.status === 401
