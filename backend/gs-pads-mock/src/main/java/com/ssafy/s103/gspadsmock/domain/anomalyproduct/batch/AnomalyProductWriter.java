@@ -1,7 +1,7 @@
 package com.ssafy.s103.gspadsmock.domain.anomalyproduct.batch;
 
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.AnomalyProduct;
-import com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity.Message;
+import com.ssafy.s103.gspadsmock.domain.anomalyproduct.dto.Message;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductBatchRepository;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.repository.AnomalyProductRepository;
 import com.ssafy.s103.gspadsmock.domain.anomalyproduct.service.AnomalyProductService;

@@ -64,7 +64,6 @@ public class AnomalyDaoImpl implements AnomalyDao {
     public void bulkUpdateBatchId(List<AnomalyProduct> anomalyProducts, String batchId) {
         String sql = "UPDATE anomaly_product SET batch_id = ?, status = ? WHERE prd_id = ?";
 
-
         // `batchUpdate`를 사용하여 일괄 업데이트 수행
         jdbcTemplate.batchUpdate(sql, anomalyProducts, anomalyProducts.size(),
                 (ps, anomalyProduct) -> {
@@ -72,5 +71,13 @@ public class AnomalyDaoImpl implements AnomalyDao {
                     ps.setString(2, AnomalyStatus.WAIT.name());                          // status
                     ps.setLong(3, anomalyProduct.getPrdId());         // prd_id
                 });
+    }
+
+    @Transactional
+    @Override
+    public void updateAnomalyStatusByBatchId(String batchId, AnomalyStatus status) {
+        String sql = "UPDATE anomaly_product SET status = ? WHERE batch_id = ?";
+        log.info("{}, {}",batchId,status.name());
+        jdbcTemplate.update(sql, status.name(), batchId);
     }
 }
