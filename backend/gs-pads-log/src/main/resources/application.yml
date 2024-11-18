@@ -2,7 +2,7 @@ server:
   port: 8082
 spring:
   profiles:
-    active: local
+    active: dev
   datasource:
     hikari:
       minimum-idle: 5
