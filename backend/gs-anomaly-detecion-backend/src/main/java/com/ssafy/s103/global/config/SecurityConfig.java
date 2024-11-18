@@ -48,10 +48,13 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/v1/members/**",
                     "/api/v1/mails/**",
-                    "/api/v1/products/**",
-                    "/api/v1/logs/**"
+                    "/"
                 ).permitAll()
-                .requestMatchers("/").authenticated()
+                .requestMatchers(
+                    "/api/v1/products/**",
+                    "/api/v1/logs/**",
+                    "/api/v1/jobs/**"
+                ).authenticated()
                 .anyRequest().hasRole("ADMIN"))
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
