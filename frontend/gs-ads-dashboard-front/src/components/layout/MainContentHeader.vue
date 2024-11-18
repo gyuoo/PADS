@@ -77,6 +77,10 @@ const handleLogout = async () => {
     console.error('Logout failed:', error.response?.data || error.message)
   }
 }
+import { Avatar, AvatarImage, AvatarFallback } from '../../components/ui/avatar'
+defineProps<{
+  title: string
+}>()
 </script>
 
 <style scoped></style>

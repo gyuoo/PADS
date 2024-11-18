@@ -179,9 +179,9 @@ export default defineComponent({
         verificationSuccess.value = response.data.success
         verificationError.value = !response.data.success
       } catch (error) {
-        verificationSuccess.value = false
-        verificationError.value = true
-        console.error('Failed to verify code:', error)
+        verificationSuccess.value = false;
+        verificationError.value = true;
+        console.error('Failed to verify code:', error);
       }
     }
 
@@ -195,7 +195,7 @@ export default defineComponent({
             email: email.value,
             password: password.value,
           },
-          { 
+          {
             withCredentials: true
           });
 

@@ -11,13 +11,7 @@
         />
       </div>
       <div class="form-group">
-        <input
-          type="password"
-          v-model="password"
-          id="password"
-          placeholder="비밀번호"
-          required
-        />
+        <input type="password" v-model="password" id="password" placeholder="비밀번호" required />
       </div>
       <button type="submit" :disabled="loading">로그인</button>
       <transition name="slide-fade">
