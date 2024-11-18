@@ -2,60 +2,77 @@
   <div class="login-container">
     <form @submit.prevent="handleSubmit">
       <div class="form-group">
-        <input type="email" v-model="email" id="email" placeholder="이메일" required />
+        <input
+          type="email"
+          v-model="email"
+          id="email"
+          placeholder="이메일"
+          required
+        />
       </div>
       <div class="form-group">
-        <input type="password" v-model="password" id="password" placeholder="비밀번호" required />
+        <input
+          type="password"
+          v-model="password"
+          id="password"
+          placeholder="비밀번호"
+          required
+        />
       </div>
       <button type="submit" :disabled="loading">로그인</button>
       <transition name="slide-fade">
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </transition>
       <p>
-        아직 계정이 없으신가요? <router-link to="/register" class="register-link">회원가입</router-link>
+        아직 계정이 없으신가요?
+        <router-link to="/register" class="register-link">회원가입</router-link>
       </p>
     </form>
   </div>
 </template>
-  
+
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import axios from 'axios';
+import { defineComponent, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import axios from 'axios'
 
 export default defineComponent({
   name: 'LoginForm',
   setup() {
-    const email = ref('');
-    const password = ref('');
-    const errorMessage = ref('');
-    const loading = ref(false);
-    const router = useRouter();
+    const email = ref('')
+    const password = ref('')
+    const errorMessage = ref('')
+    const loading = ref(false)
+    const router = useRouter()
 
     const handleSubmit = async () => {
-      loading.value = true;
-      errorMessage.value = ''; // 초기화
+      loading.value = true
+      errorMessage.value = '' // 초기화
 
       try {
-        const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/members/login`, {
-          email: email.value,
-          password: password.value,
-        });
+        const response = await axios.post(
+          `${import.meta.env.VITE_API_BASE_URL}/members/login`,
+          {
+            email: email.value,
+            password: password.value,
+          },
+        )
 
         if (response.status === 200) {
-          router.push('/'); // 로그인 성공 시 리다이렉트
+          router.push('/') // 로그인 성공 시 리다이렉트
         }
-      } catch (error) {
+      } catch (error: any) {
         if (error.response && error.response.status === 401) {
-          errorMessage.value = '이메일 또는 비밀번호가 잘못되었습니다.';
+          errorMessage.value = '이메일 또는 비밀번호가 잘못되었습니다.'
         } else {
-          errorMessage.value = '로그인 중 문제가 발생했습니다. 다시 시도해 주세요.';
+          errorMessage.value =
+            '로그인 중 문제가 발생했습니다. 다시 시도해 주세요.'
         }
-        console.error('Login error:', error);
+        console.error('Login error:', error)
       } finally {
-        loading.value = false;
+        loading.value = false
       }
-    };
+    }
 
     return {
       email,
@@ -63,11 +80,11 @@ export default defineComponent({
       errorMessage,
       loading,
       handleSubmit,
-    };
+    }
   },
-});
+})
 </script>
-  
+
 <style scoped>
 .login-container {
   margin: auto;
