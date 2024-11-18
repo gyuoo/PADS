@@ -2,6 +2,7 @@ import pandas as pd
 import json
 from model.statistics_updater import StatisticsUpdater
 
+# {"batch_id":11232131,"csv_path":"test-input/input_sample_0.csv","image_path":""}
 def main():
     # 새로 들어온 데이터를 로드
     with open('dataset/new_data.json', 'r', encoding='utf-8') as f:

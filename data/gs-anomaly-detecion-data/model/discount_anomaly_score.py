@@ -21,6 +21,6 @@ class DiscountAnomalyDetector(AbstractDetector):
 
         # discount_anomaly : B001
         data['B001_score'] = (data['discprice'] > data['price']) * 100
-        data['B001_message'] = ""
+        data['B001_message'] = "할인 가격이 원가격보다 더 높은 상태의 이상 상품입니다."
         data['B000_score'] = data['B001_score']
         return data

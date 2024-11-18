@@ -37,6 +37,26 @@ class PriceAnomalyDetector(AbstractDetector):
         """
         return (value - mean) / std
 
+    def generate_message(self, row):
+        """
+        특정 행(row)에 대해 적절한 메시지를 생성.
+
+        Parameters:
+        - row: DataFrame의 행
+
+        Returns:
+        - str: 메시지
+        """
+        # 가격 이상치 점수가 높은 경우
+        if row['D001_score'] > 75:
+            return (f"이상치 점수가 높습니다. "
+                    f"공급사 코드: {row['supplier_code']}, 카테고리: {row['cate2_nm']}, "
+                    f"브랜드 및 클래스: {row['brandclass_name']}, 가격: {row['price']:.2f}원.")
+
+        # 정상적인 경우
+        return (f"가격 데이터는 정상으로 보입니다. "
+                f"공급사 코드: {row['supplier_code']}, 카테고리: {row['cate2_nm']}, 가격: {row['price']:.2f}원.")
+
     def calculate_anomaly(self, data: pd.DataFrame, **kwargs):
         """
         각 Z-score에 가중치를 적용하여 이상치 점수 계산.
@@ -68,7 +88,7 @@ class PriceAnomalyDetector(AbstractDetector):
 
         # 종합 이상치 점수 계산 (각 점수를 곱해서 이상치 점수를 계산), price_anomaly : D001
         data['D001_score'] = data[score_columns].apply(lambda row: np.prod(row), axis=1) * 100
-        data['D001_message'] = ""
+        data['D001_message'] = data.apply(self.generate_message, axis=1)
         data['D000_score'] = data['D001_score']
 
         # 사용한 점수 및 Z-score 컬럼 삭제
