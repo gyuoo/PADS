@@ -27,7 +27,7 @@ import OverviewCount from './OverviewCard.vue';
 import DoughnutChart from './DoughnutChart.vue';
 import RecentJobList from './RecentJobList.vue';
 import LineChart from './LineChart.vue';
-import { getScheduleCount, getCount } from '@/api/dashboard';
+import { getScheduleCount, getCount } from '../../api/dashboard';
 
 const allCount = ref(0);
 const scheduledProductCount = ref(0); 

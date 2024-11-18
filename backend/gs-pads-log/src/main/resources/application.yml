@@ -2,13 +2,13 @@ server:
   port: 8082
 spring:
   profiles:
-    active: local
+    active: dev
   datasource:
     hikari:
       minimum-idle: 5
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     defer-datasource-initialization: true
     properties:
       hibernate:

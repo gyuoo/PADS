@@ -44,12 +44,14 @@ export const getCountsByCodes = () => {
         });
 }
 
-export const getAnomalyProducts = (viewName = null, code = [], totalScore = null, page = 0) => {
+export const getAnomalyProducts = (viewName = null, code = [], totalScore = null, page = 0, size = 10) => {
     return api.get('/products', {
         params: {
             viewName,
             code,
-            totalScore
+            totalScore,
+            page,
+            size
         },
     })
     .then((response) => {
