@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import Sidebar from './Sidebar.vue'
 import MainContentHeader from './MainContentHeader.vue'
-import { Separator } from '@/components/ui/separator'
+import { Separator } from '../../components/ui/separator'
 defineProps<{
   mainTitle: string
 }>()
