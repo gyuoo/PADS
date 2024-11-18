@@ -37,40 +37,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue'
-import axios from 'axios';
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import axios from 'axios'
 import { Bell } from 'lucide-vue-next'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
-const isLoggedIn = inject('isLoggedIn') as Ref<boolean>
+const store = useStore()
+const isLoggedIn = computed(() => store.getters.isLoggedIn) // Vuex에서 로그인 상태 가져오기
 const router = useRouter()
 
-const dropdownOpen = ref(false) // 드롭다운 상태 관리
+const dropdownOpen = ref(false)
 
 const goToLogin = () => {
   router.push('/login')
 }
+
 const toggleDropdown = () => {
   dropdownOpen.value = !dropdownOpen.value
 }
 
 const handleLogout = async () => {
   try {
-    const response = await axios.get(
+    await axios.post(
       '/api/v1/members/logout',
-      { withCredentials: true } // 쿠키를 포함하여 요청
-    );
+      {},
+      { withCredentials: true }
+    )
 
-    console.log('Logout successful:', response.data);
+    console.log('Logout successful')
 
-    localStorage.removeItem('sessionId');
-    router.push('/login');
+    // Vuex 상태 초기화
+    store.dispatch('logout')
+
+    // 로그인 페이지로 이동
+    router.push('/login')
   } catch (error) {
-    console.error('Logout failed:', error.response?.data || error.message);
+    console.error('Logout failed:', error.response?.data || error.message)
   }
-};
-
+}
 </script>
 
 <style scoped></style>

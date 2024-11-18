@@ -19,31 +19,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import axios from 'axios'
 
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const loading = ref(false)
-const isLoggedIn = ref(false) // 로그인 상태 관리
+const store = useStore()
 const router = useRouter()
 
-// 로그인 상태 복원
-const restoreLoginStatus = () => {
-  const sessionId = localStorage.getItem('sessionId')
-  if (sessionId) {
-    isLoggedIn.value = true
-  } else {
-    isLoggedIn.value = false
-  }
-}
-
-// 로그인 처리
 const handleLogin = async () => {
   loading.value = true
-  errorMessage.value = '' // 에러 메시지 초기화
+  errorMessage.value = ''
 
   try {
     const response = await axios.post(
@@ -53,16 +43,15 @@ const handleLogin = async () => {
         password: password.value,
       },
       {
-        withCredentials: true, // 쿠키 포함 요청
+        withCredentials: true,
       }
     )
 
     console.log('Login successful:', response.data)
 
-    // 로그인 성공 시 세션 정보 저장 및 상태 업데이트
+    // 로그인 성공 시 Vuex 상태 업데이트
     const sessionId = response.data.sessionId
-    localStorage.setItem('sessionId', sessionId)
-    isLoggedIn.value = true
+    store.dispatch('login', sessionId)
 
     // 홈 페이지로 이동
     router.push('/')
@@ -76,11 +65,6 @@ const handleLogin = async () => {
     loading.value = false
   }
 }
-
-// 컴포넌트 마운트 시 로그인 상태 복원
-onMounted(() => {
-  restoreLoginStatus()
-})
 </script>
 
 <style scoped>
