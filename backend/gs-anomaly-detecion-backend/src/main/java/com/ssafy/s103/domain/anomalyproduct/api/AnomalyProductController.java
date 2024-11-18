@@ -1,10 +1,14 @@
 package com.ssafy.s103.domain.anomalyproduct.api;
 
 import com.ssafy.s103.domain.anomalyproduct.application.service.AnomalyProductService;
+import com.ssafy.s103.domain.anomalyproduct.dto.response.AnomalyProductBatchResponse;
 import com.ssafy.s103.domain.anomalyproduct.dto.response.AnomalyProductDetailResponse;
 import com.ssafy.s103.domain.anomalyproduct.dto.response.AnomalyProductResponse;
+import com.ssafy.s103.domain.anomalyproduct.entity.AnomalyStatus;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +36,7 @@ public class AnomalyProductController {
     public ResponseEntity<AnomalyProductDetailResponse> getAnomalyProductDetail(
         @PathVariable Long prdId) {
         return ResponseEntity.ok(
-            anomalyProductService.getAnomalyProductDetail(Long.valueOf(prdId)));
+            anomalyProductService.getAnomalyProductDetail(prdId));
     }
 
     @GetMapping("/count")
@@ -44,4 +48,21 @@ public class AnomalyProductController {
     public ResponseEntity<Integer> getScheduledCount() {
         return ResponseEntity.ok(anomalyProductService.getScheduledCount());
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<Page<AnomalyProductBatchResponse>> getAllProducts(Pageable pageable) {
+        return ResponseEntity.ok(anomalyProductService.getAllProducts(pageable));
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<Page<AnomalyProductBatchResponse>> getProductsByStatus(
+        @RequestParam(name = "status", required = false) AnomalyStatus status,
+        Pageable pageable
+    ) {
+        if (status == null) {
+            return getAllProducts(pageable);
+        }
+        return ResponseEntity.ok(anomalyProductService.getProductsByStatus(status, pageable));
+    }
+
 }
