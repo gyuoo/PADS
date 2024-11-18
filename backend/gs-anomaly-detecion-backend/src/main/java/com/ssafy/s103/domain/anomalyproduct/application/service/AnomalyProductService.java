@@ -31,10 +31,9 @@ public class AnomalyProductService {
         return anomalyProductRepository.countByStatus(AnomalyStatus.SCHEDULED);
     }
 
-    public List<AnomalyProductResponse> getAnomalyProducts(String viewName, String code,
-        Integer totalScore) {
-        return anomalyProductRepository.findAnomalyProducts(viewName, code, totalScore);
-    }
+	public Page<AnomalyProductResponse> getAnomalyProducts(String viewName, String code, Integer totalScore,Pageable pageable) {
+		return anomalyProductRepository.findAnomalyProducts(viewName, code, totalScore, pageable);
+	}
 
     public AnomalyProductDetailResponse getAnomalyProductDetail(Long prdId) {
         AnomalyProduct anomalyProduct = anomalyProductRepository.findById(prdId).orElseThrow(
