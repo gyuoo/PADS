@@ -11,6 +11,7 @@ const routes = [
     path: '/',
     name: '',
     component: Main,
+    meta: { requiresAuth: true },
   },
   {
     path: '/product',
@@ -44,5 +45,14 @@ const router = createRouter({
   history: createWebHistory(), // HTML5 히스토리 모드를 사용
   routes,
 })
+
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem('sessionId');
+  if (to.matched.some((record) => record.meta.requiresAuth) && !isLoggedIn) {
+    next('/login');
+  } else {
+    next();
+  }
+});
 
 export default router
