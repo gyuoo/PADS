@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
 import type { BaseChartProps } from '.'
-import { ChartSingleTooltip, defaultColors } from '@/components/ui/chart'
-import { cn } from '@/lib/utils'
+import { ChartSingleTooltip, defaultColors } from '../../../components/ui/chart'
+import { cn } from '../../../lib/utils'
 import { Donut } from '@unovis/ts'
 import { VisDonut, VisSingleContainer } from '@unovis/vue'
 import { useMounted } from '@vueuse/core'
