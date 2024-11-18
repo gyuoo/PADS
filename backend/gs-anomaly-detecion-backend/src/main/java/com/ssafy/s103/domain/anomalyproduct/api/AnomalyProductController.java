@@ -23,16 +23,14 @@ public class AnomalyProductController {
 
     private final AnomalyProductService anomalyProductService;
 
-	@GetMapping
-	public ResponseEntity<Page<AnomalyProductResponse>> getAnomalyProducts(
-		@RequestParam(required = false) String viewName,
-		@RequestParam(required = false) String code,
-		@RequestParam(required = false) Integer totalScore,
-		Pageable pageable
-	) {
-		return ResponseEntity.ok(
-			anomalyProductService.getAnomalyProducts(viewName, code, totalScore, pageable));
-	}
+    @GetMapping
+    public ResponseEntity<List<AnomalyProductResponse>> getAnomalyProducts(
+        @RequestParam(name = "viewName", required = false) String viewName,
+        @RequestParam(name = "code", required = false) String code,
+        @RequestParam(name = "totalScore", required = false) Integer totalScore) {
+        return ResponseEntity.ok(
+            anomalyProductService.getAnomalyProducts(viewName, code, totalScore));
+    }
 
     @GetMapping("/{prdId}")
     public ResponseEntity<AnomalyProductDetailResponse> getAnomalyProductDetail(
