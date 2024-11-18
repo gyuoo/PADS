@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { Bell } from 'lucide-vue-next'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarImage, AvatarFallback } from '../../components/ui/avatar'
 defineProps<{
   title: string
 }>()
