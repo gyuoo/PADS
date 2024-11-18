@@ -94,7 +94,7 @@ const filteredBatches = computed(() => {
 
 const loadPage = async (page: number) => {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/jobs?page=${page}&size=10`);
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/jobs?page=${page}&size=10`, {withCredentials: true});
     const data = response.data;
 
     batches.value = data.content.map((batch: any) => ({

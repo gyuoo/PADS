@@ -156,6 +156,9 @@ export default defineComponent({
           const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/members/register`, {
             email: email.value,
             password: password.value,
+          },
+          { 
+            withCredentials: true
           });
 
           if (response.status === 201) {

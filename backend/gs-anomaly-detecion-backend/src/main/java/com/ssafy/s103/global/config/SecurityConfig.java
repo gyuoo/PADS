@@ -49,25 +49,21 @@ public class SecurityConfig {
                     "/api/v1/members/**",
                     "/api/v1/mails/**"
                 ).permitAll()
-                .requestMatchers(
-                    "/api/v1/products/**",
-                    "/api/v1/logs/**",
-                    "/api/v1/jobs/**",
-                    "/"
-                ).hasAnyRole("ADMIN", "MEMBER")
+//                .requestMatchers(
+//                    "/api/v1/products/**",
+//                    "/api/v1/logs/**",
+//                    "/api/v1/jobs/**",
+//                    "/"
+//                ).hasAnyAuthority("ROLE_ADMIN", "ROLE_MEMBER")
                 .anyRequest().authenticated())
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .logout(logout -> logout
                 .logoutUrl("/api/v1/members/logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .logoutSuccessHandler(customLogoutSuccessHandler)
                 .permitAll())
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // 세션 정책 변경
-                .maximumSessions(1) // 최대 세션 수 설정
-                .maxSessionsPreventsLogin(false)) // 최대 세션 도달 시 처리
             .addFilterBefore(ajaxAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(config -> config
                 .authenticationEntryPoint(authenticationEntryPoint)
@@ -105,7 +101,8 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOrigin("http://localhost:5173"); // 허용할 프론트엔드 도메인
-        configuration.addAllowedMethod("*"); // 모든 HTTP 메서드 허용
+        configuration.addAllowedMethod("GET");
+        configuration.addAllowedMethod("POST");
         configuration.addAllowedHeader("*"); // 모든 헤더 허용
         configuration.setAllowCredentials(true); // 인증 정보 허용 (예: 쿠키, Authorization 헤더)
 

@@ -91,9 +91,10 @@ const formatDate = (dateString: string): string => {
 // 데이터 가져오기 함수
 const fetchJobs = async (page = 0, size = 7) => {
   try {
-    const response = await axios.get('http://localhost:8080/api/v1/jobs', {
+    const response = await axios.get('http://localhost:8080/api/v1/jobs', 
+    {
       params: { page, size },
-    });
+    },);
 
     jobs.value = response.data.content.map((job: any) => ({
       productId: job.productId,
