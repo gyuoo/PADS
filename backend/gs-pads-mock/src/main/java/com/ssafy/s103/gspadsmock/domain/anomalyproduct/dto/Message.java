@@ -1,4 +1,4 @@
-package com.ssafy.s103.gspadsmock.domain.anomalyproduct.entity;
+package com.ssafy.s103.gspadsmock.domain.anomalyproduct.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
