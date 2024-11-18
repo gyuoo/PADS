@@ -35,8 +35,6 @@
   </div>
 </template>
 
-
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
@@ -55,7 +53,6 @@ const columns = [
   { field: 'status', label: '상태', class: 'w-1/5' },
 ];
 
-// 상태 매핑 함수
 const mapStatusToKorean = (status: string): string => {
   const statusMap: Record<string, string> = {
     SCHEDULED: "예정",
@@ -67,14 +64,13 @@ const mapStatusToKorean = (status: string): string => {
   return statusMap[status] || "알 수 없음";
 };
 
-// 상태에 따른 클래스 매핑 함수
 const getStatusClass = (status: string): string => {
   const classMap: Record<string, string> = {
     "진행중": "bg-orange-500",
     "완료": "bg-green-500",
     "실패": "bg-red-500",
   };
-  return classMap[status] || "bg-gray-500"; // 기본값
+  return classMap[status] || "bg-gray-500";
 };
 
 const formatDate = (dateString: string): string => {
@@ -88,7 +84,6 @@ const formatDate = (dateString: string): string => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
-// 데이터 가져오기 함수
 const fetchJobs = async (page = 0, size = 7) => {
   try {
     const response = await axios.get('http://localhost:8080/api/v1/jobs', 
@@ -98,7 +93,7 @@ const fetchJobs = async (page = 0, size = 7) => {
 
     jobs.value = response.data.content.map((job: any) => ({
       productId: job.productId,
-      startDateTime: formatDate(job.startDateTime), // 날짜 포맷팅
+      startDateTime: formatDate(job.startDateTime),
       status: mapStatusToKorean(job.status),
     }));
   } catch (error) {
@@ -106,6 +101,5 @@ const fetchJobs = async (page = 0, size = 7) => {
   }
 };
 
-// 컴포넌트 마운트 시 첫 번째 페이지 데이터 로드
 onMounted(() => fetchJobs());
 </script>

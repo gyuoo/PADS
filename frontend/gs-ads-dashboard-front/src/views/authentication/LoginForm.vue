@@ -19,40 +19,68 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject } from 'vue'
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
 const email = ref('')
 const password = ref('')
-const isLoggedIn = inject('isLoggedIn') as Ref<boolean>
-const router = useRouter();
+const errorMessage = ref('')
+const loading = ref(false)
+const isLoggedIn = ref(false) // 로그인 상태 관리
+const router = useRouter()
 
+// 로그인 상태 복원
+const restoreLoginStatus = () => {
+  const sessionId = localStorage.getItem('sessionId')
+  if (sessionId) {
+    isLoggedIn.value = true
+  } else {
+    isLoggedIn.value = false
+  }
+}
+
+// 로그인 처리
 const handleLogin = async () => {
+  loading.value = true
+  errorMessage.value = '' // 에러 메시지 초기화
+
   try {
     const response = await axios.post(
       '/api/v1/members/login',
-      { 
-        email: email.value, 
-        password: password.value 
+      {
+        email: email.value,
+        password: password.value,
       },
-      { 
-        withCredentials: true
+      {
+        withCredentials: true, // 쿠키 포함 요청
       }
-    );
+    )
 
-    console.log('Login successful:', response.data);
+    console.log('Login successful:', response.data)
 
-    isLoggedIn.value = true;
-    const sessionId = response.data.sessionId;
-    localStorage.setItem('sessionId', sessionId);
-    console.log('Session ID saved:', sessionId);
-    router.push('/');
+    // 로그인 성공 시 세션 정보 저장 및 상태 업데이트
+    const sessionId = response.data.sessionId
+    localStorage.setItem('sessionId', sessionId)
+    isLoggedIn.value = true
+
+    // 홈 페이지로 이동
+    router.push('/')
   } catch (error) {
-    console.error('Login failed:', error.response?.data || error.message);
+    console.error('Login failed:', error.response?.data || error.message)
+    errorMessage.value =
+      error.response?.status === 401
+        ? '이메일 또는 비밀번호가 잘못되었습니다.'
+        : '로그인 중 문제가 발생했습니다. 다시 시도해주세요.'
+  } finally {
+    loading.value = false
   }
-};
+}
 
+// 컴포넌트 마운트 시 로그인 상태 복원
+onMounted(() => {
+  restoreLoginStatus()
+})
 </script>
 
 <style scoped>

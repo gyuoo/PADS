@@ -14,4 +14,11 @@ public interface AnomalyLogDetailRepository extends JpaRepository<AnomalyLogDeta
 
     @Query("SELECT COUNT(a) FROM AnomalyLogDetail a WHERE a.code = :code AND a.subCode = '000' AND a.score > 20")
     long countByCodeAndSubCode(@Param("code") String code);
+
+    @Query("SELECT a.code, COUNT(a) " +
+        "FROM AnomalyLogDetail a " +
+        "WHERE a.subCode = '000' AND a.score > 20 " +
+        "GROUP BY a.code")
+    List<Object[]> countByCodes();
+
 }
