@@ -86,7 +86,7 @@ const formatDate = (dateString: string): string => {
 
 const fetchJobs = async (page = 0, size = 7) => {
   try {
-    const response = await axios.get('http://localhost:8080/api/v1/jobs', 
+    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/jobs`, 
     {
       params: { page, size },
     },);
