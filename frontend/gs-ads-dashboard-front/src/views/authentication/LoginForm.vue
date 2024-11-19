@@ -29,7 +29,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
-import { useUserStore } from '@/store';
+import { useUserStore } from '../../store';
 
 const email = ref('')
 const password = ref('')
