@@ -124,7 +124,7 @@ export default defineComponent({
     const router = useRouter()
 
     const validateEmail = () => {
-      const emailPattern = /^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$/
+      const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
       emailError.value = !emailPattern.test(email.value)
     }
 

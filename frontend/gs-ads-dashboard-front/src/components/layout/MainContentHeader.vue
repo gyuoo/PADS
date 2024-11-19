@@ -39,13 +39,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { useUserStore } from '@/store';
 import axios from 'axios'
 import { Bell } from 'lucide-vue-next'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
-const store = useStore()
-const isLoggedIn = computed(() => store.getters.isLoggedIn) // Vuex에서 로그인 상태 가져오기
+const store = useUserStore()
+const isLoggedIn = computed(() => store.isLoggedIn) // Pinia 상태 가져오기
 const router = useRouter()
 
 const dropdownOpen = ref(false)
@@ -62,21 +62,19 @@ const handleLogout = async () => {
   try {
     await axios.post(
       '/api/v1/members/logout',
-      {},
       { withCredentials: true }
-    )
+    );
 
-    console.log('Logout successful')
+    console.log('Logout successful');
 
-    // Vuex 상태 초기화
-    store.dispatch('logout')
+    // Pinia의 logout action 호출
+    store.logout();
 
-    // 로그인 페이지로 이동
-    router.push('/login')
-  } catch (error) {
-    console.error('Logout failed:', error.response?.data || error.message)
+    router.push('/login');
+  } catch (error: any) {
+    console.error('Logout failed:', error.response?.data || error.message);
   }
-}
+};
 defineProps<{
   title: string
 }>()

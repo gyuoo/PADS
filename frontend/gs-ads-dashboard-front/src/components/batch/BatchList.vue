@@ -70,10 +70,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import axios from "axios";
 
-const batches = ref([]);
+interface Batch {
+  productId: string;
+  productName: string;
+  startDateTime: string;
+  status: string;
+  description: string;
+}
+
+const batches = ref<Batch[]>([]);
 const currentPage = ref(0);
 const totalPages = ref(0);
 const selectedStatus = ref("");

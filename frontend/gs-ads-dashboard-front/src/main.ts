@@ -3,10 +3,11 @@ import App from './App.vue'
 import './styles/global.css'
 import router from './router'
 import axios from 'axios';
-import store from './store';
+import { createPinia } from 'pinia';
 
 const app = createApp(App)
-app.use(store);
+const pinia = createPinia();
+app.use(pinia);
 app.use(router) // 라우터 사용 설정
 app.mount('#app')
 
