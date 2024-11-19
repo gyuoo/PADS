@@ -32,10 +32,9 @@
                         <td class="px-4 py-2 text-gray-700 font-medium w-20">
                             {{ getSubCategoryText(anomaly.code, anomaly.subCode) }}
                         </td>
-                        <!-- 점수 색상 동적으로 변경 -->
                         <td :class="anomaly.score > 0 ? 'text-red-500' : 'text-gray-700'"
                             class="px-4 py-2 font-medium w-20 text-center">{{ anomaly.score }} %</td>
-                        <td class="px-4 py-2 text-gray-700">
+                        <td v-if="anomaly.score != 0" class="px-4 py-2 text-gray-700">
                             {{ anomaly.message }}
                         </td>
                     </tr>
