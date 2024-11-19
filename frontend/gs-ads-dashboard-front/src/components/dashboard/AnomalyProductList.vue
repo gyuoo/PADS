@@ -31,7 +31,7 @@
         ></path>
       </svg>
     </div>
-    <div class="overflow-x-auto h-6/7">
+    <div v-else class="overflow-x-auto h-6/7">
       <table class="min-w-full rounded-lg">
         <thead>
           <tr>
