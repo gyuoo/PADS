@@ -23,37 +23,37 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 
 	@Override
 	public Page<AnomalyProductResponse> findAnomalyProducts(String viewName, String code, Integer totalScore, Pageable pageable) {
-		StringBuilder sql = new StringBuilder(
-			"""
-				SELECT DISTINCT 
-					ap.prd_id AS prdId, 
-					ap.view_name AS viewName, 
-					CAST(al.created_at AS VARCHAR) AS createdAt, 
-					al.total_score AS totalScore, 
-					ald.code AS code
-				FROM anomaly_product ap
-				JOIN anomaly_log al ON ap.prd_id = al.prd_id
-				JOIN anomaly_log_detail ald ON al.id = ald.anomaly_log_id
-				WHERE ald.sub_code = '000' 
-				  AND ald.score > 0
-				  AND al.total_score > 0
-				"""
-		);
+		// 상품 단위로 그룹화 및 페이징 처리
+		String sql = """
+        SELECT 
+            ap.prd_id AS prdId, 
+            ap.view_name AS viewName, 
+            MAX(CAST(al.created_at AS VARCHAR)) AS createdAt, 
+            MAX(al.total_score) AS totalScore, 
+            STRING_AGG(DISTINCT ald.code, ',') AS codes
+        FROM anomaly_product ap
+        JOIN anomaly_log al ON ap.prd_id = al.prd_id
+        JOIN anomaly_log_detail ald ON al.id = ald.anomaly_log_id
+        WHERE ald.sub_code = '000' 
+          AND ald.score > 0
+          AND al.total_score > 0
+        """;
 
-		// 동적 필터링
+		// 동적 필터링 추가
 		if (viewName != null && !viewName.isEmpty()) {
-			sql.append(" AND LOWER(ap.view_name) LIKE LOWER(CONCAT('%', :viewName, '%'))");
+			sql += " AND LOWER(ap.view_name) LIKE LOWER(CONCAT('%', :viewName, '%'))";
 		}
 		if (code != null && !code.isEmpty()) {
-			sql.append(" AND ald.code = :code");
+			sql += " AND ald.code = :code";
 		}
 		if (totalScore != null) {
-			sql.append(" AND al.total_score >= :totalScore");
+			sql += " AND al.total_score >= :totalScore";
 		}
 
-		sql.append(" ORDER BY ap.prd_id");
+		sql += " GROUP BY ap.prd_id, ap.view_name ORDER BY ap.prd_id LIMIT :limit OFFSET :offset";
 
-		var query = entityManager.createNativeQuery(sql.toString());
+		// Native Query 생성 및 파라미터 바인딩
+		var query = entityManager.createNativeQuery(sql);
 
 		if (viewName != null && !viewName.isEmpty()) {
 			query.setParameter("viewName", viewName);
@@ -65,40 +65,60 @@ public class AnomalyProductCustomRepositoryImpl implements AnomalyProductCustomR
 			query.setParameter("totalScore", totalScore);
 		}
 
-		// 쿼리 결과 가져오기
+		query.setParameter("limit", pageable.getPageSize());
+		query.setParameter("offset", pageable.getOffset());
+
+		// 쿼리 결과 실행
 		List<Object[]> results = query.getResultList();
 
-		// 상품 단위로 그룹화
-		Map<Long, AnomalyProductResponse> groupedResults = results.stream()
-			.collect(Collectors.groupingBy(
-				result -> (Long) result[0],
-				Collectors.collectingAndThen(
-					Collectors.toList(),
-					groupedResultsList -> {
-						Object[] firstResult = groupedResultsList.get(0);
-						List<String> anomalyCodes = groupedResultsList.stream()
-							.map(result -> (String) result[4])
-							.distinct()
-							.collect(Collectors.toList());
+		// 결과 매핑
+		List<AnomalyProductResponse> content = results.stream().map(result ->
+			AnomalyProductResponse.from(
+				(Long) result[0],
+				(String) result[1],
+				(String) result[2],
+				(Integer) result[3],
+				List.of(((String) result[4]).split(","))
+			)
+		).collect(Collectors.toList());
 
-						return AnomalyProductResponse.from(
-							(Long) firstResult[0],
-							(String) firstResult[1],
-							(String) firstResult[2],
-							(Integer) firstResult[3],
-							anomalyCodes
-						);
-					}
-				)
-			));
+		// 총 개수 쿼리 실행
+		String countSql = """
+        SELECT COUNT(DISTINCT ap.prd_id)
+        FROM anomaly_product ap
+        JOIN anomaly_log al ON ap.prd_id = al.prd_id
+        JOIN anomaly_log_detail ald ON al.id = ald.anomaly_log_id
+        WHERE ald.sub_code = '000' 
+          AND ald.score > 0
+          AND al.total_score > 0
+        """;
 
-		List<AnomalyProductResponse> content = new ArrayList<>(groupedResults.values());
+		if (viewName != null && !viewName.isEmpty()) {
+			countSql += " AND LOWER(ap.view_name) LIKE LOWER(CONCAT('%', :viewName, '%'))";
+		}
+		if (code != null && !code.isEmpty()) {
+			countSql += " AND ald.code = :code";
+		}
+		if (totalScore != null) {
+			countSql += " AND al.total_score >= :totalScore";
+		}
 
-		int start = (int) pageable.getOffset();
-		int end = Math.min(start + pageable.getPageSize(), content.size());
-		List<AnomalyProductResponse> pageContent = content.subList(start, end);
+		var countQuery = entityManager.createNativeQuery(countSql);
 
-		return new PageImpl<>(pageContent, pageable, content.size());
+		if (viewName != null && !viewName.isEmpty()) {
+			countQuery.setParameter("viewName", viewName);
+		}
+		if (code != null && !code.isEmpty()) {
+			countQuery.setParameter("code", code);
+		}
+		if (totalScore != null) {
+			countQuery.setParameter("totalScore", totalScore);
+		}
+
+		long total = ((Number) countQuery.getSingleResult()).longValue();
+
+		return new PageImpl<>(content, pageable, total);
 	}
+
 
 }
