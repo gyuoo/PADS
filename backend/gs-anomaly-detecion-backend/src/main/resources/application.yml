@@ -2,7 +2,7 @@ spring:
   application:
     name: dashboard
   profiles:
-    active: ${SPRING_ACTIVE_PROFILE:local}
+    active: dev
   jpa:
     open-in-view: false
 
