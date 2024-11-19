@@ -39,10 +39,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/store';
+import { useUserStore } from '../../store';
 import axios from 'axios'
 import { Bell } from 'lucide-vue-next'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarImage, AvatarFallback } from '../../components/ui/avatar'
 
 const store = useUserStore()
 const isLoggedIn = computed(() => store.isLoggedIn) // Pinia 상태 가져오기
