@@ -23,6 +23,7 @@ public class KafkaConsumerService {
 	public void listenLogRequest(ConsumerRecord<String, String> record, Consumer<String, String> consumer) throws Exception {
 		AnomalyLogCreateRequest anomalyLogRequest = objectMapper.readValue(record.value(), AnomalyLogCreateRequest.class);
 		anomalyService.saveAnomalyLog(anomalyLogRequest, objectMapper);
+		anomalyService.updateStatus(anomalyLogRequest.prdId());
 		log.info("받은 메시지: " + record.value());
 	}
 
