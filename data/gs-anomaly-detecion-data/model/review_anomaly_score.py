@@ -18,7 +18,7 @@ class ReviewAnomalyDetector(AbstractDetector):
         """
         super().__init__()
 
-    def generate_message(row):
+    def generate_message(self, row):
         """
         특정 행(row)에 대해 적절한 메시지를 생성.
 
